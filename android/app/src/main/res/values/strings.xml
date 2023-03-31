@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="facebook_app_Name">VLe</string>
+    <string name="facebook_app_id">593905325990207</string>
+    <string name="fb_login_protocol_scheme">fb593905325990207</string>
+    <string name="facebook_client_token">86cf4d01ed94b2ed140758fbd2892be1</string>
+
+</resources>
