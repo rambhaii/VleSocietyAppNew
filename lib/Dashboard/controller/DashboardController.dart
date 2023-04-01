@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -64,7 +65,8 @@ class followContrller extends GetxController{
 class DashboardController extends GetxController {
   final ScrollController scrollController=ScrollController();
 
-
+  int start=0;
+  int end=10;
   RxInt selectedIndex = 0.obs;
   RxInt selectedIndexOfArtical = 0.obs;
   RxInt selectedComunityIndex = 0.obs;
@@ -116,7 +118,7 @@ class DashboardController extends GetxController {
   String email = "";
   String image = "";
   String userType = "";
-
+  RxBool  isLoadingPage=false.obs;
   var articleModel = ArticaleModel().obs;
   var articleModelByCategory = ArticaleModel().obs;
   var articleModelWithFilter= ArticaleModel().obs;
@@ -126,26 +128,34 @@ class DashboardController extends GetxController {
   @override
   void onInit()
   {
-    userName = _storage.read(AppConstant.userName);
-    email = _storage.read(AppConstant.email);
-    image = _storage.read(AppConstant.profileImg);
-    userType = _storage.read(AppConstant.userType);
-   print("sddgdfgrt"+userType);
-    print(BASE_URL+image);
+    userName = _storage.read(AppConstant.userName)??"";
+    email = _storage.read(AppConstant.email)??"";
+    image = _storage.read(AppConstant.profileImg)??"";
+    userType = _storage.read(AppConstant.userType)??"";
+
     getBannerNetworkApi();
     getCommunityNetworkApi();
-    scrollController.addListener(_scrollListener);
+    addItems();
+    // getServiceNetworkApi();
+     getreportPostApiNetworkApi();
     super.onInit();
   }
-  void _scrollListener() async
-  {
-    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-        !scrollController.position.outOfRange)
-    {
-    print("--------------------------------");
-    }
-  }
+  addItems() async {
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent == scrollController.position.pixels) {
+        if(isLoadingPage.value && selectedIndex.value==0)
+        {
+          start=end;
+          end=start+10;
+          print("uybbhiu");
+          print(start);
+          print(end);
+          getCommunityLoadingNetworkApi(end);
+        }
 
+      }
+    });
+  }
 
   RxList reportMessageList =
       [
@@ -170,25 +180,43 @@ class DashboardController extends GetxController {
       BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
+  getCommunityLoadingNetworkApi(int end) async {
+    var response = await BaseClient()
+        .get(getCommunityApi +
+        "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${end}")
+        .catchError(BaseController().handleError);
+
+    if (jsonDecode(response)["status"] == 1) {
+      if(isLoadingPage.value==true)
+      {
+        communityModel.value.data!.addAll(communityModelFromJson(response).data!);
+        communityModel.refresh();
+      }
+    }
+    else{
+      isLoadingPage.value=false;
+      Fluttertoast.showToast(msg: "No more data availabel ! ");
+    }
+
+  }
   //Community
   getCommunityNetworkApi() async {
     var response = await BaseClient()
         .get(getCommunityApi +
-            "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=100&page=0")
+        "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${0}")
         .catchError(BaseController().handleError);
-    Get.context!.loaderOverlay.hide();
-    print("vdsbvkbksdvbs");
-    print(response);
     if (jsonDecode(response)["status"] == 1) {
       communityModel.value = communityModelFromJson(response);
-      return;
+      isLoadingPage.value=true;
+      start=0;
+      end=10;
+      print("vdvbidbvdv");
+      print(start);
+      print(end);
     }
-    BaseController().errorSnack(jsonDecode(response)["message"]);
+
   }
-
   getAnswerNetworkApi(String communityId) async {
-
-    print("dkjfghkfdjh"+communityId);
     var response = await BaseClient()
         .get(getCommunityAnswerApi +
             "?lng=eng&user_id=${_storage.read(AppConstant.id)}&community_id=${communityId}&limit=100&page=0")
@@ -816,7 +844,6 @@ print("dsghgdjf"+response);
     governmentServiceModel.value = serviceModelFromJson(response);
     //BaseController().errorSnack(jsonDecode(response)["message"]);
   }
-////////////////////////////////////////////////////////////////
 
   getServicesGovernmentSubCategoryNetworkApi(String service_master_parentId,String title) async
   {

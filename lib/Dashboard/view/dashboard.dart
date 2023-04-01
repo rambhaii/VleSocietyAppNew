@@ -42,8 +42,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   void initState() {
     // TODO: implement initState
 
-    controller.getServiceNetworkApi();
-    controller.getreportPostApiNetworkApi();
+
     super.initState();
     FirebaseDynamicLinkService.initDynamicLinks(context);
     notificationServices.requestNotificationPermission();
@@ -196,29 +195,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
         ),
         body: RefreshIndicator(
           onRefresh: () {
-            return Future.delayed(
-              Duration(seconds: 1),
-              () {
-                setState(() {
-                  _loadData();
-                });
-                Get.snackbar(
-                  "Refresh",
-                  "Page Refresh Successfully ",
-                  // icon: Icon(Icons.person, color: Colors.white),
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-            );
+            if(controller.selectedIndex.value==0)
+              {
+                return controller.getCommunityNetworkApi();
+              }
+            else{
+              return Future(() => true);
+            }
+
           },
           child: SingleChildScrollView(
+               controller: controller.scrollController,
+              physics: const BouncingScrollPhysics(),
               child: SafeArea(
             child: Obx(
                 () => _widgetOptions.elementAt(controller.selectedIndex.value)),
           )),
         ),
         bottomNavigationBar: PreferredSize(
-          child: ClipRRect(
+          child:  ClipRRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
               child: Obx(
@@ -355,12 +350,12 @@ class _HomeDashboardState extends State<HomeDashboard> {
     controller.getCommunityNetworkApi();
   }
 
-  List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    ArticalPage(),
-    CSCHome(),
-    QuizPage(),
-    ServicePage(),
+  final List<Widget> _widgetOptions =  [
+     HomePage(),
+     ArticalPage(),
+     CSCHome(),
+     QuizPage(),
+     ServicePage(),
   ];
 
   void _showBottomSheet() {

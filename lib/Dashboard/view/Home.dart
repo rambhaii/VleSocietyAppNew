@@ -47,8 +47,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("dsvbvdfghfghsjvbs");
-    controller.getCommunityNetworkApi();
+
     return Container(
       margin: EdgeInsets.only(left: 10, right: 10),
       child: Column(
