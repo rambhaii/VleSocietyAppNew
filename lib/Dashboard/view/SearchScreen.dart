@@ -35,9 +35,17 @@ class _SearchScreenState extends State<SearchScreen> {
   int count = 0;
   int cuntnumber = 0;
   late String keyMessage;
+  FocusNode inputNode = FocusNode();
+// to open keyboard call this function;
+  void openKeyboard(){
+    FocusScope.of(context).requestFocus(inputNode);
+  }
+
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
+    controller.getSearchListNetworkApi("", "");
     return new Scaffold(
       body: Container(
         child: Column(
@@ -48,12 +56,16 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    onChanged: (value) {
+                    onChanged: (value)
+                    {
                       keyMessage = value;
                     },
+                    focusNode: inputNode,
+                    autofocus:true,
                     controller: controller.searchkey,
                     decoration: InputDecoration(
                         labelText: "Search post",
+
                         labelStyle: TextStyle(
                           color: Color(0xff000000),
                           fontWeight: FontWeight.w400,
@@ -82,7 +94,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   )),
             ),
             Expanded(
-                child: Obx(
+                child:
+                Obx(
               () => SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
@@ -359,106 +372,116 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     Row(
                                       children: [
-                                        RawMaterialButton(
-                                          onPressed: () {
-                                            // controller.getCommunityNetworkApi();
-                                            data.aslike == "1"
-                                                ? controller
-                                                    .getComunitylikeDislikeNetworkApi(
-                                                        data.id.toString(), '2')
-                                                : controller
-                                                    .getComunitylikeDislikeNetworkApi(
-                                                        data.id.toString(),
-                                                        '1');
-                                            data.likeslected =
-                                                data.likeslected == true
-                                                    ? false
-                                                    : true;
-                                            controller.communityModelBySerachKey
-                                                    .value =
-                                                controller
-                                                    .communityModelBySerachKey
-                                                    .value;
-                                            controller.communityModelBySerachKey
-                                                .refresh();
-                                          },
-                                          child: data.likeslected!
-                                              ? Image.asset(
-                                                  "assets/images/likecom.png",
-                                                  height: 20,
-                                                  width: 20,
-                                                )
-                                              : Image.asset(
-                                                  "assets/images/likecommunity.png",
-                                                  height: 20,
-                                                  width: 20,
-                                                ),
-                                          constraints: BoxConstraints(
-                                              maxHeight: 30, maxWidth: 30),
-                                          shape: CircleBorder(),
-                                        ),
-                                        data.likeslected!
-                                            ? Text(
-                                                "${count + 1} like",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black54),
+                                        Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            RawMaterialButton(
+                                              onPressed: ()
+                                              {
+                                                if (controller.userType == "Guest") {
+                                                  UtilsMethod.PopupBox(context, "like");
+                                                } else {
+                                                  // controller.getCommunityNetworkApi();
+                                                  data.aslike == "1"
+                                                      ? controller
+                                                      .getComunitylikeDislikeNetworkApi(
+                                                      data.id.toString(), '2')
+                                                      : controller
+                                                      .getComunitylikeDislikeNetworkApi(
+                                                      data.id.toString(), '1');
+                                                  data.likeslected =
+                                                  data.likeslected == true
+                                                      ? false
+                                                      : true;
+                                                  controller.communityModelBySerachKey.value =
+                                                      controller.communityModelBySerachKey.value;
+                                                  controller.communityModelBySerachKey.refresh();
+                                                }
+                                              },
+                                              child: data.likeslected!
+                                                  ? Image.asset(
+                                                "assets/images/likecom.png",
+                                                height: 25,
+                                                width: 25,
                                               )
-                                            : Text(
-                                                "${count} like",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black54),
+                                                  : Image.asset(
+                                                "assets/images/likecommunity.png",
+                                                height: 25,
+                                                width: 25,
                                               ),
+                                              constraints: BoxConstraints(
+                                                  maxHeight: 30, maxWidth: 30),
+                                              shape: CircleBorder(),
+                                            ),
+                                            data.likeslected!
+                                                ? Text(
+                                              "${count + 1} like",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.black54),
+                                            )
+                                                : Text(
+                                              "${count} like",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
+                                        ),
                                         RawMaterialButton(
                                           onPressed: () {
-                                            if (controller.userType ==
-                                                "Guest") {
-                                              UtilsMethod.PopupBox(
-                                                  context, "Comment");
+                                            if (controller.userType == "Guest") {
+                                              UtilsMethod.PopupBox(context, "comment");
                                             } else {
-                                              controller.getAnswerNetworkApi(
-                                                  data.id.toString());
-                                              _showBottomSheet(
-                                                  context, data.id.toString());
+                                              controller
+                                                  .getAnswerNetworkApi(data.id.toString());
+                                              _showBottomSheet(context, data.id.toString());
                                             }
                                           },
                                           child: Image.asset(
                                             "assets/images/edit.png",
-                                            height: 20,
-                                            width: 20,
+                                            height: 23,
+                                            width: 23,
                                             color: Colors.black,
                                           ),
-                                          constraints: BoxConstraints(
-                                              maxHeight: 30, maxWidth: 40),
+                                          constraints:
+                                          BoxConstraints(maxHeight: 30, maxWidth: 40),
                                           shape: CircleBorder(),
                                         ),
-                                        RawMaterialButton(
-                                          onPressed: () async {
-                                            if (controller.userType ==
-                                                "Guest") {
-                                              UtilsMethod.PopupBox(
-                                                  context, "share");
-                                            } else {
-                                              //buildDynamicLinks(data.description.toString(),BASE_URL+data.image.toString(),data.id.toString());
-                                              String generateDeeplink =
+                                        Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            RawMaterialButton(
+                                              onPressed: () async {
+                                                if (controller.userType == "Guest") {
+                                                  UtilsMethod.PopupBox(context, "share");
+                                                } else {
+                                                  //buildDynamicLinks(data.description.toString(),BASE_URL+data.image.toString(),data.id.toString());
+                                                  String generateDeeplink =
                                                   await FirebaseDynamicLinkService
                                                       .buildDynamicLinks(
-                                                          data.description
-                                                              .toString(),
-                                                          BASE_URL +
-                                                              data.image
-                                                                  .toString(),
-                                                          data.id.toString(),
-                                                          false);
-                                              print("djfhgjk " +
-                                                  generateDeeplink);
-                                            }
-                                          },
-                                          /* {
+                                                      data.description.toString(),
+                                                      BASE_URL +
+                                                          data.image.toString(),
+                                                      data.id.toString(),
+                                                      false);
+                                                  print("djfhgjk " + generateDeeplink);
+                                                  if (generateDeeplink.isNotEmpty) {
+                                                    controller.getcommunityShareNetworkApi(
+                                                        data.id.toString());
+                                                    controller.getCommunityNetworkApi();
+                                                  }
+                                                }
+                                              },
+                                              /*
+                                 {
                                     Share.share(subject: BASE_URL + data.image.toString(), data.description.toString());
                                   }*/
-                                          /*
+                                              /*
                                  async
                                  {
                                 final urlPreview =BASE_URL+data.image.toString();
@@ -470,17 +493,25 @@ class _SearchScreenState extends State<SearchScreen> {
                                 File(path).writeAsBytesSync(bytes);
                                 await Share.shareFiles([path], text: data.description.toString()+"\n"+'https://www.animationmedia.org/');
                                 },*/
-                                          child: Image.asset(
-                                            "assets/images/share.png",
-                                            height: 20,
-                                            width: 20,
-                                          ),
-                                          constraints: BoxConstraints(
-                                              maxHeight: 30, maxWidth: 40),
-                                          shape: CircleBorder(),
+                                              child: Image.asset(
+                                                "assets/images/share.png",
+                                                height: 25,
+                                                width: 25,
+                                              ),
+                                              constraints: BoxConstraints(
+                                                  maxHeight: 30, maxWidth: 40),
+                                              shape: CircleBorder(),
+                                            ),
+                                            Text("${data.ttlShare.toString()
+                                            } share",
+                                                style: TextStyle(
+                                                    fontSize: 10, color: Colors.black54))
+                                          ],
                                         ),
-                                        RawMaterialButton(
-                                          onPressed: () async {
+                                        RawMaterialButton
+                                          (
+                                          onPressed: () async
+                                          {
                                             /* final urlPreview =BASE_URL+data.image.toString();
                    final url = Uri.parse(urlPreview);
                    final response = await http.get(url);
@@ -489,17 +520,16 @@ class _SearchScreenState extends State<SearchScreen> {
                    final path = '${temp.path}/image.jpg';
                    File(path).writeAsBytesSync(bytes);
                    await Share.shareFiles([path], text: data.description.toString()+"\n"+'https://www.animationmedia.org/');
-           */
-                                            if (controller.userType ==
-                                                "Guest") {
-                                              UtilsMethod.PopupBox(
-                                                  context, "share");
-                                            } else {
+               */
+                                            if (controller.userType == "Guest")
+                                            {
+                                              UtilsMethod.PopupBox(context, "share");
+                                            }
+                                            else
+                                            {
                                               await WhatsappShare.share(
-                                                text:
-                                                    data.description.toString(),
-                                                linkUrl:
-                                                    'https://www.animationmedia.org/',
+                                                text: data.description.toString(),
+                                                linkUrl: 'https://www.animationmedia.org/',
                                                 phone: '911234567890',
                                               );
                                             }
@@ -509,46 +539,37 @@ class _SearchScreenState extends State<SearchScreen> {
                                             height: 27,
                                             width: 27,
                                           ),
-                                          constraints: BoxConstraints(
-                                              maxHeight: 30, maxWidth: 40),
+                                          constraints:
+                                          BoxConstraints(maxHeight: 30, maxWidth: 40),
                                           shape: CircleBorder(),
                                         ),
                                         Expanded(
                                             child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                                onPressed: () {},
-                                                child: Text(
-                                                    "${data.ttlAnswer} Comment",
-                                                    style:
-                                                        bodyText1Style.copyWith(
-                                                            color: Colors
-                                                                .blue.shade400,
-                                                            fontWeight:
-                                                                FontWeight.w300,
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                    onPressed: () {},
+                                                    child: Text("${data.ttlAnswer} Comment",
+                                                        style: bodyText1Style.copyWith(
+                                                            color: Colors.blue.shade400,
+                                                            fontWeight: FontWeight.w300,
                                                             fontSize: 12))),
-                                            Container(
-                                              height: 3,
-                                              width: 3,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.blue,
-                                                  shape: BoxShape.circle),
-                                            ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                child: Text(
-                                                    "${data.ttlView} Views",
-                                                    style:
-                                                        bodyText1Style.copyWith(
-                                                            color: Colors
-                                                                .blue.shade400,
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                                Container(
+                                                  height: 3,
+                                                  width: 3,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.blue,
+                                                      shape: BoxShape.circle),
+                                                ),
+                                                TextButton(
+                                                    onPressed: () {},
+                                                    child: Text("${data.ttlView} Views",
+                                                        style: bodyText1Style.copyWith(
+                                                            color: Colors.blue.shade400,
+                                                            fontWeight: FontWeight.w400,
                                                             fontSize: 12))),
-                                          ],
-                                        )),
+                                              ],
+                                            )),
                                       ],
                                     ),
                                     Padding(

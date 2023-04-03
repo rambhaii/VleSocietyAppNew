@@ -21,7 +21,8 @@ final Datum data;
 QuizeDetails(this.data);
 
 @override
-Widget build(BuildContext context) {
+Widget build(BuildContext context)
+{
   controller.getQuizNetworkApi();
   var desc = parse(data.description);
   String parsedString = parse(desc.body!.text).documentElement!.text;

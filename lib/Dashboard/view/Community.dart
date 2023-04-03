@@ -40,23 +40,29 @@ class _CommunityPageState extends State<CommunityPage> {
   int cuntnumber = 0;
   CommunityDatum communityModel2 = Get.put(CommunityDatum());
 
-  @override
+  /*@override
   void initState() {
     super.initState();
-  }
+  }*/
 
   @override
-  Widget build(BuildContext context) {
-    return Obx(
+  Widget build(BuildContext context)
+  {
+    return
+      Obx(
       () => Column(
-        children: [
+        children:
+        [
           Column(
             children: controller.communityModel.value.data != null
                 ? List.generate(
                     controller.communityModel.value.data!.length,
-                    (index) {
+                    (index)
+                    {
                       final data = controller.communityModel.value.data![index];
 
+
+                    //  controller.end=controller.communityModel.value.page! ;
                       count = int.parse(data.ttlLike.toString());
 
                       return GestureDetector(

@@ -18,6 +18,7 @@ import '../../AppConstant/textStyle.dart';
 import '../../Auth/controller/login_controller.dart';
 import '../../Auth/model/StateModel.dart';
 import '../../CSC/Model/CscModel.dart';
+import '../../Widget/loading_widget.dart';
 import '../model/ArticalModel.dart';
 import 'ArticalDetailsPage.dart';
 import 'FeedDetails.dart';
@@ -50,442 +51,470 @@ class _ArticalPageState extends State<ArticalPage>
   { controller.getCommmunityCategoryNetworkApi();
     controller.getArticleNetworkApi();
     loginController.getStateNetworkApi();
-    controller.getFeedArticalNetworkApi("");
-
+    //controller.getFeedArticalNetworkApi("");
+   print("sdfjhdkjfghgdfgfd"+controller.isLoadingPageArtical.value.toString());
     return
       Stack(
   children:
   [
      SingleChildScrollView(
-       child: Column(
-        children: [
-          SingleChildScrollView(
-            physics: ClampingScrollPhysics(),
-            child: Container(
-              child: Row(
-                  children:[
-                    SizedBox(
-                        width:120,
-                        height: 60,
-                        child: InkWell(
-                          onTap: (){
-                            setState(()
-                            {
-                              //controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
-                            controller.selectedIndexOfArtical.value=1;
-                              isCategory=true;
-                              status=1;
-                              catId="1";
-                            });
 
-                            //  Get.to(FeedDetails());
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: AnimatedContainer(
-                              decoration: BoxDecoration(
-                                /*
-                                   color: selectedSize == index
-                                        ? primaryColor
-                                        : Colors.transparent,*/
-                                border: Border.all(color: Colors.black12,),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              duration: const Duration(milliseconds: 200),
-                              child: Center(
-                                child:
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    children:
-                                    [
-                                      Container(
-                                        height: 35,
-                                        width: 35,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(
-                                                100),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors
-                                                    .transparent
-                                                    .withOpacity(
-                                                    0.2),
-                                                offset: Offset(
-                                                    -3.0, -3.0),
-                                                blurRadius: 10.0,
-                                              ),
-                                              BoxShadow(
-                                                color: Colors
-                                                    .black
-                                                    .withOpacity(
-                                                    0.1),
-                                                offset: Offset(
-                                                    3.0, 3.0),
-                                                blurRadius: 10.0,
-                                                ),
-                                            ],
-                                            color: Colors.white,
-                                            image: new DecorationImage(
-                                              image: new AssetImage("assets/images/feed.png"),
+       child:
 
-                                            )
-                                        ),
-                                      ),
-                                      SizedBox(width: 5,),
-                                      Text(
-                                        "Feed",
-                                        style:  bodyText1Style.copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+       Column(
+         children:
+         [
+           Column(
+             children: [
+               SingleChildScrollView(
+                 physics: ClampingScrollPhysics(),
+                 child: Container(
+                   child: Row(
+                       children:[
+                         SizedBox(
+                             width:120,
+                             height: 60,
+                             child: InkWell(
+                               onTap: (){
+                                 setState(()
+                                 {
+                                   controller.setSelectedCategoryOfArtical.value=1;
+                                   controller.selectedIndexOfArtical.value=1;
+                                   isCategory=true;
+                                   status=1;
+                                   catId="1";
+                                 });
 
-                                          /*   color: selectedSize == index
-                                                    ? Colors.white
-                                                    : Colors.black*/
+                                 //  Get.to(FeedDetails());
+                               },
+                               child: Padding(
+                                 padding: const EdgeInsets.all(10.0),
+                                 child: AnimatedContainer(
+                                   decoration: BoxDecoration(
+                                     /*
+                                     color: selectedSize == index
+                                          ? primaryColor
+                                          : Colors.transparent,*/
+                                     border: Border.all(color: Colors.black12,),
+                                     borderRadius: BorderRadius.circular(10),
+                                   ),
+                                   duration: const Duration(milliseconds: 200),
+                                   child: Center(
+                                     child:
+                                     Padding(
+                                       padding: EdgeInsets.all(10),
+                                       child: Row(
+                                         children:
+                                         [
+                                           Container(
+                                             height: 35,
+                                             width: 35,
+                                             decoration: BoxDecoration(
+                                                 borderRadius:
+                                                 BorderRadius
+                                                     .circular(
+                                                     100),
+                                                 boxShadow: [
+                                                   BoxShadow(
+                                                     color: Colors
+                                                         .transparent
+                                                         .withOpacity(
+                                                         0.2),
+                                                     offset: Offset(
+                                                         -3.0, -3.0),
+                                                     blurRadius: 10.0,
+                                                   ),
+                                                   BoxShadow(
+                                                     color: Colors
+                                                         .black
+                                                         .withOpacity(
+                                                         0.1),
+                                                     offset: Offset(
+                                                         3.0, 3.0),
+                                                     blurRadius: 10.0,
+                                                   ),
+                                                 ],
+                                                 color: Colors.white,
+                                                 image: new DecorationImage(
+                                                   image: new AssetImage("assets/images/feed.png"),
 
-                                        ),
-                                      ),
-                                    ],
+                                                 )
+                                             ),
+                                           ),
+                                           SizedBox(width: 5,),
+                                           Text(
+                                             "Feed",
+                                             style:  bodyText1Style.copyWith(
+                                               fontSize: 14,
+                                               fontWeight: FontWeight.w500,
 
-                                  ),
-                                ),
+                                               /*   color: selectedSize == index
+                                                      ? Colors.white
+                                                      : Colors.black*/
+
+                                             ),
+                                           ),
+                                         ],
+
+                                       ),
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             )
+                         ),
+                         SizedBox(
+                             width:MediaQuery.of(context).size.width/1.5,
+                             height: 60,
+                             child: Obx(() => controller.communityCategoryModel
+                                 .value.data !=
+                                 null
+                                 ?  ListView.builder(
+                                 scrollDirection: Axis.horizontal,
+                                 itemCount:  controller.communityCategoryModel.value.data!.length,
+                                 shrinkWrap: true,
+                                 itemBuilder: (context, index)
+                                 {
+                                   var current =  controller.communityCategoryModel.value.data![index];
+                                   return GestureDetector(
+                                     onTap: ()
+                                     {
+                                       controller.setSelectedCategoryOfArtical.value=2;
+                                       controller.selectedIndexOfArtical.value=0;
+                                       // Get.to(()=>ArticalDetailsPage());
+                                       setState(()
+                                       {
+                                         controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
+                                         isCategory=true;
+                                         selectedSize = index;
+                                         status=0;
+                                         catId= controller.communityCategoryModel.value.data![index].id.toString();
+
+                                       });
+                                     },
+                                     child: Padding(
+                                       padding: const EdgeInsets.all(10.0),
+                                       child: AnimatedContainer(
+                                         decoration: BoxDecoration(
+                                           color: selectedSize == index
+                                               ? primaryColor
+                                               : Colors.transparent,
+                                           border: Border.all(color: Colors.black12,),
+                                           borderRadius: BorderRadius.circular(10),
+                                         ),
+                                         duration: const Duration(milliseconds: 200),
+                                         child: Center(
+                                           child:
+                                           Padding(
+                                             padding: EdgeInsets.all(10),
+                                             child: Row(
+                                               children:
+                                               [Container(
+                                                 height: 35,
+                                                 width: 35,
+                                                 decoration: BoxDecoration(
+                                                     borderRadius:
+                                                     BorderRadius
+                                                         .circular(
+                                                         100),
+                                                     boxShadow: [
+                                                       BoxShadow(
+                                                         color: Colors
+                                                             .transparent
+                                                             .withOpacity(
+                                                             0.2),
+                                                         offset: Offset(
+                                                             -3.0, -3.0),
+                                                         blurRadius: 10.0,
+                                                       ),
+                                                       BoxShadow(
+                                                         color: Colors
+                                                             .black
+                                                             .withOpacity(
+                                                             0.1),
+                                                         offset: Offset(
+                                                             3.0, 3.0),
+                                                         blurRadius: 10.0,
+                                                       ),
+                                                     ],
+                                                     color: Colors.white,
+                                                     image: DecorationImage(
+                                                         image: NetworkImage(BASE_URL +
+                                                             controller
+                                                                 .communityCategoryModel
+                                                                 .value
+                                                                 .data![
+                                                             index]
+                                                                 .image
+                                                                 .toString()))
+                                                 ),
+                                               ),
+                                                 SizedBox(width: 5,),
+                                                 Text(
+                                                   controller.communityCategoryModel.value.data![index].title.toString(),
+                                                   style:  bodyText1Style.copyWith(
+                                                       fontSize: 15,
+                                                       fontWeight: FontWeight.w500,
+                                                       color: selectedSize == index
+                                                           ? Colors.white
+                                                           : Colors.black
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   );
+                                 }):
+                             const Center(
+                               child: CupertinoActivityIndicator(),
+                             ),
+                             )
+                         ),
+                       ]
+                   ),
+                 ),
+               ),
+
+               if(isCategory==false)
+                 filter==0?
+                    Obx(
+                    () =>
+                    Column(children:
+                    [
+                      Obx(() =>controller.articleModel.value.data != null
+                          ?
+                      ListView.separated(
+                        padding: EdgeInsets.all(10),
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: controller.articleModel.value.data!.length,
+                        separatorBuilder: (BuildContext context, int index) => Divider(
+                          height: 5,
+                          thickness: 1.6,
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                        itemBuilder: (BuildContext context, int index)
+                        {
+                          final datas = controller.articleModel.value.data![index];
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
+                            child: InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, datas);
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(child: Text(
+                                    datas.title.toString(),
+                                    style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),),
+                                  SizedBox(width: 10,),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: BASE_URL + datas.image.toString(),
+                                      height: 75,
+                                      width: 75,
+                                      placeholder: (context, url) =>
+                                          Center(child: const CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          ),
-                        )
-                    ),
-                    SizedBox(
-                        width:MediaQuery.of(context).size.width/1.5,
-                        height: 60,
-                        child: Obx(() => controller.communityCategoryModel
-                            .value.data !=
-                            null
-                            ?  ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount:  controller.communityCategoryModel.value.data!.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index)
-                            {
-                              var current =  controller.communityCategoryModel.value.data![index];
-                              return GestureDetector(
-                                onTap: ()
-                                {
-                                  controller.selectedIndexOfArtical.value=0;
-                                  // Get.to(()=>ArticalDetailsPage());
-                                  setState(()
-                                  {
-                                    controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
-                                    isCategory=true;
-                                    selectedSize = index;
-                                    status=0;
-                                    catId= controller.communityCategoryModel.value.data![index].id.toString();
+                          );
+                        },
+                      ): Center(
+                        child: CupertinoActivityIndicator(),
+                      ),
+                      ),
+                      controller.setCategoryOfArtical.value==2?
+                      controller.isLoadingPageArtical.value?const LoadingWidget():Container():Container()
 
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: AnimatedContainer(
-                                    decoration: BoxDecoration(
-                                      color: selectedSize == index
-                                          ? primaryColor
-                                          : Colors.transparent,
-                                      border: Border.all(color: Colors.black12,),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    duration: const Duration(milliseconds: 200),
-                                    child: Center(
-                                      child:
-                                      Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: Row(
-                                          children:
-                                          [Container(
-                                            height: 35,
-                                            width: 35,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    100),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors
-                                                        .transparent
-                                                        .withOpacity(
-                                                        0.2),
-                                                    offset: Offset(
-                                                        -3.0, -3.0),
-                                                    blurRadius: 10.0,
-                                                  ),
-                                                  BoxShadow(
-                                                    color: Colors
-                                                        .black
-                                                        .withOpacity(
-                                                        0.1),
-                                                    offset: Offset(
-                                                        3.0, 3.0),
-                                                    blurRadius: 10.0,
-                                                  ),
-                                                ],
-                                                color: Colors.white,
-                                                image: DecorationImage(
-                                                    image: NetworkImage(BASE_URL +
-                                                        controller
-                                                            .communityCategoryModel
-                                                            .value
-                                                            .data![
-                                                        index]
-                                                            .image
-                                                            .toString()))
-                                            ),
-                                          ),
-                                            SizedBox(width: 5,),
-                                            Text(
-                                              controller.communityCategoryModel.value.data![index].title.toString(),
-                                              style:  bodyText1Style.copyWith(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: selectedSize == index
-                                                      ? Colors.white
-                                                      : Colors.black
-                                                ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }):
-                        const Center(
-                          child: CupertinoActivityIndicator(),
-                        ),
-                        )
-                    ),
-                    ]
-              ),
-            ),
-          ),
-          if(isCategory==false)
-            filter==0?
-            Obx(() =>controller.articleModel.value.data != null
-                ?
-            ListView.separated(
-              padding: EdgeInsets.all(10),
-              shrinkWrap: true,
-              reverse: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: controller.articleModel.value.data!.length,
-              separatorBuilder: (BuildContext context, int index) => Divider(
-                height: 5,
-                thickness: 1.6,
-                color: Colors.grey.withOpacity(0.2),
-              ),
-              itemBuilder: (BuildContext context, int index)
-              {
-                final datas = controller.articleModel.value.data![index];
-                return Padding(
-                  padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
-                  child: InkWell(
-                    onTap: (){
-                      _showBottomSheet(context, datas);
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(child: Text(
-                          datas.title.toString(),
-                          style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),),
-                        SizedBox(width: 10,),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: BASE_URL + datas.image.toString(),
-                            height: 75,
-                            width: 75,
-                            placeholder: (context, url) =>
-                                Center(child: const CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ): Center(
-              child: CupertinoActivityIndicator(),
-            ),
-            ):
-            Obx(() =>controller.articleModelWithFilter.value.data != null
-                ? ListView.separated(
-              padding: EdgeInsets.all(10),
-              shrinkWrap: true,
-              reverse: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: controller.articleModelWithFilter.value.data!.length,
-              separatorBuilder: (BuildContext context, int index) => Divider(
-                height: 5,
-                thickness: 1.6,
-                color: Colors.grey.withOpacity(0.2),
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                final datas = controller.articleModelWithFilter.value.data![index];
-                return Padding(
-                  padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
-                  child: InkWell(
-                    onTap: (){
-                      _showBottomSheet(context, datas);
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(child: Text(
-                          datas.title.toString(),
-                          style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),),
-                        SizedBox(width: 10,),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: BASE_URL + datas.image.toString(),
-                            height: 75,
-                            width: 75,
-                            placeholder: (context, url) =>
-                                Center(child: const CircularProgressIndicator()),
-                                errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                                     ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ) :Container()
-            )
-          ,
-          if(isCategory==true)
-            status==1?
-            Obx(() =>controller.feedArticalModel.value.data != null
-                ? ListView.separated(
-              padding: EdgeInsets.all(15),
-              shrinkWrap: true,
-              reverse: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: controller.feedArticalModel.value.data!.length,
-              separatorBuilder: (BuildContext context, int index) =>
-                  Divider(
-                height: 15,
-                thickness: 1.9,
-                color: Colors.grey.withOpacity(0.2),
-                 ),
-              itemBuilder: (BuildContext context, int index)
-              {
-                final datas = controller.feedArticalModel.value.data![index];
-                return Padding
-                  (
-                  padding: const EdgeInsets.only(top: 6.0,bottom: 6.0,left: 5),
-                  child: InkWell
-                    (
-                    onTap: ()
-                    {
-                      _showBottomSheetFeedArtcal(context, datas);
-                    },
-                    child: Row
-                      (
-                      children:
-                      [
-                        Expanded(child:
-                        Text(
-                          datas.title.toString(),
-                          style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),),
-                        SizedBox(width: 10,),
-                      /*  ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                           // imageUrl: BASE_URL + datas.image.toString(),
-                            imageUrl: BASE_URL + "datas.image.toString()",
-                            height: 75,
-                            width: 75,
-                            placeholder: (context, url) =>
-                                Center(child: const CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                          ),
-                        )*/
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
-                :Container())
-                :
-            Obx(() => controller.articleModelByCategory.value.data != null
-                ?
-            ListView.separated(
-              padding: EdgeInsets.all(10),
-              shrinkWrap: true,
-              reverse: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: controller.articleModelByCategory.value.data!.length,
-              separatorBuilder: (BuildContext context, int index) => Divider(
-                height: 5,
-                thickness: 1.6,
-                color: Colors.grey.withOpacity(0.2),
-              ),
-              itemBuilder: (BuildContext context, int index)
-              {
-                final datas = controller.articleModelByCategory.value.data![index];
-                return Padding(
-                  padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
-                  child: InkWell(
-                    onTap: (){
-                      _showBottomSheet(context, datas);
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(child: Text(
-                          datas.title.toString(),
-                          style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),),
-                        SizedBox(width: 10,),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: BASE_URL + datas.image.toString(),
-                            height: 75,
-                            width: 75,
-                            placeholder: (context, url) =>
-                                Center(child: const CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ):Center(child: const CircularProgressIndicator())),
+                    ],)
+
+                   )
+                     :
+                 Obx(() =>controller.articleModelWithFilter.value.data != null
+                     ? ListView.separated(
+                   padding: EdgeInsets.all(10),
+                   shrinkWrap: true,
+                   reverse: true,
+                   physics: NeverScrollableScrollPhysics(),
+                   itemCount: controller.articleModelWithFilter.value.data!.length,
+                   separatorBuilder: (BuildContext context, int index) => Divider(
+                     height: 5,
+                     thickness: 1.6,
+                     color: Colors.grey.withOpacity(0.2),
+                   ),
+                   itemBuilder: (BuildContext context, int index) {
+                     final datas = controller.articleModelWithFilter.value.data![index];
+                     return Padding(
+                       padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
+                       child: InkWell(
+                         onTap: (){
+                           _showBottomSheet(context, datas);
+                         },
+                         child: Row(
+                           children: [
+                             Expanded(child: Text(
+                               datas.title.toString(),
+                               style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                               maxLines: 3,
+                             ),),
+                             SizedBox(width: 10,),
+                             ClipRRect(
+                               borderRadius: BorderRadius.circular(10),
+                               child: CachedNetworkImage(
+                                 fit: BoxFit.cover,
+                                 imageUrl: BASE_URL + datas.image.toString(),
+                                 height: 75,
+                                 width: 75,
+                                 placeholder: (context, url) =>
+                                     Center(child: const CircularProgressIndicator()),
+                                 errorWidget: (context, url, error) =>
+                                 const Icon(Icons.error),
+                               ),
+                             )
+                           ],
+                         ),
+                       ),
+                     );
+                   },
+                 ) :Container()
+                 )
+               ,
+               if(isCategory==true)
+                 status==1?
+                       Obx(
+                        () =>Column(
+                       children:
+                       [
+                         Obx(() =>controller.feedArticalModel.value.data != null
+                             ? ListView.separated(
+                           padding: EdgeInsets.all(15),
+                           shrinkWrap: true,
+                           reverse: true,
+                           physics: NeverScrollableScrollPhysics(),
+                           itemCount: controller.feedArticalModel.value.data!.length,
+                           separatorBuilder: (BuildContext context, int index) =>
+                               Divider(
+                                 height: 15,
+                                 thickness: 1.9,
+                                 color: Colors.grey.withOpacity(0.2),
+                               ),
+                           itemBuilder: (BuildContext context, int index)
+                           {
+                             final datas = controller.feedArticalModel.value.data![index];
+                             return Padding
+                               (
+                               padding: const EdgeInsets.only(top: 6.0,bottom: 6.0,left: 5),
+                               child: InkWell
+                                 (
+                                 onTap: ()
+                                 {
+                                   _showBottomSheetFeedArtcal(context, datas);
+                                 },
+                                 child: Row
+                                   (
+                                   children:
+                                   [
+                                     Expanded(child:
+                                     Text(
+                                       datas.title.toString(),
+                                       style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                                       maxLines: 3,
+                                     ),),
+                                     SizedBox(width: 10,),
+
+                                   ],
+                                 ),
+                               ),
+                             );
+                           },
+                         )
+                             :Container()),
+                         controller.setCategoryOfArtical.value==1?
+                         controller.isLoadingPageArtical.value?const LoadingWidget():Container():Container()
+                       ],
+                     )
+                       )
+
+                     :
+                 Obx(() => controller.articleModelByCategory.value.data != null
+                     ?
+                 ListView.separated(
+                   padding: EdgeInsets.all(10),
+                   shrinkWrap: true,
+                   reverse: true,
+                   physics: NeverScrollableScrollPhysics(),
+                   itemCount: controller.articleModelByCategory.value.data!.length,
+                   separatorBuilder: (BuildContext context, int index) => Divider(
+                     height: 5,
+                     thickness: 1.6,
+                     color: Colors.grey.withOpacity(0.2),
+                   ),
+                   itemBuilder: (BuildContext context, int index)
+                   {
+                     final datas = controller.articleModelByCategory.value.data![index];
+                     return Padding(
+                       padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
+                       child: InkWell(
+                         onTap: (){
+                           _showBottomSheet(context, datas);
+                         },
+                         child: Row(
+                           children: [
+                             Expanded(child: Text(
+                               datas.title.toString(),
+                               style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                               maxLines: 3,
+                             ),),
+                             SizedBox(width: 10,),
+                             ClipRRect(
+                               borderRadius: BorderRadius.circular(10),
+                               child: CachedNetworkImage(
+                                 fit: BoxFit.cover,
+                                 imageUrl: BASE_URL + datas.image.toString(),
+                                 height: 75,
+                                 width: 75,
+                                 placeholder: (context, url) =>
+                                     Center(child: const CircularProgressIndicator()),
+                                 errorWidget: (context, url, error) =>
+                                 const Icon(Icons.error),
+                               ),
+                             )
+                           ],
+                         ),
+                       ),
+                     );
+                   },
+                 ):Center(child: const CircularProgressIndicator())),
 
 
-        ],
-      ),
+             ],
+           ),
+
+
+
+
+
+         ],
+
+       ),
+
     ),
+
+
+
     status==1?Container():
     Positioned(
       right: 10,

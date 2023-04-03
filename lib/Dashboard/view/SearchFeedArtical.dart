@@ -26,6 +26,11 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
   late String keyMessage;
 
   DashboardController controller = Get.find();
+  FocusNode inputNode = FocusNode();
+// to open keyboard call this function;
+  void openKeyboard(){
+    FocusScope.of(context).requestFocus(inputNode);
+  }
 
   @override
   Widget build(BuildContext context)
@@ -48,6 +53,8 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
                             onChanged: (value) {
                               keyMessage = value;
                             },
+                            focusNode: inputNode,
+                            autofocus:true,
                             decoration: InputDecoration(
                                 labelText: "Search post",
                                 labelStyle: TextStyle(

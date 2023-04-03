@@ -19,7 +19,8 @@ class notification extends StatefulWidget {
   State<notification> createState() => _notificationState();
 }
 
-class _notificationState extends State<notification> {
+class _notificationState extends State<notification>
+{
   DashboardController controller = Get.find();
   @override
   Widget build(BuildContext context) {

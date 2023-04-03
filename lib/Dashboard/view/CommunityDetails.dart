@@ -147,40 +147,6 @@ class _CommunityDetailsState extends State<CommunityDetails>
           ),
         ),
 
-
-
-
-        /*StaggeredGrid.count(
-             crossAxisCount: 1,
-             mainAxisSpacing: 4,
-           crossAxisSpacing: 4,
-           children:List.generate(controller.communityModel.value.data!.imageList!.length, (index) =>
-               StaggeredGridTile.count(
-
-                 crossAxisCellCount:controller.communityModel.value.data!.imageList!.length==4?4: Random().nextInt(2)+1,
-                 mainAxisCellCount:controller.communityModel.value.data!.imageList!.length==4?3: Random().nextInt(2)+1,
-                 child:  InkWell(
-                   onTap: ()
-                   {
-                     final data= controller.communityModel.value.data!;
-                     Get.to(GalleryPage(cid:data.id.toString(),));
-                   },
-                   child:
-                  CachedNetworkImage
-                     (
-                     fit: BoxFit.fill,
-                     imageUrl: BASE_URL + controller.communityModel.value.data!.image!,
-                     placeholder: (context, url) =>Center(child: const CircularProgressIndicator()),
-                     errorWidget: (context, url, error) =>
-                     const Icon(Icons.error),
-                     ),
-                 ),
-
-
-               )
-
-             ,)
-           ),*/
       ),
 
 

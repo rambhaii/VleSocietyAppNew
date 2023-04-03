@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../AppConstant/textStyle.dart';
 import '../Auth/view/LoginPage2.dart';
+import '../Splash/SplashPage1.dart';
 
 class UtilsMethod{
 static  Future<void> launchUrls(String url)
@@ -65,7 +66,7 @@ async {
                         MaterialButton(onPressed: ()
                         {
                           Future.delayed(Duration(seconds: 0)).then((value) =>
-                              Get.to(()=>LogInPage1(),transition: Transition.fade,duration: Duration(milliseconds: 10))
+                              Get.to(()=>SplashPage1(),transition: Transition.fade,duration: Duration(milliseconds: 10))
                           );
                           Navigator.pop(context);
                         },

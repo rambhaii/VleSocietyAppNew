@@ -16,6 +16,7 @@ import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import '../Dashboard/model/ArticalModel.dart';
 import '../Dashboard/view/MyAsk.dart';
+import '../Widget/loading_widget.dart';
 import 'View/CscDetails.dart';
 
 class CSCHome extends StatefulWidget {
@@ -72,6 +73,19 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                       options: CarouselOptions(
                         height: 130.h,
                         viewportFraction: 1,
+                        aspectRatio: 16/9,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enlargeCenterPage: true,
+                        enlargeFactor: 0.3,
+                        scrollDirection: Axis.horizontal,
+
+
                       ),
                       items: controller.bannerModel.value.data!.map((i) {
                         return Builder(
@@ -143,70 +157,78 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
             ),
           )*/
           SizedBox(height: 10,),
+      Obx(
+            () => Column(
+     children: [
+       Obx(
+             ()=> controller.cscModel.value.data != null?
+         Column(
+           children: [
+             GridView.count(
+               physics: ScrollPhysics(),
+               crossAxisCount: 2,
+               crossAxisSpacing: 5.0,
+               mainAxisSpacing: 5.0,
+               childAspectRatio: 3/2.6,
+               shrinkWrap: true,
+               children: List.generate(controller.cscModel.value.data!.length, (index)
+               {
 
-      Obx(()=> controller.cscModel.value.data != null?
-      Column(
-      children: [
-        GridView.count(
-          physics: ScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-          childAspectRatio: 3/2.6,
-          shrinkWrap: true,
-          children: List.generate(controller.cscModel.value.data!.length, (index)
-          {
+                 final datas = controller.cscModel.value.data![index];
+                 return GestureDetector(
+                   onTap: (){
+                     Get.to(()=>CscDetails(datas));
+                   },
+                   child: Card(
+                     color: Colors.white,
+                     shadowColor: Colors.white,
+                     shape: RoundedRectangleBorder(
+                       borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
+                     ),
+                     elevation: 2,
+                     child: Column(
 
-            final datas = controller.cscModel.value.data![index];
-            return GestureDetector(
-              onTap: (){
-                Get.to(()=>CscDetails(datas));
-              },
-              child: Card(
-                color: Colors.white,
-                shadowColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
-                ),
-                elevation: 2,
-                child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.center,
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         SizedBox(height: 10,),
+                         ClipRRect(
+                           borderRadius: BorderRadius.circular(5),
+                           child: CachedNetworkImage(
+                             fit: BoxFit.fill,
+                             imageUrl: BASE_URL + datas.image.toString(),
+                             height: 55.h,
+                             width: 75.h,
+                             placeholder: (context, url) =>
+                                 Center(child: const CircularProgressIndicator()),
+                             errorWidget: (context, url, error) =>
+                             const Icon(Icons.error),
+                           ),
+                         ),
+                         Padding(
+                           padding: const EdgeInsets.only(left: 8.0,right: 8,top: 8,bottom: 8),
+                           child: Text(datas.title.toString(),
+                             style: bodyText1Style.copyWith(fontSize: 12.sp),overflow: TextOverflow.ellipsis,
+                             //   textAlign: TextAlign.justify,
+                             maxLines: 3,),
+                         )],
 
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 10,),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fill,
-                        imageUrl: BASE_URL + datas.image.toString(),
-                        height: 65.h,
-                        width: 55.h,
-                        placeholder: (context, url) =>
-                            Center(child: const CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                      ),
-                    ),
-                       Padding(
-                         padding: const EdgeInsets.all(8.0),
-                         child: Text(datas.title.toString(),
-                           style: bodyText1Style.copyWith(fontSize: 12.sp),overflow: TextOverflow.ellipsis,
-                        //   textAlign: TextAlign.justify,
-                           maxLines: 3,),
-                       )],
+                     ),
+                   ),
+                 );
+               },),
+             ),
+           ],
+         ):
+         Center(
+           child: CupertinoActivityIndicator(),
+         ),
+       ),
+       controller.isLoadingCSCPage.value?const LoadingWidget():Container(),
+       ],
+            )
+   )
 
-                ),
-              ),
-            );
-          },),
-        ),
-      ],
-    ):
-      Center(
-        child: CupertinoActivityIndicator(),
-      ),
-  )
 
 
 

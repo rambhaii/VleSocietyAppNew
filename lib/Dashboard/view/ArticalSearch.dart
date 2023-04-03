@@ -23,7 +23,12 @@ class ArticalSearch extends StatefulWidget {
 
 class _ArticalSearchState extends State<ArticalSearch> {
   late String keyMessage;
+
   DashboardController controller = Get.find();
+  FocusNode inputNode = FocusNode();
+  void openKeyboard(){
+    FocusScope.of(context).requestFocus(inputNode);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +46,8 @@ class _ArticalSearchState extends State<ArticalSearch> {
               onChanged: (value) {
                 keyMessage = value;
               },
+              focusNode: inputNode,
+              autofocus:true,
               decoration: InputDecoration(
                   labelText: "Search post",
                   labelStyle: TextStyle(

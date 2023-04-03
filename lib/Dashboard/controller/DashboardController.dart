@@ -64,9 +64,11 @@ class followContrller extends GetxController{
 
 class DashboardController extends GetxController {
   final ScrollController scrollController=ScrollController();
+  final ScrollController scrollController1=ScrollController();
 
   int start=0;
   int end=10;
+
   RxInt selectedIndex = 0.obs;
   RxInt selectedIndexOfArtical = 0.obs;
   RxInt selectedComunityIndex = 0.obs;
@@ -119,6 +121,12 @@ class DashboardController extends GetxController {
   String image = "";
   String userType = "";
   RxBool  isLoadingPage=false.obs;
+  RxBool  isLoadingPageArtical=false.obs;
+  RxBool  isLoadingCSCPage=false.obs;
+
+  RxInt setCategoryOfArtical = 0.obs;
+  RxInt setSelectedCategoryOfArtical = 0.obs;
+
   var articleModel = ArticaleModel().obs;
   var articleModelByCategory = ArticaleModel().obs;
   var articleModelWithFilter= ArticaleModel().obs;
@@ -132,30 +140,83 @@ class DashboardController extends GetxController {
     email = _storage.read(AppConstant.email)??"";
     image = _storage.read(AppConstant.profileImg)??"";
     userType = _storage.read(AppConstant.userType)??"";
-
-    getBannerNetworkApi();
-    getCommunityNetworkApi();
-    addItems();
-    // getServiceNetworkApi();
-     getreportPostApiNetworkApi();
+       addItems();
+        getBannerNetworkApi();
+        getCommunityNetworkApi();
+        getreportPostApiNetworkApi();
+        getQuizNetworkApi();
+        addItemsQuize();
+        getFeedArticalNetworkApi("");
+        print("dfkjghdfkjhgiueryt"+isLoadingPage.value.toString());
     super.onInit();
   }
-  addItems() async {
-    scrollController.addListener(() {
-      if (scrollController.position.maxScrollExtent == scrollController.position.pixels) {
+  addItems() async
+  {
+    scrollController.addListener
+      (
+            ()
+    {
+      if (scrollController.position.maxScrollExtent == scrollController.position.pixels)
+      {
+
+        print("dfkjghdfkjhgidsfsfuersddyt"+isLoadingPageArtical.value.toString());
+        print("dfkjghdfkjhgiueryt"+isLoadingPage.value.toString());
         if(isLoadingPage.value && selectedIndex.value==0)
         {
-          start=end;
-          end=start+10;
-          print("uybbhiu");
-          print(start);
-          print(end);
-          getCommunityLoadingNetworkApi(end);
+
+          print("");
+             //start=end;
+            //end=start+10;
+           // print("sdjhdhfg"+communityModel.value.page!.toString());
+          //print("dfgdfg"+start.toString());
+         // print(""+end.toString());
+            start=start+int.parse(communityModel.value.page!.toString());
+            //print("dfhgdjfg"+start.toString());
+          getCommunityLoadingNetworkApi(start);
         }
+        else if(isLoadingPageArtical.value && selectedIndex.value==1 && setSelectedCategoryOfArtical.value==1)
+          {
+            start=start+int.parse(feedArticalModel.value.page!.toString());
+            getFeedArticalLoadingNetworkApi(start);
+          }
+        else if(isLoadingPage.value && selectedIndex.value==3)
+          {
+            start=start+int.parse(quizModel.value.page!.toString());
+            getQuizeLoadingNetworkApi(start);
+          }
+        else if(isLoadingPageArtical.value && selectedIndex.value==1 &&setSelectedCategoryOfArtical.value==2 )
+          {
+            start=start+int.parse(articleModel.value.page!.toString());
+            getArticalLoadingNetworkApi(start);
+          }
 
       }
     });
   }
+
+
+
+  addItemsQuize() async
+  {
+    scrollController1.addListener
+      (
+            ()
+        {
+          if (scrollController1.position.maxScrollExtent == scrollController1.position.pixels)
+          {
+            print("djkfghj"+isLoadingPage.value.toString());
+            if(isLoadingPage.value)
+            {
+              start=start+int.parse(quizModel.value.page!.toString());
+
+              print("dfhgdjvcvdffdgffdgbbfg"+start.toString());
+              getQuizeLoadingNetworkApi(start);
+            }
+
+          }
+        });
+  }
+
 
   RxList reportMessageList =
       [
@@ -180,16 +241,20 @@ class DashboardController extends GetxController {
       BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
-  getCommunityLoadingNetworkApi(int end) async {
+  getCommunityLoadingNetworkApi(int end) async
+  {
+    print("dfjgfdkjg"+end.toString());
     var response = await BaseClient()
         .get(getCommunityApi +
         "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${end}")
         .catchError(BaseController().handleError);
 
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"] == 1)
+    {
       if(isLoadingPage.value==true)
       {
         communityModel.value.data!.addAll(communityModelFromJson(response).data!);
+        //controller.end=controller.communityModel.value.page!;
         communityModel.refresh();
       }
     }
@@ -199,13 +264,64 @@ class DashboardController extends GetxController {
     }
 
   }
+
+  getFeedArticalLoadingNetworkApi(int end) async
+  {
+    print("dfjgfdkjg"+end.toString());
+    var response = await BaseClient().get(getFeedArtical +
+        "?lng=eng&limit=${20}&page=${end}")
+        .catchError(BaseController().handleError);
+
+
+    if (jsonDecode(response)["status"] == 1)
+    {
+      if(isLoadingPageArtical.value==true)
+      {
+        feedArticalModel.value.data!.addAll(feedArticalModelFromJson(response).data!);
+        feedArticalModel.refresh();
+      }
+    }
+    else{
+      isLoadingPageArtical.value=false;
+      Fluttertoast.showToast(msg: "No more data availabel ! ");
+    }
+
+  }
+
+  getArticalLoadingNetworkApi(int end) async
+  {
+
+    var response = await BaseClient().get(getArticalApi +
+        "?lng=eng&limit=${20}&page=${end}")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"] == 1)
+     {
+      if(isLoadingPageArtical.value==true)
+      {
+        articleModel.value.data!.addAll(articleModelFromJson(response).data!);
+        articleModel.refresh();
+      }
+    }
+    else{
+      isLoadingPageArtical.value=false;
+      Fluttertoast.showToast(msg: "No more data availabel ! ");
+    }
+
+  }
+
+
+
+
+
   //Community
-  getCommunityNetworkApi() async {
+  getCommunityNetworkApi() async
+  {
     var response = await BaseClient()
         .get(getCommunityApi +
         "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${0}")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"] == 1)
+    {
       communityModel.value = communityModelFromJson(response);
       isLoadingPage.value=true;
       start=0;
@@ -383,13 +499,21 @@ class DashboardController extends GetxController {
 //api/Dashboard/getArtical?lng=eng&csc_id=8
   getArticleNetworkApi()
   async {
+
     var response = await BaseClient()
-        .get(getArticalApi + "?lng=eng&csc_id=8")
+        .get(getArticalApi + "?lng=eng")
         .catchError(BaseController().handleError);
-    print("vdfvsds");
-    print(response);
-    if (jsonDecode(response)["status"] == 1) {
-      articleModel.value = articleModelFromJson(response);
+    if (jsonDecode(response)["status"] == 1)
+     {
+       articleModel.value = articleModelFromJson(response);
+
+       if(articleModel.value.page!>=9)
+         {
+          isLoadingPageArtical.value=true;
+           setCategoryOfArtical.value=2;
+         }
+
+
       return;
     }
     articleModel.value = articleModelFromJson(response);
@@ -404,6 +528,7 @@ class DashboardController extends GetxController {
     {
       print("sjhbghsdasd"+response);
       articleModelByCategory.value = articleModelFromJson(response);
+
       return;
     }
     articleModelByCategory.value = articleModelFromJson(response);
@@ -440,17 +565,41 @@ class DashboardController extends GetxController {
   }
   getQuizNetworkApi() async {
     var response = await BaseClient()
-        .get(getQuizApi + "?lng=eng&limit=200&page=0")
+        .get(getQuizApi + "?lng=eng&limit=${5}&page=${0}")
         .catchError(BaseController().handleError);
     print("vdfvsds");
     print(response);
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"] == 1)
+    {
       quizModel.value = quzeModelFromJson(response);
+      isLoadingPage.value=true;
+
+
       return;
     }
     quizModel.value = quzeModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+  getQuizeLoadingNetworkApi(int end) async
+  {
+    print("dfjgfdkjg"+end.toString());
+    var response = await BaseClient().get(getQuizApi +
+        "?lng=eng&limit=${5}&page=${end}")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"] == 1)
+    {
+      if(isLoadingPage.value==true)
+      {
+        quizModel.value.data!.addAll(quzeModelFromJson(response).data!);
+        quizModel.refresh();
+      }
+    }
+    else{
+      isLoadingPage.value=false;
+      Fluttertoast.showToast(msg: "No more data availabel ! ");
+    }
+  }
+
   getQuizContestNetworkApi()
   async {
     var response = await BaseClient()
@@ -756,16 +905,16 @@ print("dsghgdjf"+response);
   getSearchListNetworkApi(String searchKey,String post_category_master_id) async
   {
 
-    Get.context!.loaderOverlay.show();
+ //   Get.context!.loaderOverlay.show();
 
     var response = await BaseClient()
         .get(getCommunity_search + "?lng=eng&limit=10&page=0&user_id=${_storage.read(AppConstant.id)}&searchkey=${searchKey}&post_category_master_id=${post_category_master_id}")
         .catchError(BaseController().handleError);
-    Get.context!.loaderOverlay.hide();
+   // Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1)
     {
       communityModelBySerachKey.value = communityModelFromJson(response);
-      Get.to(SearchScreen());
+
       return;
     }
     communityModelBySerachKey.value = communityModelFromJson(response);
@@ -897,13 +1046,15 @@ print("dsghgdjf"+response);
     serviceCategoryModel2.value = serviceCategoryModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
-   getFeedArticalNetworkApi(String searchkey) async
+   getFeedArticalNetworkApi(String searchkey)
+   async
   {
-    var response = await BaseClient().get(getFeedArtical + "?lng=eng&limit=100&page=0&searchkey=${searchkey}").catchError(BaseController().handleError);
+    var response = await BaseClient().get(getFeedArtical + "?lng=eng&limit=${20}&page=${0}&searchkey=${searchkey}").catchError(BaseController().handleError);
     if (jsonDecode(response)["status"] == 1)
     {
-      print("fjghkjfdgh"+response);
       feedArticalModel.value = feedArticalModelFromJson(response);
+      isLoadingPageArtical.value=true;
+      setCategoryOfArtical.value=1;
       return;
     }
     feedArticalModel.value = feedArticalModelFromJson(response);

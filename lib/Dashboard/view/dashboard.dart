@@ -104,10 +104,14 @@ class _HomeDashboardState extends State<HomeDashboard> {
                           ? RawMaterialButton(
                               constraints: BoxConstraints(
                                   maxHeight: 30.h, minWidth: 30.w),
-                              onPressed: () {
-                                if (controller.selectedIndex.value == 0) {
-                                  controller.getSearchListNetworkApi("", "");
-                                } else if (controller.selectedIndex.value ==
+                              onPressed: ()
+                              {
+                                if (controller.selectedIndex.value == 0)
+                                {
+                                  Get.to(SearchScreen());
+
+                                }
+                                else if (controller.selectedIndex.value ==
                                     1) {
                                   print("sddgdfgfgg" +
                                       controller.selectedIndexOfArtical.value
@@ -135,20 +139,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                               ),
                             )
                           : Container(),
-                  /*    RawMaterialButton(
-                        constraints:
-                            BoxConstraints(maxHeight: 30.h, minWidth: 30.w),
-                        onPressed: () {
-                          controller.getNotificationListNetworkApi();
-                        },
-                        shape: CircleBorder(),
-                        child: Image.asset(
-                          "assets/images/chat.png",
-                          height: 30,
-                          width: 30,
-                          fit: BoxFit.fill,
-                        ),
-                      ),*/
+
                       RawMaterialButton(
                         constraints:
                             BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
@@ -193,14 +184,17 @@ class _HomeDashboardState extends State<HomeDashboard> {
             60.0,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () {
+        body: RefreshIndicator
+          (
+          onRefresh: ()
+          {
             if(controller.selectedIndex.value==0)
               {
                 return controller.getCommunityNetworkApi();
               }
             else{
-              return Future(() => true);
+              return Future(() => true
+              );
             }
 
           },

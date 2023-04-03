@@ -64,6 +64,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       options: CarouselOptions(
                         height: 130.0,
                         viewportFraction: 1,
+                        aspectRatio: 16/9,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enlargeCenterPage: true,
+                        enlargeFactor: 0.3,
+                        scrollDirection: Axis.horizontal,
                       ),
                       items: controller.bannerModel.value.data!.map((i) {
                         return Builder(
