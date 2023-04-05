@@ -1,9 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/html_parser.dart';
+import 'package:flutter_html/style.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
+import 'package:whatsapp_share/whatsapp_share.dart';
 
 import '../../../AppConstant/textStyle.dart';
 import '../profile/FCQ.dart';
@@ -18,8 +25,10 @@ class ReferAndEarn extends StatefulWidget {
 
  class _ReferAndEarnState extends State<ReferAndEarn> {
   DashboardController controller=Get.find();
+
    @override
    Widget build(BuildContext context) {
+     controller.getReferalPointsDetailNetworkApi();
 
      return Scaffold(
        appBar: PreferredSize(
@@ -40,7 +49,7 @@ class ReferAndEarn extends StatefulWidget {
                      width: 39,
                      color: Colors.amber,
                    ),SizedBox(height: 4,),
-                   Text("Get a Course Free!",style: TextStyle(fontSize: 14),)
+                   //Text("Get a Course Free!",style: TextStyle(fontSize: 14),)
                  ],
                ),
              ),
@@ -91,7 +100,7 @@ class ReferAndEarn extends StatefulWidget {
                child: Column(
                  children: [
                    Container(
-                     height: 240,
+                     height: 240.h,
                      child: Stack(
                        children: [
                          Container(
@@ -138,10 +147,16 @@ class ReferAndEarn extends StatefulWidget {
                                      Image(image: AssetImage("assets/images/ratus.png")),
                                      Container(
                                          padding: EdgeInsets.only(left: 10),
-                                         child: Text("Invite Friends on Bada Business Community",
+                                         child: Text("Invite Friends on VLE Community",
                                            style: TextStyle(fontSize: 10),)),
                                      Spacer(),
-                                     Text("Invite",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),)
+                                     InkWell(
+                                       onTap: (){
+                                         Share.share(subject: "", "AppLink ");
+                                       },
+                                         child: Text("Invite",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
+                                     )
+
                                    ],
                                  ),
                                ),
@@ -153,7 +168,7 @@ class ReferAndEarn extends StatefulWidget {
                    ),
                    Container(
                      width: MediaQuery.of(context).size.width/1.07,
-                     height:240,
+                     height:150.h,
                      decoration: BoxDecoration(
                          borderRadius: BorderRadius.circular(5),
                          border: Border.all(width: .5)
@@ -167,13 +182,19 @@ class ReferAndEarn extends StatefulWidget {
                              children: [
                                Text("How it Works?"),
                                Spacer(),
-                               Text("T&Cs",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
+                               InkWell(
+                                 onTap: (){
+                                   termsAndPolicey();
+                                 },
+                                 child:Text("T&Cs",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
+                               )
+
                              ],
                            ),
                            SizedBox(height: 15,),
                            Divider(color: Colors.grey,height: 2,),
                            ListView.builder(
-                               itemCount: 2,
+                               itemCount: 1,
                                shrinkWrap: true,
                                itemBuilder: (context,index){
                                  return Container(
@@ -193,33 +214,44 @@ class ReferAndEarn extends StatefulWidget {
                                            child: Center(child: Text("1x")),
                                          ),
                                        ),
+                                       controller.referalModel.value.data!=null?
                                        Container(
                                          width: MediaQuery.of(context).size.width/1.8,
-                                         child: Column(
+                                         child: Column
+                                           (
                                            crossAxisAlignment: CrossAxisAlignment.start,
                                            mainAxisAlignment: MainAxisAlignment.start,
-                                           children: [
+                                           children:
+                                           [
                                              Text("Your Friend registers on Community",style: TextStyle(fontSize: 12),),
-                                             Text("Friend earn 250 point &gets a free Course",maxLines:2,
-                                               style:TextStyle(height:1.4,fontSize: 12,color: Colors.green),overflow: TextOverflow.ellipsis,)
-                                           ],
+
+                                            Text(controller.referalModel.value.data!.referalUse!=null?"Friend earn ${ controller.referalModel.value.data!.referalUse.toString()} points":"Friend earn 0 points ",
+                                              maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.green),overflow: TextOverflow.ellipsis,
+                                             )],
                                          ),
-                                       ),
+                                       ):Container(),
+
                                        Spacer(),
+
                                        Container(
+                                         margin: EdgeInsets.only(top: 15),
                                          height: 70,
-                                         width: 60,
+                                         width: 75,
                                          child: Stack(
                                            children: [
                                              Container(
                                                height: 40,
-                                               width: 60,
+                                               width: 75,
+                                                 padding: EdgeInsets.only(left: 3,right: 3),
                                                decoration: BoxDecoration(
                                                    border: Border.all(width: 1,color: Colors.black),
                                                    borderRadius: BorderRadius.circular(5)
-
                                                ),
+                                               child:
+                                               Text( controller.referalModel.value.data!.referalUse!=null?"${ controller.referalModel.value.data!.referalUse.toString()} points you earn  ":"0 point you ",maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.black),overflow: TextOverflow.ellipsis,
+                                               )
                                              ),
+
                                              // Positioned(
                                              //     top: -10,
                                              //     right: 20,
@@ -281,13 +313,26 @@ class ReferAndEarn extends StatefulWidget {
                                      style: ButtonStyle(
                                          backgroundColor: MaterialStateProperty.all(Colors.white)
                                      ),
-                                     child:Row(
-                                       crossAxisAlignment: CrossAxisAlignment.center,
-                                       mainAxisAlignment: MainAxisAlignment.center,
-                                       children: [
-                                         Text("Refer Now",style: TextStyle(color: Colors.black),),SizedBox(width: 5,),
-                                         Image(image: AssetImage("assets/images/whatsapp.png",),height: 20,)
-                                       ],
+                                     child:
+                                     InkWell(
+                                       onTap: () async
+                                       {
+                                         await WhatsappShare.share
+                                           (
+                                           text: "App Link",
+                                           linkUrl: 'https://www.animationmedia.org/',
+                                           phone: '911234567890',
+                                         );
+                                       },
+                                       child: Row(
+                                         crossAxisAlignment: CrossAxisAlignment.center,
+                                         mainAxisAlignment: MainAxisAlignment.center,
+                                         children:
+                                         [
+                                           Text("Refer Now",style: TextStyle(color: Colors.black),),SizedBox(width: 5,),
+                                           Image(image: AssetImage("assets/images/whatsapp.png",),height: 20,)
+                                         ],
+                                       ),
                                      ) // trying to move to the bottom
                                  ),
                                ),
@@ -303,5 +348,73 @@ class ReferAndEarn extends StatefulWidget {
        ),
      );
    }
+
+  void termsAndPolicey()
+  {
+    final double h = MediaQuery.of(context).size.height;
+    final double w = MediaQuery.of(context).size.width;
+    showModalBottomSheet(
+        context: context,
+        barrierColor: Colors.transparent,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder:(context){
+          return Obx(() =>controller.privacyModel.value.data!=null? SingleChildScrollView(
+            child: Padding(padding:EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      child: Container(
+                          height: Get.height/1.25,
+                          padding: EdgeInsets.all(10),
+                          // height: h * 0.45,
+                          width: double.infinity,
+                          color: Colors.white70,
+                          child: SingleChildScrollView(
+                            child: Column(
+                                children: [
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    width: 40,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(width: 0.5, color: Colors.black12),
+                                        borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                  controller.privacyModel.value.data!.description!=null?  Html(
+                                      data:  controller.privacyModel.value.data!.description.toString(),
+                                      style: {
+                                        "body": Style(
+                                          fontSize: FontSize(12.0),
+                                        ),
+                                      },
+                                      onLinkTap: (String? url,
+                                          RenderContext context,
+                                          Map<String, String> attributes,
+                                          element) async {
+                                        await launch(url!);
+                                      }):Center()
+
+
+
+
+
+
+                                ]
+                            ),
+                          )
+                      ),
+                    )
+                )
+            ),
+          ):Center()
+          )
+          ;
+        }
+
+    );
+
+  }
+
  }
 

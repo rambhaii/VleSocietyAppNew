@@ -144,6 +144,8 @@ class _AwordsState extends State<Awords> {
             left: 16.w,
             bottom: 100.h,
             child: Container(
+
+
                 height: 350.h,
                 width: MediaQuery.of(context).size.width/1.1,
                 // controller: _pageController,
@@ -166,6 +168,13 @@ class _AwordsState extends State<Awords> {
                             Container(
                               height: 250.h,
                               width: 200.w,
+                              decoration:
+                              BoxDecoration(
+                                border:  Border.all(
+                                    color: Colors.brown,
+                                    width: 10.0
+                                ),
+                              ),
                               child: CachedNetworkImage(
                                 fit: BoxFit.fill,
                                 imageUrl: BASE_URL+ awarddata.image.toString(),

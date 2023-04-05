@@ -38,7 +38,7 @@ class _ArticalPageState extends State<ArticalPage>
   DashboardController controller = Get.find();
   LoginController loginController=Get.put(LoginController());
 
-  int selectedSize =0;
+  int selectedSize =-1;
   int selectedSize1 =0;
   int selectedColor = -0;
   bool? isCategory =false;
@@ -414,9 +414,10 @@ class _ArticalPageState extends State<ArticalPage>
                            itemBuilder: (BuildContext context, int index)
                            {
                              final datas = controller.feedArticalModel.value.data![index];
+                             print(""+datas.url.toString());
                              return Padding
                                (
-                               padding: const EdgeInsets.only(top: 6.0,bottom: 6.0,left: 5),
+                               padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
                                child: InkWell
                                  (
                                  onTap: ()
@@ -433,7 +434,21 @@ class _ArticalPageState extends State<ArticalPage>
                                        style: bodyText1Style,overflow: TextOverflow.ellipsis,
                                        maxLines: 3,
                                      ),),
+
                                      SizedBox(width: 10,),
+                                     ClipRRect(
+                                       borderRadius: BorderRadius.circular(10),
+                                       child: CachedNetworkImage(
+                                         fit: BoxFit.cover,
+                                         imageUrl:  datas.url.toString(),
+                                         height: 75,
+                                         width: 75,
+                                         placeholder: (context, url) =>
+                                             Center(child: const CircularProgressIndicator()),
+                                         errorWidget: (context, url, error) =>
+                                         const Icon(Icons.error),
+                                       ),
+                                     )
 
                                    ],
                                  ),
@@ -472,8 +487,10 @@ class _ArticalPageState extends State<ArticalPage>
                            _showBottomSheet(context, datas);
                          },
                          child: Row(
-                           children: [
-                             Expanded(child: Text(
+                           children:
+                           [
+                             Expanded(child: Text
+                               (
                                datas.title.toString(),
                                style: bodyText1Style,overflow: TextOverflow.ellipsis,
                                maxLines: 3,
@@ -710,25 +727,23 @@ class _ArticalPageState extends State<ArticalPage>
                         height: 20,
                       ),
 
-                    /*  ClipRRect(
+                      ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: CachedNetworkImage(
                           fit: BoxFit.cover,
                           //imageUrl: BASE_URL + datum.image.toString(),
-                          imageUrl: BASE_URL + "datum.image.toString()",
+                          imageUrl: datum.url.toString(),
                           height: 200,
                           width: double.infinity,
-                          placeholder: (context, url) =>
-                              Center(child: const CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                          placeholder: (context, url) => Center(child: const CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>Image.asset("assets/images/vleSociety.jpg"),
                         ),
-                      ),*/
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
                       Container(
-                        height:Get.height/1.2,
+                        height:Get.height/1.5,
                         width: double.infinity,
                         child: SingleChildScrollView(
                           child: Column(

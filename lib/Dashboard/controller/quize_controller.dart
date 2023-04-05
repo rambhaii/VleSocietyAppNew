@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -49,8 +50,119 @@ class QuizeController extends GetxController
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
+  RxString hoursString = "00".obs, minuteString = "00".obs, secondString = "00".obs;
 
-  jumptopage(){
+  RxInt hours = 0.obs, minutes = 0.obs, seconds = 0.obs;
+
+  late Timer _timer;
+
+
+
+
+
+
+  void startTimer()
+  {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer)
+    {
+      _startSecond();
+    });
+  }
+
+  void pauseTimer() {
+    _timer.cancel();
+  }
+
+  void _startSecond() {
+
+      if (seconds < 59)
+      {
+        seconds++;
+        secondString.value = seconds.toString();
+        if (secondString.value.length == 1) {
+          secondString.value = "0" + secondString.value;
+        }
+      } else
+      {
+        _startMinute();
+      }
+
+  }
+
+  void _startMinute() {
+
+      if (minutes < 59)
+      {
+        seconds.value = 0;
+        secondString.value = "00";
+        minutes++;
+        minuteString.value= minutes.toString();
+        if (minuteString.value.length == 1)
+        {
+          minuteString.value = "0" + minuteString.value;
+        }
+      } else {
+        _starHour();
+      }
+
+  }
+
+  void _starHour() {
+
+      seconds.value = 0;
+      minutes.value = 0;
+      secondString.value = "00";
+      minuteString.value = "00";
+      hours++;
+      hoursString.value = hours.toString();
+      if (hoursString.value.length == 1) {
+        hoursString.value = "0" + hoursString.value;
+      }
+
+  }
+
+  void resetTimer() {
+    _timer.cancel();
+
+      seconds.value = 0;
+      minutes.value = 0;
+      hours.value = 0;
+      secondString.value = "00";
+      minuteString.value = "00";
+      hoursString.value = "00";
+
+
+  }
+
+  bool checkValues()
+  {
+    if (seconds != 0 || minutes != 0 || hours != 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  jumptopage()
+  {
     if(quizqModel.value.data!.questionList!.isNotEmpty && ind.value<(quizqModel.value.data!.questionList!.length))
       {
         questionListId.add(quizqModel.value.data!.questionList![ind.value].id!);
@@ -88,6 +200,7 @@ class QuizeController extends GetxController
       {
         print("sdvbjdsbv@");
         print(ind.value);
+        print("sdsdfgfdgghd"+secondString.value+""+minuteString.value);
         QuizTestNetworkApi();
       }
     }
@@ -98,7 +211,7 @@ class QuizeController extends GetxController
     var bodyRequest={
     "lng":"eng",
     "user_id":_storage.read(AppConstant.id),
-    "times":"1:13",
+    "times":minuteString.value+":"+secondString.value,
     "quiz_id":quizeId,
     "qusdtion_id":jsonEncode(questionListId),
     "choose_answer":jsonEncode(selectedAnsList),

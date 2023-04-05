@@ -25,6 +25,7 @@ class FirebaseDynamicLinkService
         packageName: "com.vlesociety.vlesociety",
         minimumVersion: 30,
       ),
+
 /*      iosParameters: const IOSParameters(
         bundleId: "com.example.app.ios",
         appStoreId: "123456789",

@@ -93,8 +93,10 @@ class _QuestionHistoryState extends State<QuestionHistory>
         child: Column(
           children: [
 
-            Obx(() => controller.quizqModel.value.data!= null
-                ? ListView.builder(
+            Obx(() =>
+            controller.quizqModel.value.data!= null
+                ?
+            ListView.builder(
                 shrinkWrap: true,
                 itemCount:controller.quizqModel.value.data!.questionList!.length,
                 physics: ScrollPhysics(),
@@ -113,7 +115,7 @@ class _QuestionHistoryState extends State<QuestionHistory>
                           child: Text("Q.${index+1} "+datas.question.toString(),style: titleStyle.copyWith(fontSize: 16,letterSpacing: 1.5,height: 1.2))
                           ),
                         SizedBox(height: 10,),
-                      Padding(padding: EdgeInsets.only(left: 20,top: 0,bottom: 5),
+                        Padding(padding: EdgeInsets.only(left: 20,top: 0,bottom: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
@@ -139,7 +141,9 @@ class _QuestionHistoryState extends State<QuestionHistory>
                       ],
                     ),
                   );
-                }):Container()),
+                }
+                )
+                :Container()),
 
           ],
         ),

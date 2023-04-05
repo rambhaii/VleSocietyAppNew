@@ -21,20 +21,21 @@ class _questionState extends State<question>
 {
   late QuizeController controller;
   bool onTapPressed = false;
-
   @override
   void initState()
   {
+
     controller  = Get.put(QuizeController(quizeId:widget.quizeId ));
     controller.getQuizqNetworkApi();
     controller.ind.value=0;
+    controller.startTimer();
     // TODO: implement initState
     super.initState();
   }
   @override
   Widget build(BuildContext context)
   {
-
+    print("sdsdfgfdgghd"+controller.secondString.value+""+controller.minuteString.value);
     return Stack(
       children: [
         Scaffold(

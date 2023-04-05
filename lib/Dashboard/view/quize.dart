@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:blinking_text/blinking_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -226,7 +228,12 @@ class QuizPage extends StatelessWidget
                                                   if (controller.userType == "Guest")
                                                   {
                                                     UtilsMethod.PopupBox(context, "Attempt quiz");
-                                                  } else {
+
+
+
+                                                  }
+                                                  else
+                                                  {
                                                     Get.to(() =>
                                                         question(quizeId: controller
                                                             .quizModelContest.value
@@ -235,7 +242,10 @@ class QuizPage extends StatelessWidget
                                                         fullscreenDialog: true,
                                                         transition: Transition
                                                             .rightToLeft);
-                                                  }  }, child:
+
+                                                  }
+
+                                                  }, child:
                                                 Text("ATTEMPT",style:bodyText2Style.copyWith(color: Colors.blue),maxLines: 1,overflow: TextOverflow.ellipsis,)),
                                               ),
                                             ],
@@ -362,7 +372,7 @@ class QuizPage extends StatelessWidget
               ):Container()),
             ],
           ),
-          controller.isLoadingPage.value?const LoadingWidget():Container(),
+          controller.isLoadingQuizePage.value?const LoadingWidget():Container(),
 
         ],
       ),

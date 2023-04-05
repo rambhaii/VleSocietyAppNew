@@ -95,9 +95,11 @@ class _TesimonialsState extends State<Tesimonials> {
                 children:[
                   Container(
                     height: 130.h,
-                    child: PageView.builder(
+                    child: PageView.builder
+                      (
                         controller: _controller,
                         itemCount:controller.testimonialModel.value.data!.length ,
+
                         itemBuilder: (context,int index)
                         {
                           final data=controller.testimonialModel.value.data![index];

@@ -165,10 +165,12 @@ class _YourCertificatesState extends State<YourCertificates> {
                                               InkWell(
                                                   onTap: ()
                                                 {
-                                                 // generatePdf(BASE_URL+data.certificate.toString());
+
+
+
                                                   showDialog(
                                                     context: context,
-                                                    builder: (context) => const DownloadingDialog(),
+                                                    builder: (context) =>  DownloadingDialog(BASE_URL+data.certificate.toString()),
                                                     );
                                                 },
                                                   child: Text(
@@ -199,35 +201,84 @@ class _YourCertificatesState extends State<YourCertificates> {
     );
   }
 
+ /* pw.Column(
+  crossAxisAlignment: pw.CrossAxisAlignment.start,
+  children: [
+  pw.Row(
+  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  children: [
+  pw.Header(text: "About Cat", level: 1),
+  pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)
+  ]
+  ),
+  pw.Divider(borderStyle: pw.BorderStyle.dashed),
+  pw.Paragraph(text: "fjhjf"),
+  ]
+  );*/
+
+ /* Future<Uint8List> buildPdf(PdfPageFormat format,String imageUrl)
+  async
+  {
+    final pdf = pw.Document();
+    final ByteData bytes = await rootBundle.load('assets/notification.png');
+    final Uint8List byteList = bytes.buffer.asUint8List();
+    pdf.addPage(
+        pw.Page(
+            margin: const pw.EdgeInsets.all(10),
+            pageFormat: PdfPageFormat.a4,
+            build: (context)
+            {
+              return
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Header(text: "About Cat", level: 1),
+                          pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)
+                        ]
+                    ),
+                    pw.Divider(borderStyle: pw.BorderStyle.dashed),
+                    pw.Paragraph(text: "fjhjf"),
+                  ]
+              );
+            }
+        ));
+    return pdf.save();
+  }*/
 
 
-  Future<Uint8List> _generatePdf(PdfPageFormat format, String title,String imageUrl)
-  async {
-    const String url = 'https://firebasestorage.googleapis.com/v0/b/e-commerce-72247.appspot.com/o/195-1950216_led-tv-png-hd-transparent-png.png?alt=media&token=0f8a6dac-1129-4b76-8482-47a6dcc0cd3e';
-
-
+  void _convertPdfToImages(pw.Document doc) async
+  {
+    await for (var page in Printing.raster(await doc.save(), pages: [0, 1], dpi: 72)) {
+      final image = page.toImage(); // ...or page.toPng()
+      print(image);
+    }
+  }
+  Future<Uint8List> _generatePdf(PdfPageFormat format, String title) async
+  {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     final font = await PdfGoogleFonts.nunitoExtraLight();
+  /*  final ByteData bytes = await rootBundle.load('assets/filter.png');
+  //  final Uint8List byteList = bytes.buffer.asUint8List();
+    //pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)*/
 
     pdf.addPage(
-
       pw.Page(
-
         pageFormat: format,
-        build: (context)
-        {
+        build: (context) {
           return pw.Column(
-            children:
-            [
-              pw.SizedBox
-                (
+            children: [
+              pw.SizedBox(
                 width: double.infinity,
-                child: pw.FittedBox
-                  (
+                child: pw.FittedBox(
                   child: pw.Text(title, style: pw.TextStyle(font: font)),
                 ),
               ),
               pw.SizedBox(height: 20),
+              pw.Flexible(child: pw.FlutterLogo()),
+
             ],
           );
         },
@@ -235,10 +286,10 @@ class _YourCertificatesState extends State<YourCertificates> {
     );
     return pdf.save();
   }
-
- void generatePdf(String imageUrl)async
-  {
+  void generatePdf() async {
     const title = 'eclectify Demo';
-    await Printing.layoutPdf(onLayout: (format) => _generatePdf(format, title,imageUrl));
+    await Printing.layoutPdf(onLayout: (format) => _generatePdf(format, title));
   }
+
+
 }

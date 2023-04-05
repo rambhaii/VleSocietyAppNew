@@ -45,6 +45,7 @@ const getPostReport = "${BASE_URL}/api/Dashboard/getPostReport";
 const postPostReport = "${BASE_URL}/api/Dashboard/postPostReport";
 const guestUserLogin = "${BASE_URL}/api/UserMaster/guestUserLogin";
 const socialSignInUp = "${BASE_URL}/api/UserMaster/socialSignInUp";
+const getReferalPointsDetail = "${BASE_URL}/api/UserMaster/getReferalPointsDetail";
 
 const String kUriPrefix = 'https://vlesocietyapp.page.link';
 const String kHomepageLink = '/homepage';

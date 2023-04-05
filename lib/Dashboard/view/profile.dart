@@ -39,6 +39,8 @@ import '../controller/DashboardController.dart';
 import 'Earning/ReferAndEarn.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+
+import 'VleNews.dart';
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
 
@@ -233,8 +235,10 @@ class _ProfileState extends State<Profile> {
                         ),
                         SizedBox(height: 5,width: 10),
                         ListTile(
-                          onTap: (){
-                            Get.to(()=>ReferAndEarn());
+                          onTap: ()
+                          {
+                            controller.getReferalPointsDetailNetworkApi();
+
                           },
                           contentPadding: EdgeInsets.only(left: 20,right: 20),
                           title: Text("REFER & EARN ", style: titleStyle.copyWith(
@@ -256,6 +260,9 @@ class _ProfileState extends State<Profile> {
                           )),
                         ),
                         ListTile(
+                          onTap: (){
+                            Get.to(VleNews());
+                          },
                           contentPadding: EdgeInsets.only(left: 20,right: 20),
                           title: Text("VLE NEWS",style: titleStyle.copyWith(
                               fontWeight: FontWeight.w800,

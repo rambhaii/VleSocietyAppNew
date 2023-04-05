@@ -33,6 +33,7 @@ import '../model/PrivacyModel .dart';
 import '../model/QuizModel.dart';
 import '../model/Quiz_Model/ContestQuize.dart';
 import '../model/Quiz_Model/quizq_model.dart';
+import '../model/ReferalModel.dart';
 import '../model/ReportPostApi.dart';
 import '../model/SearchKeyModel.dart';
 import '../model/ServiceCategoryModel.dart';
@@ -41,6 +42,7 @@ import '../model/TestimonialModel.dart';
 import '../model/TransactionsModel.dart';
 import '../view/ArticalSearch.dart';
 import '../view/Community.dart';
+import '../view/Earning/ReferAndEarn.dart';
 import '../view/SearchScreen.dart';
 import '../view/SubCategoryOfCategoryServices.dart';
 import '../view/SubCategoryOfServices.dart';
@@ -54,6 +56,11 @@ import '../view/profile/PressMediaDetails.dart';
 import '../view/profile/PressMida.dart';
 import '../view/profile/testimonials.dart';
 import '../view/profile/transaction.dart';
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 class followContrller extends GetxController{
   bool follow=false;
   void likee(){
@@ -65,6 +72,67 @@ class followContrller extends GetxController{
 class DashboardController extends GetxController {
   final ScrollController scrollController=ScrollController();
   final ScrollController scrollController1=ScrollController();
+
+  Timer? _timer;
+  RxInt startime = 0.obs;
+
+  void startTimer()
+  {
+    const oneSec =  Duration(seconds: 1);
+    _timer =  Timer.periodic(oneSec, (Timer timer)
+      {
+        if (startime.value == 0)
+        {
+          timer.cancel();
+        }
+        else
+        {
+          startime.value++;
+        }
+      },
+    );
+  }
+   // Stopwatch? stopwatch;
+  /*Timer? t;
+
+
+
+  void handleStartStop() {
+    if(stopwatch!.isRunning) {
+      stopwatch!.stop();
+    }
+    else {
+      stopwatch!.start();
+    }
+  }*/
+
+
+
+  /*String returnFormattedText()
+  {
+    var milli = stopwatch!.elapsed.inMilliseconds;
+
+    String milliseconds = (milli % 1000).toString().padLeft(3, "0");
+    String seconds = ((milli ~/ 1000) % 60).toString().padLeft(2, "0");
+    String minutes = ((milli ~/ 1000) ~/ 60).toString().padLeft(2, "0");
+
+    return "$minutes:$seconds:$milliseconds";
+  }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   int start=0;
   int end=10;
@@ -96,6 +164,7 @@ class DashboardController extends GetxController {
   var faqModel = FaqModel().obs;
   var contestQuize = ContestQuize().obs;
   var reportPostApi = ReportPostApi().obs;
+  var referalModel = ReferalModel().obs;
   var notificationModel = NotificationModel().obs;
   var certificateModel = CertificateModel().obs;
   //var searchKeyModel = SearchKeyModel().obs;
@@ -122,6 +191,7 @@ class DashboardController extends GetxController {
   String userType = "";
   RxBool  isLoadingPage=false.obs;
   RxBool  isLoadingPageArtical=false.obs;
+  RxBool  isLoadingQuizePage=false.obs;
   RxBool  isLoadingCSCPage=false.obs;
 
   RxInt setCategoryOfArtical = 0.obs;
@@ -179,7 +249,7 @@ class DashboardController extends GetxController {
             start=start+int.parse(feedArticalModel.value.page!.toString());
             getFeedArticalLoadingNetworkApi(start);
           }
-        else if(isLoadingPage.value && selectedIndex.value==3)
+        else if(isLoadingQuizePage.value && selectedIndex.value==3)
           {
             start=start+int.parse(quizModel.value.page!.toString());
             getQuizeLoadingNetworkApi(start);
@@ -565,14 +635,18 @@ class DashboardController extends GetxController {
   }
   getQuizNetworkApi() async {
     var response = await BaseClient()
-        .get(getQuizApi + "?lng=eng&limit=${5}&page=${0}")
+        .get(getQuizApi + "?lng=eng&limit=${10}&page=${0}")
         .catchError(BaseController().handleError);
     print("vdfvsds");
     print(response);
     if (jsonDecode(response)["status"] == 1)
     {
       quizModel.value = quzeModelFromJson(response);
-      isLoadingPage.value=true;
+      if(quizModel.value.page!>=10)
+        {
+          isLoadingQuizePage.value=true;
+        }
+
 
 
       return;
@@ -584,18 +658,18 @@ class DashboardController extends GetxController {
   {
     print("dfjgfdkjg"+end.toString());
     var response = await BaseClient().get(getQuizApi +
-        "?lng=eng&limit=${5}&page=${end}")
+        "?lng=eng&limit=${10}&page=${end}")
         .catchError(BaseController().handleError);
     if (jsonDecode(response)["status"] == 1)
     {
-      if(isLoadingPage.value==true)
+      if(isLoadingQuizePage.value==true)
       {
         quizModel.value.data!.addAll(quzeModelFromJson(response).data!);
         quizModel.refresh();
       }
     }
     else{
-      isLoadingPage.value=false;
+      isLoadingQuizePage.value=false;
       Fluttertoast.showToast(msg: "No more data availabel ! ");
     }
   }
@@ -1101,6 +1175,25 @@ print("dsghgdjf"+response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
     return false;
   }
+
+
+
+  getReferalPointsDetailNetworkApi() async
+  {
+    var response = await BaseClient().get(getReferalPointsDetail + "?lng=eng").catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"] == 1)
+    {
+      print("fjghkjfdgh"+response);
+      referalModel.value = referalModelFromJson(response);
+      Get.to(()=>ReferAndEarn());
+      return;
+    }
+    referalModel.value = referalModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+
+
+
 
 
 

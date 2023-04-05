@@ -50,7 +50,7 @@ class transaction extends StatelessWidget {
                     children:
                     [
                       Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
-                      Text(controller.transactionsModel.value.totalPoints.toString()+"+  Earn points", style: TextStyle(color: Colors.green, fontSize: 12),),
+                      Text(controller.transactionsModel.value.totalPoints.toString()+" Points", style: TextStyle(color: Colors.green, fontSize: 12),),
 
                     ],
                   ),
@@ -88,53 +88,157 @@ class transaction extends StatelessWidget {
           60.0,
         ),
       ),
-      body:Obx(() => controller.transactionsModel.value.data!=null?
-      ListView.builder(itemCount: controller.transactionsModel.value.data?.length, itemBuilder: (context,index)
-      {
-        final data = controller.transactionsModel.value.data![index];;
-        return Padding(
-          padding: const EdgeInsets.only(left: 8.0,right: 8),
-          child: Container(
-            height:60.h,
-            decoration: BoxDecoration(
-            ),
-            child: InkWell(
-              onTap: (){
-              },
+      body:
+      SingleChildScrollView(
+        child: Obx(() => controller.transactionsModel.value.data!=null?
+        Column(
+          children: [
+            Container(
+              height: 150.h,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  border: Border.all()
+              ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                      height: 40,
-                      width: 40,
-                      child:Image.asset("assets/images/points.png")
-                  ) ,
-
-                  SizedBox(width: 20,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(data.title.toString(),style: bodyText1Style.copyWith(fontSize: 17),),
-                      Text(data.addDate.toString(),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
-                    ],
+                    height: 100.h,
+                    width: 120.w,
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Total Point"),
+                          SizedBox(height: 10.h,),
+                          Container(
+                            height: 40.h,
+                            width: 90.w,
+                            decoration: BoxDecoration(
+                                border: Border.all()
+                            ),
+                            child: Center(child: Text("90")),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                  Spacer(),
+                  VerticalDivider(width: 2,color: Colors.black,),
                   Container(
-                      padding: EdgeInsets.only(right: 80),
-                      height: 40,
-                      width: 10,
-                      child:data.status.toString()=="1"?Icon(Icons.add,size: 15,color: Colors.green,):Container()),
-                  SizedBox(width: 6,),
-                  data.status.toString()=="1"?
-                  Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14),)
-                      :Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
-                  SizedBox(width: 20,),
+                    height: 100.h,
+                    width: 120.w,
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Credit"),
+                          SizedBox(height: 10,),
+                          Container(
+                            height: 40.h,
+                            width: 90.w,
+                            decoration: BoxDecoration(
+                                border: Border.all()
+                            ),
+                            child: Center(child: Text("₹-89")),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  VerticalDivider(width: 2,color: Colors.black,),
+                  Container(
+                    height: 100,
+                    width: 120,
+                    child: Center
+                      (
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("prhgfg"),
+                          SizedBox(height: 10.h,),
+                          Container(
+                            height: 40.h,
+                            width: 90.w,
+                            decoration: BoxDecoration(
+                                border: Border.all()
+                            ),
+                            child: Center(child: Text("dnuigfrg")),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+
                 ],
               ),
             ),
-          ),
-        );
-      }):Container())
+            ListView.builder(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: controller.transactionsModel.value.data?.length,
+                itemBuilder: (context,index)
+            {
+              final data = controller.transactionsModel.value.data![index];;
+              return Padding(
+                padding: const EdgeInsets.only(left: 8.0,right: 8),
+                child: Container(
+                  height:60.h,
+                  decoration: BoxDecoration(
+                  ),
+                  child: InkWell(
+                    onTap: (){
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                            height: 40,
+                            width: 40,
+                            child:Image.asset("assets/images/points.png")
+                        ) ,
+
+                        SizedBox(width: 20,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:
+                          [
+                            Container(
+                              width: 180.h,
+                              child: Text(data.title.toString(),style: bodyText1Style.copyWith(fontSize: 17),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis
+                              ),
+                            ),
+
+
+                            Text(data.addDate.toString(),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
+                          ],
+                        ),
+                        Spacer(),
+                        Container(
+                            padding: EdgeInsets.only(right: 80),
+                            height: 40,
+                            width: 10,
+                            child:data.status.toString()=="1"?Icon(Icons.add,size: 15,color: Colors.green,):Container()),
+                        SizedBox(width: 6,),
+                        data.status.toString()=="1"?
+                        Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14),)
+                            :Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
+                        SizedBox(width: 20,),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+
+          ],
+        ):Container()),
+      )
 
 
 
