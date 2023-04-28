@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "35051053246-4kau5hpbu9phq2uf8ljq1em6dbogj242.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vlesociety.vlesociety",
+            "certificate_hash": "42b376e28fee24e1d9db7ac5cbf2c4ce7f26af58"
+          }
+        },
+        {
           "client_id": "35051053246-nn26t8p4b5at77a2lku8m85bk7lhct84.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +30,7 @@
           }
         },
         {
-          "client_id": "35051053246-r5ki8k0pek7ko0abd4mk5sttvo7fda4m.apps.googleusercontent.com",
+          "client_id": "35051053246-j2s4gbl3caghm92eo2ug3mvptuv13p66.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "35051053246-r5ki8k0pek7ko0abd4mk5sttvo7fda4m.apps.googleusercontent.com",
+              "client_id": "35051053246-j2s4gbl3caghm92eo2ug3mvptuv13p66.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
