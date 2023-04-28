@@ -6,100 +6,48 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
 
 import '../../AppConstant/APIConstant.dart';
+import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
+import '../../Widget/CustomAppBarWidget.dart';
 import '../../Widget/loading_widget.dart';
 import '../controller/DashboardController.dart';
 import '../model/FeedArticalModel.dart';
 
-class VleNews extends StatelessWidget
+class VleNews extends StatefulWidget
 {  VleNews({Key? key}) : super(key: key);
+  @override
+  State<VleNews> createState() => _VleNewsState();
+}
+
+class _VleNewsState extends State<VleNews> {
   DashboardController controller = Get.find();
+
   @override
   Widget build(BuildContext context)
   {
     return
       Scaffold
       (
-      appBar: PreferredSize(
-        child:
-        Stack(
-          children: [
-            Positioned(
-                top: -80,
-                right: 60,
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:   Color(0xffcdf55a),
-                  ),
-                )
-            ),
-            ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: AppBar(
-                  backgroundColor: Colors.white.withOpacity(0.5),
-                  leading: Padding(
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: CircleAvatar(
-                      radius: 10,
-                      backgroundColor: Colors.amber.withOpacity(0.1),
-                      backgroundImage: NetworkImage(BASE_URL+controller.image),
-                    ),
-                  ),
-                  leadingWidth: 60,
-                  title:Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                    [
-                      Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
-                      //Text(controller.transactionsModel.value.totalPoints.toString()+"+  Earn points", style: TextStyle(color: Colors.green, fontSize: 12),),
-
-                    ],
-                  ),
-
-
-                  elevation: 0.0,
-                  actions: [
-
-                    RawMaterialButton(
-                      constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
-                      onPressed: ()
-                      {
-                        Get.to(()=>Profile());
-
-                      },
-                      shape: CircleBorder(
-                          side: BorderSide(width: 0.5, color: Colors.black)),
-                      child: Image.asset("assets/images/menu.png",
-                        height: 15,
-                        width: 20,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    )
-
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        preferredSize: Size(
-          double.infinity,
-          60.0,
-        ),
+      appBar:
+      PreferredSize(
+          preferredSize: Size(
+            double.infinity,
+            60.0,
+          ),
+          child: CustomAppBar(
+              title: GetStorage().read(AppConstant.userName).toString().trim(),
+              Points: controller.points.toString().trim(),
+              image:BASE_URL+GetStorage().read(AppConstant.profileImg)
+          )
       ),
       body:
       SingleChildScrollView(
+        controller: controller.scrollController2,
         child: Column(
           children: [
             Obx(
@@ -108,7 +56,7 @@ class VleNews extends StatelessWidget
                   [
                     Obx(() =>controller.feedArticalModel.value.data != null
                         ? ListView.separated(
-                      controller: controller.scrollController,
+
                       padding: EdgeInsets.all(15),
                       shrinkWrap: true,
                       reverse: true,
@@ -166,8 +114,8 @@ class VleNews extends StatelessWidget
                       },
                     )
                         :Container()),
-                    controller.setCategoryOfArtical.value==1?
-                    controller.isLoadingPageArtical.value?const LoadingWidget():Container():Container()
+
+                    controller.isLoadingVleNewsPage.value?const LoadingWidget():Container()
                   ],
                 )
             )
@@ -177,7 +125,6 @@ class VleNews extends StatelessWidget
 
     );
   }
-
 
 void _showBottomSheetFeedArtcal(BuildContext context, Datum1 datum)
 {

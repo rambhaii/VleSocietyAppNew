@@ -8,14 +8,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vlesociety/AppConstant/AppConstant.dart';
+import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
+import 'package:vlesociety/Dashboard/controller/NotificationController.dart';
 
 class NotificationServices
 {
-  //initialising firebase message plugin
+
   FirebaseMessaging messaging = FirebaseMessaging.instance ;
-  //initialising firebase message plugin
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin  = FlutterLocalNotificationsPlugin();
-  // function to request notifications permissions
   void requestNotificationPermission()async
   {
     NotificationSettings settings = await messaging.requestPermission(
@@ -39,7 +43,6 @@ class NotificationServices
   }
 
 
-  //function to initialise flutter local notification plugin to show notifications for android when app is active
   void initLocalNotifications(BuildContext context, RemoteMessage message)async
   {
     var androidInitializationSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -61,7 +64,13 @@ class NotificationServices
     );
   }
 
-  void firebaseInit(BuildContext context){
+  Future<void> firebaseInit(BuildContext context)
+  async
+  {
+
+
+
+
 
 
     FirebaseMessaging.onMessage.listen((message)
@@ -75,6 +84,12 @@ class NotificationServices
         print(message.data['type']);
         print(message.data['id']);
         print("dsfhfdg"+message.data['image']);
+        DashboardController controller=Get.find();
+        controller.counter();
+
+
+
+
       }
 
       //show notifications when app is active
@@ -152,7 +167,9 @@ class NotificationServices
     // when app is terminated
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
-    if(initialMessage != null){
+
+    if(initialMessage != null)
+    {
       handleMessage(context, initialMessage);
     }
 
@@ -160,6 +177,8 @@ class NotificationServices
     //when app ins background
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       handleMessage(context, event);
+      DashboardController controller=Get.find();
+      controller.counter();
     });
 
   }

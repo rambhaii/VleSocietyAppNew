@@ -94,13 +94,21 @@ class SubCategoryOfCategoryServices extends StatelessWidget
                             controller.getServicesSubCategoryOfCategoryThirdLevelNetworkApi(controller.serviceCategoryModel1.value.data![index].id.toString(),controller.serviceCategoryModel1.value.data![index].title.toString())
                                 :Get.to(ServicesDescription( controller.serviceCategoryModel1.value.data![index].description.toString(),controller.serviceCategoryModel1.value.data![index].url.toString(),controller.serviceCategoryModel1.value.data![index].title.toString(),controller.serviceCategoryModel1.value.data![index].image.toString()));
 
-                          }else
+                          }else if(type=="1")
                             {
                               controller.serviceCategoryModel1.value.data![index].isGosite=='0'?
                               controller.getServicesGovernmentSubCategoryOfCategoryThirdLevelNetworkApi(controller.serviceCategoryModel1.value.data![index].id.toString(),controller.serviceCategoryModel1.value.data![index].title.toString())
                                   :Get.to(ServicesDescription( controller.serviceCategoryModel1.value.data![index].description.toString(),controller.serviceCategoryModel1.value.data![index].url.toString(),controller.serviceCategoryModel1.value.data![index].title.toString(),controller.serviceCategoryModel1.value.data![index].image.toString()));
 
                             }
+                        else if(type=="2")
+                          {
+                            print("dgdgdggdh"+controller.serviceCategoryModel1.value.data![index].isGosite.toString()+"    "+controller.serviceCategoryModel1.value.data![index].id.toString());
+                            controller.serviceCategoryModel1.value.data![index].isGosite=='0'?
+                            controller.getServicesCSCSSubCategoryOfCategoryThirdLevelNetworkApi(controller.serviceCategoryModel1.value.data![index].id.toString(),controller.serviceCategoryModel1.value.data![index].title.toString())
+                                :Get.to(ServicesDescription( controller.serviceCategoryModel1.value.data![index].description.toString(),controller.serviceCategoryModel1.value.data![index].url.toString(),controller.serviceCategoryModel1.value.data![index].title.toString(),controller.serviceCategoryModel1.value.data![index].image.toString()));
+
+                          }
 
 
                       },

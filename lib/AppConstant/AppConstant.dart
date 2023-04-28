@@ -12,6 +12,9 @@ class AppConstant{
   static final String cityId ="city";
   static final String points ="points";
   static final String userType ="userType";
+  static final String dob ="dob";
+  static final String referId ="referId";
+  static late  int countNotification =0;
 
 
 }

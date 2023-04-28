@@ -22,14 +22,18 @@ class _AboutCSCState extends State<AboutCSC> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  PreferredSize(
+      appBar:
+      PreferredSize(
           preferredSize: Size(
             double.infinity,
             60.0,
           ),
           child: CustomAppBar(
               title: GetStorage().read(AppConstant.userName),
-              image:BASE_URL+GetStorage().read(AppConstant.profileImg))),
+              Points: controller.points,
+              image:BASE_URL+GetStorage().read(AppConstant.profileImg)
+          )
+      ),
       body: Obx(()=> controller.aboutCscModel.value.data!=null
           ?
       SingleChildScrollView(

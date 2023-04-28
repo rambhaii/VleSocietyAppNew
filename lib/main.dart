@@ -1,4 +1,7 @@
+
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,17 +11,47 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:vlesociety/Splash/SplashPage.dart';
 import 'AppConstant/AppConstant.dart';
 import 'Dashboard/view/dashboard.dart';
+import 'Notification/FirebaseDynamicLink.dart';
 
 
 
 
 
-void main() async {
+void main() async
+{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await GetStorage.init();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseDynamicLinkService.initDynamicLinks();
+  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+  if (initialLink != null)
+  {
+    final Uri deepLink = initialLink.link;
+    var isRefer = deepLink.pathSegments.contains('refer');
+    if (isRefer)
+    {
+      var referral_id = deepLink.queryParameters['referral_id'];
+      var postId = deepLink.queryParameters['postId'];
+      if (referral_id != null)
+      {  GetStorage _storage=GetStorage();
+        _storage.write(AppConstant.referId,referral_id);
+
+      }
+    }
+
+
+
+
+
+
+  }
+
+
+
+  runApp(  MyApp());
+
 }
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async
@@ -27,13 +60,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async
   print(message.notification!.title.toString());
   print(message.notification!.body.toString());
   print(message.data.toString());
-
 }
-
-
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget
+{
+  const MyApp( {super.key});
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -61,8 +91,9 @@ class MyApp extends StatelessWidget {
             title: 'Vle Society',
             theme: ThemeData(
               primarySwatch: Colors.blue,
-            ),
-            home: GetStorage().read(AppConstant.userName)!=null?
+                 ),
+            home:
+            GetStorage().read(AppConstant.userName)!=null?
             GetStorage().read(AppConstant.userName).toString().isNotEmpty?HomeDashboard():
             const SplashPage():const SplashPage(),
             debugShowCheckedModeBanner: false,

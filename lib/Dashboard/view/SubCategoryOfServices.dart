@@ -97,7 +97,7 @@ class SubCategoryOfServices extends StatelessWidget
                             controller.serviceCategoryModel.value.data![index].url.toString(),controller.serviceCategoryModel.value.data![index].title.toString(),controller.serviceCategoryModel.value.data![index].image.toString()));
 
                       }
-                    else
+                    else if(type=="1")
                         {
                               controller.serviceCategoryModel.value.data![index].isGosite=='0'?
                               controller.getServicesGovernmentSubCategoryOfCategoryNetworkApi(controller.serviceCategoryModel.value.data![index].id.toString(),
@@ -106,6 +106,16 @@ class SubCategoryOfServices extends StatelessWidget
                               controller.serviceCategoryModel.value.data![index].url.toString(),controller.serviceCategoryModel.value.data![index].title.toString(),controller.serviceCategoryModel.value.data![index].image.toString()));
 
                         }
+                    else if(type=="2")
+                      {
+                            controller.serviceCategoryModel.value.data![index].isGosite=='0'?
+                            controller.getServicesCSCSubCategoryOfCategoryNetworkApi(controller.serviceCategoryModel.value.data![index].id.toString(),
+                            controller.serviceCategoryModel.value.data![index].title.toString())
+                            :Get.to(ServicesDescription( controller.serviceCategoryModel.value.data![index].description.toString(),
+                            controller.serviceCategoryModel.value.data![index].url.toString(),controller.serviceCategoryModel.value.data![index].title.toString(),controller.serviceCategoryModel.value.data![index].image.toString()));
+
+                      }
+
                        },
                   child: Container(
                     width: MediaQuery.of(context).size.width,

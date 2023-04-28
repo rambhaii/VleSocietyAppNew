@@ -48,13 +48,19 @@ class _ArticalSearchState extends State<ArticalSearch> {
               },
               focusNode: inputNode,
               autofocus:true,
-              decoration: InputDecoration(
-                  labelText: "Search post",
-                  labelStyle: TextStyle(
-                    color: Color(0xff000000),
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
+              decoration: InputDecoration
+                (  labelText: "Search Artical",
+                   labelStyle: TextStyle
+                     (color: Color(0xff000000),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
                   ),
+
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+
+
                   hintText: "Search By Artical",
                   hintStyle: TextStyle(
                     color: Color(0xff000000),
@@ -70,63 +76,64 @@ class _ArticalSearchState extends State<ArticalSearch> {
                       child: Icon(
                         Icons.search,
                         size: 30,
+                        color: Colors.grey,
                       )),
                   border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)))),
             )),
       ),
-               Obx(() => controller.articleModelWithSearchKey.value.data != null
-                 ?
-               SingleChildScrollView
-                 (
-               child: ListView.separated(
-                 padding: EdgeInsets.all(10),
-                 shrinkWrap: true,
-                 reverse: true,
-                 physics: NeverScrollableScrollPhysics(),
-                 itemCount: controller.articleModelWithSearchKey.value.data!.length,
-                 separatorBuilder: (BuildContext context, int index) => Divider(
-                   height: 5,
-                   thickness: 1.6,
-                   color: Colors.grey.withOpacity(0.2),
-                 ),
-                 itemBuilder: (BuildContext context, int index)
-                 {
-                   final datas = controller.articleModelWithSearchKey.value.data![index];
-                   return Padding(
-                     padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
-                     child: InkWell(
-                       onTap: (){
-                         _showBottomSheet(context, datas);
-                       },
-                       child: Row(
-                         children: [
-                           Expanded(child: Text(
-                             datas.title.toString(),
-                             style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                             maxLines: 3,
-                           ),),
-                           SizedBox(width: 10,),
-                           ClipRRect(
-                             borderRadius: BorderRadius.circular(10),
-                             child: CachedNetworkImage(
-                               fit: BoxFit.cover,
-                               imageUrl: BASE_URL + datas.image.toString(),
-                               height: 75,
-                               width: 75,
-                               placeholder: (context, url) =>
-                                   Center(child: const CircularProgressIndicator()),
-                               errorWidget: (context, url, error) =>
-                               const Icon(Icons.error),
-                             ),
-                           )
-                         ],
+               Expanded(
+                 child: Obx(() =>SingleChildScrollView(child: controller.articleModelWithSearchKey.value.data != null
+                   ?
+                 ListView.separated(
+                   padding: EdgeInsets.all(10),
+                   shrinkWrap: true,
+                   reverse: true,
+                   physics: NeverScrollableScrollPhysics(),
+                   itemCount: controller.articleModelWithSearchKey.value.data!.length,
+                   separatorBuilder: (BuildContext context, int index) => Divider(
+                     height: 5,
+                     thickness: 1.6,
+                     color: Colors.grey.withOpacity(0.2),
+                   ),
+                   itemBuilder: (BuildContext context, int index)
+                   {
+                     final datas = controller.articleModelWithSearchKey.value.data![index];
+                     return Padding(
+                       padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
+                       child: InkWell(
+                         onTap: (){
+                           _showBottomSheet(context, datas);
+                         },
+                         child: Row(
+                           children: [
+                             Expanded(child: Text(
+                               datas.title.toString(),
+                               style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                               maxLines: 3,
+                             ),),
+                             SizedBox(width: 10,),
+                             ClipRRect(
+                               borderRadius: BorderRadius.circular(10),
+                               child: CachedNetworkImage(
+                                 fit: BoxFit.cover,
+                                 imageUrl: BASE_URL + datas.image.toString(),
+                                 height: 75,
+                                 width: 75,
+                                 placeholder: (context, url) =>
+                                     Center(child: const CircularProgressIndicator()),
+                                 errorWidget: (context, url, error) =>
+                                 const Icon(Icons.error),
+                               ),
+                             )
+                           ],
+                         ),
                        ),
-                     ),
-                   );
-                 },
-               ),
-             ):Center(child: const CircularProgressIndicator()))
+                     );
+                   },
+                 ):Center(child: const CircularProgressIndicator()))),
+               )
     ])));
   }
 

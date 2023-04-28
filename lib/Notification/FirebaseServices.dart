@@ -40,10 +40,9 @@ class FirebaseServices
     try
     {
        print("djfkg");
-      /*final LoginResult loginResult = await FacebookAuth.instance.login(permissions: ['email', 'public_profile', 'user_birthday']
-    );*/
-       print("djfkg");
-       LoginResult loginResult=await FacebookAuth.instance.login();
+      final LoginResult loginResult = await FacebookAuth.instance.login(permissions: ['email', 'public_profile', 'user_birthday']
+    );
+
     final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
     final userData = await FacebookAuth.instance.getUserData();
 
@@ -51,7 +50,8 @@ class FirebaseServices
     print("djfkghjkdfg"+userEmail+"fdfgdgf"+FirebaseAuth.instance.signInWithCredential(facebookAuthCredential).toString());
 
        print("djfkg");
-    } on FirebaseAuthException catch (e)
+     } on
+    FirebaseAuthException catch (e)
     {
       print("djfkg");
       print("sdfdf"+e.message.toString());
@@ -59,7 +59,9 @@ class FirebaseServices
     }
     }
 
-  googleSignOut() async {
+  googleSignOut() async
+  {
+
     await _auth.signOut();
     await _googleSignIn.signOut();
   }

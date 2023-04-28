@@ -9,6 +9,12 @@ NotificationModel notificationModelFromJson(String str) => NotificationModel.fro
 String notificationModelToJson(NotificationModel data) => json.encode(data.toJson());
 
 class NotificationModel {
+  int? status;
+  String? message;
+  String? limit;
+  int? page;
+  List<Datum>? data;
+
   NotificationModel({
     this.status,
     this.message,
@@ -16,12 +22,6 @@ class NotificationModel {
     this.page,
     this.data,
   });
-
-  int? status;
-  String? message;
-  String ?limit;
-  int? page;
-  List<Datum>? data;
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
     status: json["status"],
@@ -41,6 +41,12 @@ class NotificationModel {
 }
 
 class Datum {
+  String? id;
+  String? title;
+  String? typeId;
+  String? type;
+  DateTime? addDate;
+
   Datum({
     this.id,
     this.title,
@@ -48,12 +54,6 @@ class Datum {
     this.type,
     this.addDate,
   });
-
-  String? id;
-  String? title;
-  String? typeId;
-  String? type;
-  DateTime? addDate;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["id"],

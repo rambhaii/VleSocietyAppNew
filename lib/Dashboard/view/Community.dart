@@ -1,11 +1,11 @@
 import 'dart:ui';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:readmore/readmore.dart';
 import 'package:vlesociety/AppConstant/textStyle.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
@@ -19,8 +19,7 @@ import '../../UtilsMethod/UtilsMethod.dart';
 import '../../Widget/loading_widget.dart';
 import '../model/CommunityModel.dart';
 import 'CommunityDetails.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
+
 
 class CommunityPage extends StatefulWidget {
   CommunityPage({super.key});
@@ -29,7 +28,8 @@ class CommunityPage extends StatefulWidget {
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-class _CommunityPageState extends State<CommunityPage> {
+class _CommunityPageState extends State<CommunityPage>
+{
 
   DashboardController controller = Get.find();
   final followContrller modelfollow = Get.put(followContrller());
@@ -40,31 +40,24 @@ class _CommunityPageState extends State<CommunityPage> {
   int cuntnumber = 0;
   CommunityDatum communityModel2 = Get.put(CommunityDatum());
 
-  /*@override
-  void initState() {
-    super.initState();
-  }*/
 
   @override
   Widget build(BuildContext context)
   {
+    controller.getCommunityNetworkApi();
+
     return
       Obx(
       () => Column(
         children:
-        [
-          Column(
+        [Column(
             children: controller.communityModel.value.data != null
                 ? List.generate(
                     controller.communityModel.value.data!.length,
                     (index)
                     {
                       final data = controller.communityModel.value.data![index];
-
-
-                    //  controller.end=controller.communityModel.value.page! ;
                       count = int.parse(data.ttlLike.toString());
-
                       return GestureDetector(
                         onTap: () {
                           Get.to(() => CommunityDetails(
@@ -95,13 +88,14 @@ class _CommunityPageState extends State<CommunityPage> {
                                           )),
                                 ),
                               ),
-                              // CircleAvatar(
-                              //   backgroundImage: NetworkImage(BASE_URL+data.addByPic.toString()),
-                              // ),
-                              title: Text(
-                                data.addBy ?? '',
-                                style: bodyText1Style.copyWith(fontSize: 12),
-                              ),
+
+                              title: Row(children: [Text(data.addBy ?? '', style: bodyText1Style.copyWith(fontSize: 12),),
+                                SizedBox(width: 10,),
+                                         Container(
+                                           child:  data.is_verify=="1"?
+                                           Image(image: AssetImage("assets/images/verified.png",),width: 15,height: 15,
+                                           ):Container()
+                                         )],),
                               subtitle: Text(
                                 timeago.format(
                                     DateTime.parse(data.addDate.toString())),
@@ -327,12 +321,14 @@ class _CommunityPageState extends State<CommunityPage> {
                                   ],
                                 ),
                                 RawMaterialButton(
-                                  onPressed: () {
+                                  onPressed: ()
+                                  {
                                     if (controller.userType == "Guest") {
                                       UtilsMethod.PopupBox(context, "comment");
-                                    } else {
-                                      controller
-                                          .getAnswerNetworkApi(data.id.toString());
+                                    }
+                                    else
+                                    {
+                                      controller.getAnswerNetworkApi(data.id.toString());
                                       _showBottomSheet(context, data.id.toString());
                                     }
                                   },
@@ -355,7 +351,8 @@ class _CommunityPageState extends State<CommunityPage> {
                                       onPressed: () async {
                                         if (controller.userType == "Guest") {
                                           UtilsMethod.PopupBox(context, "share");
-                                        } else {
+                                        } else
+                                        {
                                           //buildDynamicLinks(data.description.toString(),BASE_URL+data.image.toString(),data.id.toString());
                                           String generateDeeplink =
                                               await FirebaseDynamicLinkService
@@ -364,7 +361,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                                       BASE_URL +
                                                           data.image.toString(),
                                                       data.id.toString(),
-                                                      false);
+                                                      false,1,"");
                                           print("djfhgjk " + generateDeeplink);
                                           if (generateDeeplink.isNotEmpty) {
                                             controller.getcommunityShareNetworkApi(
@@ -423,11 +420,20 @@ class _CommunityPageState extends State<CommunityPage> {
                                     }
                                     else
                                     {
-                                      await WhatsappShare.share(
-                                        text: data.description.toString(),
-                                        linkUrl: 'https://www.animationmedia.org/',
-                                        phone: '911234567890',
-                                      );
+
+                                      String generateDeeplink =
+                                      await FirebaseDynamicLinkService
+                                          .buildDynamicLinks(
+                                          data.description.toString(),
+                                          BASE_URL +
+                                              data.image.toString(),
+                                          data.id.toString(),
+                                          false,2,"");
+
+
+
+
+
                                     }
                                   },
                                   child: Image.asset(
@@ -444,7 +450,10 @@ class _CommunityPageState extends State<CommunityPage> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          controller.getAnswerNetworkApi(data.id.toString());
+                                          _showCommentSheet(context, data.id.toString());
+                                        },
                                         child: Text("${data.ttlAnswer} Comment",
                                             style: bodyText1Style.copyWith(
                                                 color: Colors.blue.shade400,
@@ -557,9 +566,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                                       const Icon(Icons.error),
                                             ),
                                           ),
-                                          // CircleAvatar(
-                                          //   backgroundImage: NetworkImage(BASE_URL+data.addByPic.toString()),
-                                          // ),
+
                                           title: Container(
                                               padding: EdgeInsets.only(
                                                   left: 10,
@@ -751,6 +758,206 @@ class _CommunityPageState extends State<CommunityPage> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCommentSheet(BuildContext context, String id) {
+    TextEditingController etmessage = TextEditingController();
+    controller.rxMessaage.value = "";
+    controller.rxMessaage.value = "";
+    showModalBottomSheet(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.1),
+      isScrollControlled: true,
+      backgroundColor: Colors.white70,
+      builder: (context) {
+        return ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              width: double.infinity,
+              height: Get.height - 150,
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Container(
+                    padding: EdgeInsets.all(10),
+                    // height: h * 0.45,
+
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          width: 40,
+                          height: 7,
+                          decoration: BoxDecoration(
+                              border:
+                              Border.all(width: 0.5, color: Colors.black38),
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Obx(
+                              () => controller.answerModel.value.data != null
+                              ? Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: ClipOval(
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl: BASE_URL +
+                                            controller.answerModel.value
+                                                .data![index].addByPic
+                                                .toString(),
+                                        height: 50,
+                                        width: 50,
+                                        placeholder: (context, url) => Center(
+                                            child:
+                                            const CircularProgressIndicator()),
+                                        errorWidget:
+                                            (context, url, error) =>
+                                        const Icon(Icons.error),
+                                      ),
+                                    ),
+                                    // CircleAvatar(
+                                    //   backgroundImage: NetworkImage(BASE_URL+data.addByPic.toString()),
+                                    // ),
+                                    title: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10,
+                                            right: 10,
+                                            top: 8,
+                                            bottom: 8),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey
+                                                    .withOpacity(0.7),
+                                                width: 0.5),
+                                            borderRadius:
+                                            BorderRadius.circular(8),
+                                            color: Colors.black
+                                                .withOpacity(0.1)),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              controller
+                                                  .answerModel
+                                                  .value
+                                                  .data![index]
+                                                  .addBy ??
+                                                  '',
+                                              style: bodyText1Style
+                                                  .copyWith(fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                              controller.answerModel.value
+                                                  .data![index].answer
+                                                  .toString(),
+                                              style: smallTextStyle,
+                                            ),
+                                          ],
+                                        )),
+                                    subtitle: Row(
+                                      children: [
+                                        Text(
+                                          controller.answerModel.value
+                                              .data![index].addDate
+                                              .toString(),
+                                          style: smallTextStyle,
+                                        ),
+                                        Expanded(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                              children: [
+                                                RawMaterialButton(
+                                                  onPressed: () {
+                                                    controller.communityAnswerLikeDislikeNetworkApi(
+                                                        controller.answerModel.value.data![index]
+                                                            .id!,
+                                                         controller
+                                                            .answerModel
+                                                            .value
+                                                            .data![index]
+                                                            .aslike!,
+                                                        id);
+                                                  },
+                                                  child: Image.asset(
+                                                    "assets/images/like.png",
+                                                    height: 20,
+                                                    width: 20,
+                                                    color: controller
+                                                        .answerModel
+                                                        .value
+                                                        .data![index]
+                                                        .aslike
+                                                        .toString() ==
+                                                        "1"
+                                                        ? Colors.blue
+                                                        : Colors.grey,
+                                                  ),
+                                                  constraints:
+                                                  const BoxConstraints(
+                                                      maxHeight: 20,
+                                                      maxWidth: 20),
+                                                  shape: const CircleBorder(),
+                                                ),
+                                                RawMaterialButton(
+                                                  onPressed: () {
+                                                    Share.share(controller
+                                                        .answerModel
+                                                        .value
+                                                        .data![index]
+                                                        .answer
+                                                        .toString());
+                                                  },
+                                                  child: Image.asset(
+                                                    "assets/images/share.png",
+                                                    height: 20,
+                                                    width: 20,
+                                                  ),
+                                                  constraints: BoxConstraints(
+                                                      maxHeight: 20,
+                                                      maxWidth: 20),
+                                                  shape: CircleBorder(),
+                                                ),
+                                              ],
+                                            ))
+                                      ],
+                                    ));
+                              },
+                              itemCount: controller
+                                  .answerModel.value.data!.length,
+                            ),
+                          )
+                              : Center(
+                            child: Text(
+                              controller.rxMessaage.value,
+                              style: smallTextStyle,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+
               ),
             ),
           ),

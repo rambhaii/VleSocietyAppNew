@@ -49,7 +49,8 @@ class _SearchScreenState extends State<SearchScreen> {
     return new Scaffold(
       body: Container(
         child: Column(
-          children: <Widget>[
+          children: <Widget>
+          [
             SizedBox(height: 50),
             Container(
               height: 50.h,
@@ -65,6 +66,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     controller: controller.searchkey,
                     decoration: InputDecoration(
                         labelText: "Search post",
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
 
                         labelStyle: TextStyle(
                           color: Color(0xff000000),
@@ -78,8 +82,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           fontSize: 14,
                         ),
                         suffixIcon: InkWell(
-                            onTap: () {
-                              if (keyMessage.isNotEmpty) {
+                            onTap: ()
+                            {
+                              if (keyMessage.isNotEmpty)
+                              {
                                 controller.getSearchListNetworkApi(
                                     keyMessage, "");
                               }
@@ -89,8 +95,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               size: 30,
                             )),
                         border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)))),
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)))),
                   )),
             ),
             Expanded(
@@ -100,8 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: Column(
-                    children: controller.communityModelBySerachKey.value.data !=
-                            null
+                    children: controller.communityModelBySerachKey.value.data != null
                         ? List.generate(
                             controller
                                 .communityModelBySerachKey.value.data!.length,
@@ -468,7 +473,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       BASE_URL +
                                                           data.image.toString(),
                                                       data.id.toString(),
-                                                      false);
+                                                      false,2,"");
                                                   print("djfhgjk " + generateDeeplink);
                                                   if (generateDeeplink.isNotEmpty) {
                                                     controller.getcommunityShareNetworkApi(
@@ -527,11 +532,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                             }
                                             else
                                             {
-                                              await WhatsappShare.share(
-                                                text: data.description.toString(),
-                                                linkUrl: 'https://www.animationmedia.org/',
-                                                phone: '911234567890',
-                                              );
+                                              String generateDeeplink =
+                                              await FirebaseDynamicLinkService
+                                                  .buildDynamicLinks(
+                                                  data.description.toString(),
+                                                  BASE_URL +
+                                                      data.image.toString(),
+                                                  data.id.toString(),
+                                                  false,2,"");
+
                                             }
                                           },
                                           child: Image.asset(

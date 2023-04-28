@@ -283,7 +283,7 @@ class QuizPage extends StatelessWidget
               Obx(() => controller.quizModel.value.data != null
                   ? Container(
                   child: ListView.builder(
-                      controller: controller.scrollController1,
+                      controller: controller.scrollController,
                       shrinkWrap: true,
                       itemCount:controller.quizModel.value.data!.length,
                       physics: ScrollPhysics(),

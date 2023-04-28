@@ -40,7 +40,6 @@ class OtypVerifyPage extends StatelessWidget {
                    height: 40,
                    child: OTPTextField(
                      length: 4,
-
                      width: MediaQuery.of(context).size.width,
                      fieldWidth: 30,
                      style:const TextStyle(
@@ -48,9 +47,13 @@ class OtypVerifyPage extends StatelessWidget {
                      ),
                      textFieldAlignment: MainAxisAlignment.spaceAround,
                      fieldStyle: FieldStyle.underline,
-                     onCompleted: (pin) {
-                         etotp=pin;
-                       _controller.verifyNetworkApi(id, pin);
+                     onCompleted: (pin)
+                     {
+                        etotp=pin;
+                        if(etotp!=null)
+                         {
+                          _controller.verifyNetworkApi(id, pin);
+                           }
                        },
 
                    ),
@@ -76,8 +79,10 @@ class OtypVerifyPage extends StatelessWidget {
                    ),
                  )),
 
-             CustomButton(onPress: (){
-               _controller.verifyNetworkApi(id, etotp);
+             CustomButton(onPress: ()
+             { if(etotp!=null)
+               { _controller.verifyNetworkApi(id, etotp);}
+
              },title: "Verify Code",)
            ],
          ),

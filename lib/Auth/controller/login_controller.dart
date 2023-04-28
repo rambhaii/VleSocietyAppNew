@@ -5,12 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/view/dashboard.dart';
 
 import '../../AppConstant/APIConstant.dart';
+import '../../Dashboard/model/PrivacyModel .dart';
 import '../../UtilsMethod/BaseController.dart';
 import '../../UtilsMethod/base_client.dart';
 import '../model/CityModel.dart';
@@ -18,15 +20,18 @@ import '../model/StateModel.dart';
 import '../view/Registration.dart';
 import '../view/VerifyOTP.dart';
 
-class LoginController extends GetxController{
+class LoginController extends GetxController
+{
   var stateData=StateModel().obs;
   var cityModel=CityModel().obs;
+  var privacyModel=PrivacyModel().obs;
   TextEditingController etMobile=TextEditingController();
    var selectedState;
    var selectedCity;
    RxString rxPath="".obs;
   TextEditingController etName=TextEditingController();
   TextEditingController etEmail=TextEditingController();
+  TextEditingController dob=TextEditingController();
   TextEditingController etZip=TextEditingController();
   TextEditingController etblock=TextEditingController();
   TextEditingController etSate=TextEditingController();
@@ -36,12 +41,15 @@ class LoginController extends GetxController{
 
  loginNetworkApi(String device_id )async
  {
-   print("assdd"+device_id);
+
+
   var bodyRequest=
   {
      "lng":language,
      "mobile":etMobile.text,
      "fcm_id":device_id,
+      "referral_id":_storage.read(AppConstant.referId).toString().trim(),
+
       };
   Get.context!.loaderOverlay.show();
   var response=await BaseClient().post(loginApi, bodyRequest).catchError(BaseController().handleError);
@@ -82,7 +90,7 @@ class LoginController extends GetxController{
       "lng":language,
       "ID":id,
       "otp":otp,
-    };
+        };
     Get.context!.loaderOverlay.show();
     var response=await BaseClient().post(verfyApi, bodyRequest).catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
@@ -105,7 +113,8 @@ class LoginController extends GetxController{
             _storage.write(AppConstant.cityId, jsonDecode(response)["Data"]["city_id"]??"");
             _storage.write(AppConstant.zip, jsonDecode(response)["Data"]["zip_code"]??"");
             _storage.write(AppConstant.userType, jsonDecode(response)["Data"]["u_type"]??"");
-            print("jnvkjnkdsv"+jsonDecode(response)["Data"]["u_type"]??"");
+            _storage.write(AppConstant.dob, jsonDecode(response)["Data"]["dob"]??"");
+            print("jnvkjsdfsfnkdsv"+jsonDecode(response)["Data"]["points"]??"");
             Get.offAll(() => HomeDashboard());
           }
        else{
@@ -123,7 +132,7 @@ class LoginController extends GetxController{
   }
   signUpNetworkApi(String deviceId)async
   {
-  print("dfhgdjh"+deviceId);
+
     if(etSate.text.isEmpty)
       {
         BaseController().warningSnack("Please Select State");
@@ -133,7 +142,8 @@ class LoginController extends GetxController{
       BaseController().warningSnack("Please Select City");
       return;
     }
-    var bodyRequest={
+    var bodyRequest=
+    {
       "lng":language,
     "name":etName.text,
     "email":etEmail.text,
@@ -145,10 +155,10 @@ class LoginController extends GetxController{
     "device_id":"",
     "fcm_id":deviceId,
       "ID":_storage.read(AppConstant.id).toString().trim(),
-      "profile":""
+      "profile":"",
+      "dob":"12/12/1950"
     };
-    print("vbdsjsjkbsdvjbvds");
-    print(bodyRequest);
+
     Get.context!.loaderOverlay.show();
     var response=await BaseClient().post(signUpApi, bodyRequest).catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
@@ -165,16 +175,19 @@ class LoginController extends GetxController{
       _storage.write(AppConstant.cityId, jsonDecode(response)["Data"]["city_id"]??"");
       _storage.write(AppConstant.zip, jsonDecode(response)["Data"]["zip_code"]??"");
       _storage.write(AppConstant.userType, jsonDecode(response)["Data"]["u_type"]??"");
+      _storage.write(AppConstant.dob, jsonDecode(response)["Data"]["dob"]??"");
       Get.offAll(() => HomeDashboard());
      return;
     }
-    BaseController().errorSnack(jsonDecode(response)["message"]);
+    BaseController().errorSnack("Successfully Register !");
   }
+
+
   signUpwithSocialLoginNetworkApi(UserCredential userCredential,String deviceId)async
   {
     final user = userCredential.user;
 
-   // user?.phoneNumber.toString()
+
 
     var bodyRequest={
       "lng":language,
@@ -183,16 +196,15 @@ class LoginController extends GetxController{
       "mobile":"",
       "device_id":"",
       "fcm_id":deviceId,
-
     };
-    print("vbdsjsjkbsdvjbvds"+bodyRequest.toString());
+
     print(bodyRequest);
     Get.context!.loaderOverlay.show();
     var response=await BaseClient().post(socialSignInUp, bodyRequest).catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
-     print("vbdsjsjkbsdvjbvds"+response);
-    if(jsonDecode(response)["status"]==1)
+    if(jsonDecode(response)["status"].toString()=="1")
     {
+
       BaseController().successSnack(jsonDecode(response)["message"]);
       _storage.write(AppConstant.id, jsonDecode(response)["Data"]["ID"]??"");
       _storage.write(AppConstant.userId, jsonDecode(response)["Data"]["user_login"]??"");
@@ -208,7 +220,13 @@ class LoginController extends GetxController{
       Get.offAll(() => HomeDashboard());
       return;
     }
-    BaseController().errorSnack(jsonDecode(response)["message"]);
+    else {
+      final _auth = FirebaseAuth.instance;
+      final _googleSignIn = GoogleSignIn();
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+      BaseController().errorSnack(jsonDecode(response)["message"]);
+    }
   }
 
 
@@ -267,7 +285,7 @@ class LoginController extends GetxController{
     Get.context!.loaderOverlay.hide();
     if(jsonDecode(response)["status"]==1)
     {
-     print("vdsbvkjdsbvkjs");
+
      print(response);
      cityModel.value=cityModelFromJson(response);
       return;
@@ -281,8 +299,6 @@ class LoginController extends GetxController{
     etEmail.text=_storage.read(AppConstant.email);
     etMobile.text=_storage.read(AppConstant.phone);
   }
-
-
   chooseImage(bool isCamera)async{
     final ImagePicker _picker = ImagePicker();
     try {
@@ -296,7 +312,6 @@ class LoginController extends GetxController{
     }
 
   }
-
   signUpProfileImgNetworkApi()async{
     print("djskfhj");
     if(etSate.text.isEmpty)
@@ -308,7 +323,8 @@ class LoginController extends GetxController{
       BaseController().warningSnack("Please Select City");
       return;
     }
-    var bodyRequest={
+    var bodyRequest=
+    {
       "lng":language,
       "name":etName.text,
       "email":etEmail.text,
@@ -320,6 +336,7 @@ class LoginController extends GetxController{
       "device_id":"",
       "fcm_id":"",
       "ID":_storage.read(AppConstant.id).toString().trim(),
+      "dob":dob.text
     };
     print("vbdsjsjkbsdvjbvds");
     print(bodyRequest);
@@ -345,6 +362,19 @@ class LoginController extends GetxController{
      // Get.offAll(() => HomeDashboard());
       return;
     }
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+  getPrivacyNetworkApi() async {
+    var response = await BaseClient()
+        .get(getPrivacy + "?lng=eng")
+        .catchError(BaseController().handleError);
+
+    if (jsonDecode(response)["status"] == 1) {
+
+      privacyModel.value = privacyModelFromJson(response);
+      return;
+    }
+    privacyModel.value = privacyModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 

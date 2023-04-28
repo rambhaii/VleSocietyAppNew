@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vlesociety/Dashboard/view/profile/tawk_widget.dart';
 
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
@@ -12,13 +13,18 @@ import '../../UtilsMethod/BaseController.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import 'WebViewPage.dart';
 
-class ServicesDescription extends StatelessWidget
+class ServicesDescription extends StatefulWidget
 {  final String desc;
   final String url;
   final String title;
   final String image;
   const ServicesDescription( this.desc, this.url, this.title, this.image, {Key? key}) : super(key: key);
 
+  @override
+  State<ServicesDescription> createState() => _ServicesDescriptionState();
+}
+
+class _ServicesDescriptionState extends State<ServicesDescription> {
   @override
   Widget build(BuildContext context)
   {
@@ -47,9 +53,24 @@ class ServicesDescription extends StatelessWidget
                     UtilsMethod.launchUrls("https://www.google.com/search?q=flutter+different+type+ui+design&rlz=1C1GIVA_enIN997IN997&oq=&aqs=chrome.0.35i39i362l8.3034932j0j7&sourceid=chrome&ie=UTF-8");
                   }
              */
-                if(url.isNotEmpty)
+                if(widget.url.isNotEmpty)
                   {
-                    Get.to(WebViewPage(url,title));}
+                   // Get.to(WebViewPage(url,title));}
+                    Get.to(ChatAd( directChatLink: widget.url,
+                        title:widget.title,
+
+                      onLoad: ()
+                      {
+                        print('Hello Tawk!');
+                      },
+                      onLinkTap: (String url)
+                      {
+                        print(url);
+                      },
+                      placeholder: const Center(
+                        child: Text('Loading...'),
+                      ),));}
+
 
 
               },
@@ -97,8 +118,8 @@ class ServicesDescription extends StatelessWidget
                     elevation: 0.0,
                     leadingWidth: 60,
 
-                    title: title!=null?
-                    Text(title, style: subtitleStyle.copyWith(fontWeight: FontWeight.w900,fontSize: 16)
+                    title: widget.title!=null?
+                    Text(widget.title, style: subtitleStyle.copyWith(fontWeight: FontWeight.w900,fontSize: 16)
                     ):Text("", style: TextStyle(color: Colors.black, fontSize: 16)
                     ),
                   )
@@ -112,7 +133,7 @@ class ServicesDescription extends StatelessWidget
           ),
         ),
         body:SingleChildScrollView(
-          child:desc!=null?
+          child:widget.desc!=null?
           Column
             (
             children: [
@@ -132,7 +153,7 @@ class ServicesDescription extends StatelessWidget
                                 height: 20,
                               ),
 
-                              image!=null?
+                              widget.image!=null?
                               Card(
                                 elevation: 0.5,
                                 shape:RoundedRectangleBorder(
@@ -142,7 +163,7 @@ class ServicesDescription extends StatelessWidget
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
                                     fit: BoxFit.cover,
-                                    imageUrl: BASE_URL + image.toString(),
+                                    imageUrl: BASE_URL + widget.image.toString(),
                                     height: 200,
                                     width: double.infinity,
                                     placeholder: (context, url) =>
@@ -164,13 +185,13 @@ class ServicesDescription extends StatelessWidget
                                   child: Column(
                                     children: [
                                       SizedBox(height: 20,),
-                                      title!=null?Text(
-                                        title.toString(),
+                                      widget.title!=null?Text(
+                                        widget.title.toString(),
                                         style: bodyText1Style,
                                       ):Center(),
 
                                       Html(
-                                          data:desc.toString(),
+                                          data:widget.desc.toString(),
                                           style: {
                                             "body": Style(
                                               fontSize: FontSize(12.0),

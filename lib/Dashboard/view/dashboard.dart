@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:badges/badges.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -8,25 +9,33 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/view/Artical.dart';
 import 'package:vlesociety/Dashboard/view/Home.dart';
 import 'package:vlesociety/Dashboard/view/Services.dart';
 import 'package:vlesociety/Dashboard/view/notification.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
+import 'package:vlesociety/Dashboard/view/profile/ChaAdmin.dart';
 import 'package:vlesociety/Dashboard/view/quize.dart';
 import 'package:vlesociety/UtilsMethod/UtilsMethod.dart';
 import '../../AppConstant/APIConstant.dart';
+import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import '../../CSC/CSCHome.dart';
 import '../../Notification/FirebaseDynamicLink.dart';
 import '../../Notification/FirebaseNotification.dart';
 import '../../Widget/CircularButton.dart';
 import '../../Widget/CustomIcon.dart';
+import '../controller/NotificationController.dart';
 import 'SearchFeedArtical.dart';
 import 'SearchScreen.dart';
-
-class HomeDashboard extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+class HomeDashboard extends StatefulWidget
+{
   const HomeDashboard({super.key});
 
   @override
@@ -35,16 +44,17 @@ class HomeDashboard extends StatefulWidget {
 
 class _HomeDashboardState extends State<HomeDashboard> {
   DashboardController controller = Get.put(DashboardController());
+
   DateTime? currentBackPressTime;
   NotificationServices notificationServices = NotificationServices();
-
   @override
-  void initState() {
-    // TODO: implement initState
-
-
+  void initState()
+  {
+    if(controller.isDob==true)
+    {
+    Future.delayed(Duration.zero, () => UtilsMethod.dateOfBirth(context,controller.userName.toString()));
+    }
     super.initState();
-    FirebaseDynamicLinkService.initDynamicLinks(context);
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);
@@ -57,16 +67,29 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
+  Widget build(BuildContext context)
+  {
+
+    print("rryrtyyui   "+controller.countvalue.value.toString());
+    controller.getgetUserDetailsNetworkApi();
+
+
+
+    SystemChrome.setSystemUIOverlayStyle
+      (
         SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+
+
+
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
         extendBodyBehindAppBar: true,
         extendBody: true,
-        appBar: PreferredSize(
-          child: Stack(
+        appBar:
+        PreferredSize(
+          child:
+          Stack(
             children: [
               Positioned(
                   top: -80.h,
@@ -84,24 +107,49 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                   child: AppBar(
                     backgroundColor: Colors.white.withOpacity(0.5),
-                    leading: Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: CircleAvatar(
-                        radius: 10,
-                        backgroundColor: Colors.amber.withOpacity(0.1),
-                        backgroundImage:
-                            NetworkImage(BASE_URL + controller.image),
+                    leading: InkWell(
+                      onTap: ()
+                      {
+
+                        Get.to( Profile());
+                      },
+                      child: Padding(
+
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.amber.withOpacity(0.1),
+                          backgroundImage:
+                              NetworkImage(BASE_URL + GetStorage().read(AppConstant.profileImg).toString()),
+                        ),
                       ),
                     ),
                     leadingWidth: 60,
-                    title: Text(
-                      controller.userName.toString(),
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
+                    title:
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              GetStorage().read(AppConstant.userName).toString(),
+                              style: TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                            Text(
+                              "${controller.points} Points",
+                              style: smallTextStyle.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 11,
+                                  color: Colors.green),
+                            ),
+                          ],
+                        )
+                    ,
+
                     elevation: 0.0,
                     actions: [
                       controller.selectedIndex.value <= 1
-                          ? RawMaterialButton(
+                          ?
+                      RawMaterialButton(
                               constraints: BoxConstraints(
                                   maxHeight: 30.h, minWidth: 30.w),
                               onPressed: ()
@@ -111,24 +159,18 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                   Get.to(SearchScreen());
 
                                 }
-                                else if (controller.selectedIndex.value ==
-                                    1) {
-                                  print("sddgdfgfgg" +
-                                      controller.selectedIndexOfArtical.value
-                                          .toString());
-                                  if (controller.selectedIndexOfArtical.value ==
-                                      1) {
+                                else if (controller.selectedIndex.value == 1) {
+                                  if (controller.selectedIndexOfArtical.value == 1) {
                                     Get.to(FeedArticalSearch());
-                                  } else {
+                                  }
+                                  else
+                                  {
                                     controller.getArticleBySearchKeyNetworkApi(
                                         "", "", "");
-                                    print("dhfggdjffddh" +
-                                        controller.selectedIndex.value
-                                            .toString());
+
                                   }
                                 }
-                                // Get.to(SearchScreen());
-                                //controller.getNotificationListNetworkApi();
+
                               },
                               shape: CircleBorder(),
                               child: Image.asset(
@@ -137,14 +179,64 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                 width: 23,
                                 fit: BoxFit.fill,
                               ),
-                            )
-                          : Container(),
-
+                            ) :
+                      Container(),
                       RawMaterialButton(
                         constraints:
-                            BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
-                        onPressed: () {
-                          controller.getNotificationListNetworkApi();
+                        BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
+                        onPressed: ()
+                        {
+                          //controllerNotification.getNotificationListNetworkApi();
+                          Get.to(()=>chats());
+                        },
+                        shape: CircleBorder(),
+                        child: Image.asset(
+                          "assets/images/chat.png",
+                          height: 35,
+                          width: 35,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                     Obx(() =>  Padding(
+                       padding: const EdgeInsets.only(top: 5.0,right: 15),
+                       child: badges.Badge(
+                         position: badges.BadgePosition.topEnd(top: -8, end: -5) ,
+                         badgeContent: Text(controller.countvalue.value.toString()),
+                         child: Icon(Icons.notifications,size: 30,color: Colors.orange[300]),
+                         showBadge:controller.countvalue.value!=0?true:false,
+                         ignorePointer: false,
+                         onTap: ()
+                         async {
+                           controller.countvalue.value=0;
+                           final SharedPreferences prefs = await SharedPreferences.getInstance();
+                           await prefs.setInt( "count", 0);
+                           Get.to(()=>notification());
+                            },
+                         badgeStyle: badges.BadgeStyle(
+                           shape: badges.BadgeShape.circle,
+                           badgeColor: Colors.red,
+                           padding: EdgeInsets.all(5),
+                           borderRadius: BorderRadius.circular(50),
+                           borderSide: BorderSide(color: Colors.red, width: 1),),
+                          badgeAnimation: badges.BadgeAnimation.rotation(
+                           animationDuration: Duration(seconds: 1),
+                           colorChangeAnimationDuration: Duration(seconds: 1),
+                           loopAnimation: false,
+                           curve: Curves.fastOutSlowIn,
+                           colorChangeAnimationCurve: Curves.easeInCubic,
+                         ),
+                       ),
+                     ))
+                     ,
+
+
+                   /*   RawMaterialButton(
+                        constraints:
+                                   BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
+                        onPressed: ()
+                        {
+                          //controllerNotification.getNotificationListNetworkApi();
+                          Get.to(()=>notification());
                         },
                         shape: CircleBorder(),
                         child: Image.asset(
@@ -153,7 +245,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
                           width: 45,
                           fit: BoxFit.fill,
                         ),
-                      ),
+                      ),*/
+
                       RawMaterialButton(
                         constraints:
                             BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
@@ -198,7 +291,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
             }
 
           },
-          child: SingleChildScrollView(
+          child:
+          SingleChildScrollView(
                controller: controller.scrollController,
               physics: const BouncingScrollPhysics(),
               child: SafeArea(
@@ -263,13 +357,16 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   selectedItemColor: Colors.red[800],
                   unselectedItemColor: Colors.black,
                   showUnselectedLabels: true,
-                  onTap: (int index) {
-                    setState(() {
-                      print(
-                          controller.selectedIndex.value.toString() + "hello");
-                    });
-                    switch (index) {
+                  onTap: (int index)
+                  {
+                   /* setState(()
+                    {
+
+                    });*/
+                    switch (index)
+                    {
                       case 0:
+
                         controller.selectedIndex.value = 0;
                         break;
                       case 1:
@@ -339,10 +436,23 @@ class _HomeDashboardState extends State<HomeDashboard> {
       ),
     );
   }
-
+  void showAlert(BuildContext context)
+  {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text("hi"),
+        ));
+  }
   Future<void> _loadData() async {
     controller.getCommunityNetworkApi();
   }
+
+
+
+
+
+
 
   final List<Widget> _widgetOptions =  [
      HomePage(),
@@ -487,7 +597,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                                                       .data![
                                                                           index]
                                                                       .image
-                                                                      .toString()))),
+                                                                      .toString()))
+                                                      ),
                                                     ),
                                                     SizedBox(
                                                       height: 8,
@@ -564,10 +675,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                                       child: Obx(() => Text(
                                                             controller.fileLength !=
                                                                     0
-                                                                ? controller
-                                                                        .fileLength
-                                                                        .toString() +
-                                                                    "  file Selected"
+                                                                ? "${controller
+                                                                        .fileLength}  file Selected"
                                                                 : "",
                                                             style:
                                                                 subtitleStyle,
@@ -600,47 +709,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                         )))),
                       ),
 
-                      // Container(
-                      //     padding: EdgeInsets.only(top: 30, left: 10, right: 10),
-                      //     child: Container(
-                      //         padding: EdgeInsets.all(10),
-                      //         child: Container(
-                      //             decoration: BoxDecoration(
-                      //                 color: Colors.grey,
-                      //                 borderRadius: BorderRadius.all(Radius.circular(12))),
-                      //             padding: EdgeInsets.all(10),
-                      //             child: Container(
-                      //               padding: EdgeInsets.zero,
-                      //               decoration: BoxDecoration(
-                      //                   color: Colors.white,
-                      //                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                      //                   boxShadow: [
-                      //                     BoxShadow(
-                      //                         color: Colors.white,
-                      //                         blurRadius: 10,
-                      //                         spreadRadius: 10)
-                      //                   ]),
-                      //               width: double.infinity,
-                      //               height: 150,
-                      //               child: Stack(
-                      //                 children: [
-                      //                   Positioned(
-                      //                       bottom: 0,
-                      //                       right: 0,
-                      //                       child: Row(
-                      //                         mainAxisAlignment: MainAxisAlignment.end,
-                      //                         children: [
-                      //                           IconButton(onPressed: (){}, icon: Icon(Icons.attach_file)),
-                      //                           CircularButton(onPress: (){
-                      //
-                      //                   },),
-                      //                         ],
-                      //                       ))
-                      //                 ],
-                      //               ),
-                      //             )))),
 
-                      // ListView.separated(itemBuilder: itemBuilder, separatorBuilder: separatorBuilder, itemCount: itemCount)
                     ],
                   )),
             ),

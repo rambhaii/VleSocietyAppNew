@@ -5,11 +5,14 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/model/TestimonialModel.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
 
 import '../../../AppConstant/APIConstant.dart';
+import '../../../AppConstant/AppConstant.dart';
+import '../../../Widget/CustomAppBarWidget.dart';
 import '../../controller/DashboardController.dart';
 
 class TestimonialsDetails extends StatelessWidget {
@@ -21,67 +24,17 @@ class TestimonialsDetails extends StatelessWidget {
   Widget build(BuildContext context)
   {
     return Scaffold(
-        appBar: PreferredSize(
-          child: Stack(
-            children: [
-              Positioned(
-                  top: -80,
-                  right: 60,
-                  child: Container(
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color:   Color(0xffcdf55a),
-                    ),
-                  )
-              ),
-              ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: AppBar(
-                    backgroundColor: Colors.white.withOpacity(0.5),
-                    leading: Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: CircleAvatar(
-                        radius: 10,
-                        backgroundColor: Colors.amber.withOpacity(0.1),
-                        backgroundImage: NetworkImage(BASE_URL+controller.image),
-                      ),
-                    ),
-                    leadingWidth: 60,
-                    title: Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    elevation: 0.0,
-                    actions: [
-                      RawMaterialButton (
-                        constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
-                        onPressed: () {
-                          Get.to(()=>Profile());
-                          //  controller.logout();
-                        },
-                        shape: CircleBorder(
-                            side: BorderSide(width: 0.5, color: Colors.black)),
-                        child: Image.asset("assets/images/menu.png",
-                          height: 15,
-                          width: 20,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      )
-
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          preferredSize: Size(
-            double.infinity,
-            60.0,
-          ),
+        appBar:
+        PreferredSize(
+            preferredSize: Size(
+              double.infinity,
+              60.0,
+            ),
+            child: CustomAppBar(
+                title: GetStorage().read(AppConstant.userName),
+                Points: controller.points,
+                image:BASE_URL+GetStorage().read(AppConstant.profileImg)
+            )
         ),
         body:value1!=null?
         Padding(

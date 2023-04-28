@@ -53,8 +53,24 @@ class _TesimonialsState extends State<Tesimonials> {
                     ),
                   ),
                   leadingWidth: 60,
-                  title: Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
+                  title:  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        controller.userName.toString(),
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      Text(
+                        controller.points.toString()+" Points",
+                        style: smallTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: Colors.green),
+                      ),
+                    ],
+                  )
+                  ,
                   elevation: 0.0,
                   actions: [
 

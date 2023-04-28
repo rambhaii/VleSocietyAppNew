@@ -39,12 +39,15 @@ class _AwordsState extends State<Awords> {
     });
   }
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     _pageController = PageController();
-    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+    Timer.periodic(Duration(seconds: 5), (Timer timer)
+    {
       return setState(() {
-        if (currentIndex <2){
+        if (currentIndex <2)
+        {
           currentIndex++;
         } else{
           currentIndex=0;
@@ -254,19 +257,3 @@ class _AwordsState extends State<Awords> {
   }
 }
 
-// class Indicator extends StatelessWidget {
-//   final int positionIndex, currentIndex;
-//   const Indicator({required this.currentIndex, required this.positionIndex});
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 12,
-//       width: 12,
-//       decoration: BoxDecoration(
-//           border: Border.all(color: Colors.blue),
-//           color:
-//           positionIndex == currentIndex ? Colors.blue : Colors.transparent,
-//           borderRadius: BorderRadius.circular(100)),
-//     );
-//   }
-// }

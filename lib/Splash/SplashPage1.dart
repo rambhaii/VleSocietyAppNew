@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -36,7 +37,7 @@ class _SplashPage1State extends State<SplashPage1> {
       body: Stack(
         children: <Widget>[
           Positioned(child:  Lottie.asset('assets/json/hello.json'),height: 400,width: Get.width,),
-          Center(
+        /*  Center(
             child: SizedBox(
               width: 94.0,
               height: 86.0,
@@ -143,7 +144,12 @@ class _SplashPage1State extends State<SplashPage1> {
                 ],
               ),
             ),
-          ),
+          ),*/
+          Center(child: Container(
+            height: 220.h,
+            child: Image.asset("assets/images/icons.png"),
+          )),
+          
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +161,7 @@ class _SplashPage1State extends State<SplashPage1> {
                 ),
                 SizedBox(height: 40,),
                 Text(
-                  ' help each other',
+                  ' help to each other',
                   style: heading3.copyWith(fontSize: 25,fontWeight: FontWeight.w300),
                 ),
               ],

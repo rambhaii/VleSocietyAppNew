@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,7 +10,10 @@ import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/view/dashboard.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
+import '../../Widget/loading_widget.dart';
+import '../controller/NotificationController.dart';
 import 'CommunityDetails.dart';
 import 'profile.dart';
 class notification extends StatefulWidget {
@@ -22,8 +26,12 @@ class notification extends StatefulWidget {
 class _notificationState extends State<notification>
 {
   DashboardController controller = Get.find();
+  NotificationController controllerNotification = Get.put(NotificationController());
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
+    controllerNotification.getNotificationListNetworkApi();
     return Scaffold(
       appBar: PreferredSize(
         child: Stack(
@@ -54,7 +62,23 @@ class _notificationState extends State<notification>
                     ),
                   ),
                   leadingWidth: 60,
-                  title: Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),
+                  title:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        controller.userName.toString(),
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      Text(
+                        controller.points.toString()+" Points",
+                        style: smallTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: Colors.green),
+                      ),
+                    ],
                   ),
                   elevation: 0.0,
                   actions: [
@@ -88,39 +112,63 @@ class _notificationState extends State<notification>
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView.builder(
-                    itemCount:controller.notificationModel.value.data!.length ,
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context,index){
-                      final data=controller.notificationModel.value.data![index];
-              return Container(
-                height:60.h,
-                decoration: BoxDecoration(
-                ),
-                child: InkWell(
-                  onTap: ()
-                  {
-                    if(data.type.toString()=="1")
-                      {
-                        print("76sndfbdsbf"+data.typeId.toString());
-                        Get.to(()=>CommunityDetails(cid:data.typeId.toString() ,));
-                      }
-                    },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8,right: 10),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 50.h,
-                          width: 50.w,
+        controller: controllerNotification.scrollController1,
+        child:
+    Obx(
+    () =>
+      Column(
+          children:
+          [
+                 Obx(() =>controllerNotification.notificationModel.value.data!=null? ListView.builder(
+                     itemCount:controllerNotification.notificationModel.value.data!.length ,
+                     physics: ScrollPhysics(),
+                     shrinkWrap: true,
+                     itemBuilder: (context,index)
+                     {
+                       final data=controllerNotification.notificationModel.value.data![index];
+                   /*  for(int i=0;i<=index;i++)
+                     {
+                       if(controllerNotification.notificationModel.value.data![i].isSeen==false)
+                       {
+                        // AppConstant.countNotification=AppConstant.countNotification+i;
+                       }
+                     }*/
+                       String result=data.title.toString();
+                       print("object"+result);
+                       result = result.substring(0, 1);
+                       return Container(
+                         height:60.h,
+                         decoration: BoxDecoration(
+                         ),
+                         child: InkWell(
+                           onTap: ()
+                           {
+                             /*controllerNotification.notificationModel.value.data![index].isSeen==true;
+                             controllerNotification.notificationModel.refresh();*/
+                             if(data.type.toString()=="1")
+                             {
+                               Get.to(()=>CommunityDetails(cid:data.typeId.toString() ,));
+                             }
+                           },
+                           child: Padding(
+                             padding: const EdgeInsets.only(left: 8,right: 10),
+                             child: Row(
+                               children: [
+                                 Container(
+                                   height: 50.h,
+                                   width: 50.w,
+                                   decoration: BoxDecoration(
+                                       shape: BoxShape.circle,
+                                       color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.1)
+                                   ),
+                                   child: Center(child: Text(result.toString(),style: heading3.copyWith(
+                                       fontSize: 20,
+                                       fontWeight: FontWeight.w500
+                                       ,  color:Colors.primaries[Random().nextInt(Colors.primaries.length)] ) ,)),
 
-                          child: CachedNetworkImage(
+                                   /*  CachedNetworkImage(
                             fit: BoxFit.fill,
-                            imageUrl:"https://image.shutterstock.com/image-photo/"
-                                "mountains-under-mist-morning-amazing-260nw-1725825019.jpg",
+                            imageUrl:"${result}",
                             imageBuilder: (context, imageProvider) => Container(
                               height: 50.h,
                               width: 50.w,
@@ -134,41 +182,44 @@ class _notificationState extends State<notification>
                                 const CircularProgressIndicator()),
                             errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
-                          ) ,
-                        ),
-                        SizedBox(width: 8.w,),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(data.title.toString(),style: TextStyle(),maxLines: 2,overflow: TextOverflow.ellipsis,),
+                          ) ,*/
+                                 ),
+                                 SizedBox(width: 8.w,),
+                                 Expanded(
+                                   child: Column(
+                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                     mainAxisAlignment: MainAxisAlignment.center,
+                                     children: [
+                                       Text(data.title.toString(),style:smallTextStyle ,maxLines: 2,overflow: TextOverflow.ellipsis,),
 
-                            ],
-                          ),
-                        ),
-                       Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          // mainAxisAlignment: MainAxisAlignment.end,
-                          children:
-                          [
-                            Text( timeago.format(DateTime.parse(
-                                data.addDate.toString()))
-                              ,
-                              style: smallTextStyle.copyWith(fontWeight: FontWeight.w500,fontSize: 10,
-                                  color: Colors.black.withOpacity(0.5)),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            })
+                                     ],
+                                   ),
+                                 ),
+                                 Row(
+                                   crossAxisAlignment: CrossAxisAlignment.end,
+                                   // mainAxisAlignment: MainAxisAlignment.end,
+                                   children:
+                                   [
+                                     Text( timeago.format(DateTime.parse(
+                                         data.addDate.toString()))
+                                       ,
+                                       style: smallTextStyle.copyWith(fontWeight: FontWeight.w500,fontSize: 10,
+                                           color: Colors.black.withOpacity(0.5)),
+                                     ),
+                                   ],
+                                 )
+                               ],
+                             ),
+                           ),
+                         ),
+                       );
+                     }):Container()
+                   ,),
+            controllerNotification.isLoadingNotificationPage.value?const LoadingWidget():Container(),
           ],
         ),
       ),
+      )
     );
   }
 }

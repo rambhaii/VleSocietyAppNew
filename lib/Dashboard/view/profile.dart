@@ -10,6 +10,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -145,14 +146,6 @@ class _ProfileState extends State<Profile> {
                   fit: BoxFit.fill,
                 ),
               ),
-
-
-
-            //   IconButton(onPressed: (){
-            //     Navigator.pop(context,true);
-            //   } ,icon:Image.asset('assets/images/back.png',
-            //     fit: BoxFit.fill,width: 50,height: 50,),
-            // ),
             ),
             Positioned.fill(
                 top: 40,
@@ -172,22 +165,30 @@ class _ProfileState extends State<Profile> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius:BorderRadius.circular(100),
                                 ),
-                                child: Container(
-                                  height: 65,
-                                  width: 65,
-                                  decoration: BoxDecoration(
-                                      color: Colors.greenAccent.withOpacity(0.2),
-                                      shape: BoxShape.circle,
-                                      image:DecorationImage(
-                                          image: NetworkImage(BASE_URL+controller.image),fit:BoxFit.fill
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            blurRadius: 10,
-                                            spreadRadius: 0,
-                                            color: Colors.amber.withOpacity(0.3)
-                                        )
-                                      ]
+                                child: InkWell(
+                                  onTap: (){
+                                    bottomSheet();
+                                  },
+                                  child: Container(
+                                    height: 65,
+                                    width: 65,
+
+                                    decoration: BoxDecoration(
+
+                                        color: Colors.greenAccent.withOpacity(0.2),
+                                        shape: BoxShape.circle,
+                                        image:DecorationImage(
+
+                                            image: NetworkImage(BASE_URL+GetStorage().read(AppConstant.profileImg).toString()),fit:BoxFit.fill
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              blurRadius: 10,
+                                              spreadRadius: 0,
+                                              color: Colors.amber.withOpacity(0.3)
+                                          )
+                                        ]
+                                    ),
                                   ),
                                 ),
                               ),
@@ -200,7 +201,13 @@ class _ProfileState extends State<Profile> {
 
                                     Text(controller.userName.toString(), style: titleStyle.copyWith(fontSize: 18),softWrap: false,maxLines: 1,),
                                    SizedBox(height: 5,),
-                                    Text(controller.email, style:bodyText2Style),
+                                    Text(
+                                      controller.points.toString()+" Points",
+                                      style: smallTextStyle.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 13,
+                                          color: Colors.green),
+                                    ),
 
                                   ],
                                 ),
@@ -233,19 +240,11 @@ class _ProfileState extends State<Profile> {
                                       end: Alignment.centerRight,
                                       colors: [Colors.greenAccent, Colors.blue]))),
                         ),
-                        SizedBox(height: 5,width: 10),
-                        ListTile(
-                          onTap: ()
-                          {
-                            controller.getReferalPointsDetailNetworkApi();
 
-                          },
-                          contentPadding: EdgeInsets.only(left: 20,right: 20),
-                          title: Text("REFER & EARN ", style: titleStyle.copyWith(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 19,height: .5
-                          )),
-                        ),
+
+
+                        SizedBox(height: 5,width: 10),
+
                         ListTile(
                           onTap: ()
                           {
@@ -284,16 +283,27 @@ class _ProfileState extends State<Profile> {
 
                         ),
                         ListTile(
+                          onTap: ()
+                          {
+                            controller.getReferalPointsDetailNetworkApi();
+
+                          },
+                          contentPadding: EdgeInsets.only(left: 20,right: 20),
+                          title: Text("REFER & EARN ", style: titleStyle.copyWith(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 19,height: .5
+                          )),
+                        ),
+                        ListTile(
                           onTap: (){
                            // Get.to(()=>transaction());
-                            controller.gettransactionHistoryDetails();
+                            controller.gettransactionHistoryDetails("");
                           },
                           contentPadding: EdgeInsets.only(left: 20,right: 20),
                           title: Text("TRANSACTIONS",  style: titleStyle.copyWith(
                               fontWeight: FontWeight.w800,
-                              fontSize: 19,height:.3
-
-                          )),
+                              fontSize: 19,height:.3)
+                          ),
 
                         ),
                         ListTile(
@@ -646,20 +656,74 @@ class _ProfileState extends State<Profile> {
   }
   void showAlertBox()
   {
-    Get.defaultDialog(
-        title: 'Are you sure!',
-        titleStyle: TextStyle(fontSize: 20),
-        middleText: 'if you want to logout please press Yes otherwise No',
-        backgroundColor: Colors.white,
-        radius:5,
-        textCancel: 'No',
-        textConfirm: 'yes',
-        onCancel: (){},
-        onConfirm: ()
-        {  controller.logout();
 
-        }
+    showDialog(
+      context: context,
+      builder: (_) =>
+          Dialog(
+            alignment: Alignment.center,
+            insetPadding:EdgeInsets.all(20) ,
+            backgroundColor: Colors.transparent,
+            child:
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              child:
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children:
+                  [
+                    Text("Are you sure!",style: bodyText1Style.copyWith(color: Colors.red,fontSize: 20,),),
+                    SizedBox(height: 10,),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Text("if you want to logout please press Yes otherwise No",style: bodyText1Style.copyWith(color: Colors.red,fontSize: 15,
+                          height: 1.3
+                      ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20,right: 20),
+                      child: Row(
+                        children:
+                        [
+                          MaterialButton(onPressed: ()
+                          {
+                            Navigator.pop(context);
+                          },
+                            shape:RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                            color: Colors.green.withOpacity(0.1),
+                            child: Text("No",style: bodyText1Style.copyWith(color: Colors.black,fontSize: 15,)),),
+                          Spacer(),
+                          MaterialButton(onPressed: ()
+                          {
+                            controller.logout();
+
+                          },
+                            shape:RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                            color: Colors.cyanAccent.withOpacity(0.1),
+                            child: Text("Yes",style: bodyText1Style.copyWith(color: Colors.black,fontSize: 15,)),)
+                        ],
+                      ),
+                    )
+
+                  ],
+                ),
+              ),
+            ),
+          ),
     );
+
+
+
+
   }
   void bottomSheetFeedBack()
   {
@@ -745,8 +809,6 @@ class _ProfileState extends State<Profile> {
     );
 
   }
-
-
   void bottomSheet()
   {
 
@@ -798,7 +860,7 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   Padding(padding: EdgeInsets.only(left: 20)),
                                   imageProfile(),
-                          SizedBox(width: 20,),
+                                  SizedBox(width: 20,),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -852,6 +914,73 @@ class _ProfileState extends State<Profile> {
                                           ),
 
                                         )),
+                                    SizedBox(height: 15,),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 80),
+                                      child:
+                                      Center(
+                                        child: TextFormField(
+                                            controller:loginController.dob,
+
+                                            decoration:  InputDecoration
+                                              (
+                                              prefixIconConstraints: BoxConstraints(minWidth: 20,
+                                              ),
+
+                                              enabledBorder: const UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.black),
+                                              ),
+                                              focusedBorder:const UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.black),
+                                              ),
+                                              hintText: "Select Date Of Birth",
+                                              isDense: true,
+                                              counter: Offstage(),
+                                              contentPadding:const EdgeInsets.symmetric(horizontal: 1.5, vertical: 5),
+                                            ),
+                                            readOnly: true,
+                                            onTap: ()
+                                            async{
+                                              final Datet = await
+                                              showDatePicker(
+                                                  context: context,
+                                                  builder: (context, child) {
+                                                    return Theme(
+                                                      data: Theme.of(context).copyWith(
+                                                        colorScheme: ColorScheme.light(
+                                                          primary: Colors.white, // <-- SEE HERE
+                                                          onPrimary: Colors.redAccent, // <-- SEE HERE
+                                                          onSurface: Colors.black, // <-- SEE HERE
+                                                        ),
+                                                        textButtonTheme: TextButtonThemeData(
+                                                          style: TextButton.styleFrom(
+                                                            primary: Colors.red, // button text color
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: child!,
+                                                    );
+                                                  },
+
+
+
+
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(1950),
+                                                  lastDate: DateTime(2050));
+                                              if(Datet !=null)
+                                              {
+                                                String formattedDate= DateFormat('dd/MM/yyyy').format(Datet);
+                                                loginController.dob.text=formattedDate;
+
+                                              }
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            style: subtitleStyle
+                                        ),
+                                      ),
+
+                                    ),
                                     SizedBox(height: 10,),
                                     Padding(padding: EdgeInsets.only(left: 80),
                                         child: Center(
@@ -873,18 +1002,20 @@ class _ProfileState extends State<Profile> {
                                     SizedBox(height: 10,),
                                     Padding(padding: EdgeInsets.only(left: 80),
                                         child: Center(
-                                          child:  Obx(() {
+                                          child:  Obx(()
+                                          {
                                             int ind=loginController.stateData.value.data!.indexWhere((element) =>
                                             element.stateId==GetStorage().read(AppConstant.stateId).toString());
-                                            print("byugyud"+ind.toString()+GetStorage().read(AppConstant.stateId).toString());
                                             if(ind!=-1){
-                                              print("byugyud");
+
                                               loginController.selectedState=loginController.stateData.value.data![ind];
                                               loginController.etSate.text=loginController.stateData.value.data![ind].stateId!;
-                                              loginController.getCityNetworkApi(loginController.stateData.value.data![ind].stateId.toString());
+                                              loginController.getCityNetworkApi(loginController.stateData.value.data![ind].
+                                              stateId.toString());
                                             }
                                           return  loginController.stateData.value.data !=
-                                                null ? DropdownButton(
+                                                null ?
+                                          DropdownButton(
                                               value: loginController.selectedState,
                                               isExpanded: true,
                                               underline: Container(
@@ -901,8 +1032,7 @@ class _ProfileState extends State<Profile> {
                                               icon: const Icon(
                                                   Icons.keyboard_arrow_down),
                                               items: loginController.stateData.value
-                                                  .data!.map((
-                                                  StateDatum items) {
+                                                  .data!.map((StateDatum items) {
                                                 return DropdownMenuItem(
                                                   value: items,
                                                   child: Text(" " +

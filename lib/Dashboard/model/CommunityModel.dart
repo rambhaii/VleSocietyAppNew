@@ -59,7 +59,8 @@ class CommunityDatum {
     this.isSlected,
     this.likeslected,
     this.ttlMedia,
-    this.ttlShare
+    this.ttlShare,
+    this.is_verify
   });
 
   String? id;
@@ -80,6 +81,7 @@ class CommunityDatum {
   bool? likeslected;
   String? ttlMedia;
   String? ttlShare;
+  String? is_verify;
 
   factory CommunityDatum.fromJson(Map<String, dynamic> json) => CommunityDatum(
     id: json["id"],
@@ -100,6 +102,7 @@ class CommunityDatum {
     likeslected:json["aslike"]!=null?json["aslike"]=="0"?false:true:false,
     ttlMedia: json["ttlMedia"]??"",
     ttlShare: json["ttlShare"]??"",
+    is_verify: json["is_verify"]??"",
   );
 
   Map<String, dynamic> toJson() => {
@@ -120,5 +123,6 @@ class CommunityDatum {
     "isSlected": isSlected,
     "likeslected": likeslected,
     "ttlShare": ttlShare,
+    "is_verify": is_verify,
   };
 }

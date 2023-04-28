@@ -80,9 +80,10 @@ class _ArticalPageState extends State<ArticalPage>
                                  {
                                    controller.setSelectedCategoryOfArtical.value=1;
                                    controller.selectedIndexOfArtical.value=1;
-                                   isCategory=true;
-                                   status=1;
+                                   isCategory=false;
+                                   status=0;
                                    catId="1";
+                                   selectedSize = -1;
                                  });
 
                                  //  Get.to(FeedDetails());
@@ -91,10 +92,9 @@ class _ArticalPageState extends State<ArticalPage>
                                  padding: const EdgeInsets.all(10.0),
                                  child: AnimatedContainer(
                                    decoration: BoxDecoration(
-                                     /*
-                                     color: selectedSize == index
+                                     color: selectedSize == -1
                                           ? primaryColor
-                                          : Colors.transparent,*/
+                                          : Colors.transparent,
                                      border: Border.all(color: Colors.black12,),
                                      borderRadius: BorderRadius.circular(10),
                                    ),
@@ -147,13 +147,11 @@ class _ArticalPageState extends State<ArticalPage>
                                              style:  bodyText1Style.copyWith(
                                                fontSize: 14,
                                                fontWeight: FontWeight.w500,
-
-                                               /*   color: selectedSize == index
-                                                      ? Colors.white
-                                                      : Colors.black*/
-
-                                             ),
-                                           ),
+                                                 color: selectedSize == -1
+                                                     ? Colors.white
+                                                     : Colors.black
+                                                     ),
+                                                 ),
                                          ],
 
                                        ),
@@ -187,8 +185,9 @@ class _ArticalPageState extends State<ArticalPage>
                                          controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
                                          isCategory=true;
                                          selectedSize = index;
-                                         status=0;
+                                         status=1;
                                          catId= controller.communityCategoryModel.value.data![index].id.toString();
+
 
                                        });
                                      },
@@ -278,7 +277,7 @@ class _ArticalPageState extends State<ArticalPage>
                  ),
                ),
 
-               if(isCategory==false)
+           /*    if(isCategory==false)
                  filter==0?
                     Obx(
                     () =>
@@ -391,10 +390,9 @@ class _ArticalPageState extends State<ArticalPage>
                    },
                  ) :Container()
                  )
-               ,
-               if(isCategory==true)
-                 status==1?
-                       Obx(
+               ,*/
+               isCategory==false?
+                 Obx(
                         () =>Column(
                        children:
                        [
@@ -462,9 +460,8 @@ class _ArticalPageState extends State<ArticalPage>
                        ],
                      )
                        )
-
-                     :
-                 Obx(() => controller.articleModelByCategory.value.data != null
+                     :filter==0?
+                    Obx(() => controller.articleModelByCategory.value.data != null
                      ?
                  ListView.separated(
                    padding: EdgeInsets.all(10),
@@ -514,7 +511,57 @@ class _ArticalPageState extends State<ArticalPage>
                        ),
                      );
                    },
-                 ):Center(child: const CircularProgressIndicator())),
+                 ):Center(child: const CircularProgressIndicator())):
+                    Obx(() =>controller.articleModelWithFilter.value.data != null
+                   ? ListView.separated(
+                 padding: EdgeInsets.all(10),
+                 shrinkWrap: true,
+                 reverse: true,
+                 physics: NeverScrollableScrollPhysics(),
+                 itemCount: controller.articleModelWithFilter.value.data!.length,
+                 separatorBuilder: (BuildContext context, int index) => Divider(
+                   height: 5,
+                   thickness: 1.6,
+                   color: Colors.grey.withOpacity(0.2),
+                 ),
+                 itemBuilder: (BuildContext context, int index) {
+                   final datas = controller.articleModelWithFilter.value.data![index];
+                   return Padding(
+                     padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
+                     child: InkWell(
+                       onTap: (){
+                         _showBottomSheet(context, datas);
+                       },
+                       child: Row(
+                         children: [
+                           Expanded(child:
+                           Text(
+                             datas.title.toString(),
+                             style: bodyText1Style,overflow: TextOverflow.ellipsis,
+                             maxLines: 3,
+                           ),),
+                           SizedBox(width: 10,),
+                           ClipRRect(
+                             borderRadius: BorderRadius.circular(10),
+                             child: CachedNetworkImage(
+                               fit: BoxFit.cover,
+                               imageUrl: BASE_URL + datas.image.toString(),
+                               height: 75,
+                               width: 75,
+                               placeholder: (context, url) =>
+                                   Center(child: const CircularProgressIndicator()),
+                               errorWidget: (context, url, error) =>
+                               const Icon(Icons.error),
+                             ),
+                           )
+                         ],
+                       ),
+                     ),
+                   );
+                 },
+               ) :Container()
+               )
+
 
 
              ],
@@ -532,7 +579,8 @@ class _ArticalPageState extends State<ArticalPage>
 
 
 
-    status==1?Container():
+    status==0?
+    Container():
     Positioned(
       right: 10,
       top: Get.height/9,
@@ -788,72 +836,7 @@ class _ArticalPageState extends State<ArticalPage>
     );
   }
 
-  /* void _showBottomSheetFilter(BuildContext context,String cat_Id)
-  {
 
-    showModalBottomSheet(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.12),
-      isScrollControlled: true,
-      backgroundColor: Colors.white70,
-      builder: (context)
-      {
-        return Obx(() => loginController.stateData.value.data!=null?
-        ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: Container(
-                padding: EdgeInsets.all(10),
-                height: Get.height/2,
-                width: double.infinity,
-                child:
-                SingleChildScrollView(
-                  child: GridView.count
-                    (
-                    childAspectRatio:2,
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: List.generate(loginController.stateData.value.data!.length, (index)
-                    {
-                      return GestureDetector(
-                         onTap: ()
-                         {
-                           selectedSize1 = index;
-                           controller.getArticleWithFilterNetworkApi(cat_Id,loginController.stateData.value.data![index].stateId.toString());
-                           setState(()
-                         {
-                           //controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
-                           filter=1;
-                           isCategory=false;
-                         });
-                           },
-
-                        child: Container(
-                          child: Text(loginController.stateData.value.data![index].stateTitle.toString()
-                          ,  style: bodyText1Style.copyWith(
-                              color: selectedSize1 == index
-                                  ? Colors.black
-                                  : Colors.grey,
-                            ),
-
-
-                          ),
-                        ),
-                      );
-                    },),
-                  ),
-                )),
-          ),
-        ):Center())
-         ;
-      },
-    );
-
-
-
-  }*/
   void _showBottomSheetFilter(BuildContext context,String cat_Id)
   {
     showDialog(
@@ -908,7 +891,7 @@ class _ArticalPageState extends State<ArticalPage>
                                 {
                                   //controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
                                   filter=1;
-                                  isCategory=false;
+                                  isCategory=true;
                                 });
                               },
 

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
-
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import 'Community.dart';
 import 'MyAsk.dart';
-import 'forum.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DashboardController controller = Get.find();
+
   late TabController tabController;
   AnimationController? _controller;
   Animation<double>? _animation;
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState()
   {
     super.initState();
+
     tabController = TabController(length: 2, vsync: this);
     _controller = AnimationController(
         duration: const Duration(seconds: 1),
@@ -37,6 +39,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _animation =
         CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn);
     _controller!.forward();
+
+
   }
 
   @override
@@ -46,9 +50,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
 
-    return Container(
+    return
+      Container(
       margin: EdgeInsets.only(left: 10, right: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,21 +84,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                       items: controller.bannerModel.value.data!.map((i) {
                         return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              height: 130.0,
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.only(left: 10.0, right: 10),
-                              decoration: BoxDecoration(
+                          builder: (BuildContext context)
+                          {
+                            return InkWell(
+                              onTap: ()
+                              async{
+                                await launch(i.url!=null?i.url.toString():"");
+                              },
+                              child:  Container(
+                                height: 130.0,
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.only(left: 10.0, right: 10),
+
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                   color: Colors.white,
                                   image:
                                   DecorationImage(
-                                      image: NetworkImage(
-                                          BASE_URL + i.image.toString()),
-                                      fit: BoxFit.fill)
+                                    image: NetworkImage(BASE_URL + i.image.toString()),
+                                    fit: BoxFit.fill,
+
+                                  ),
+                                 ),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 60.0,left: 5,right: 5),
+                                    child: Text(i.title.toString(),
+                                     style: bodyText1Style.copyWith(
+                                         color: Colors.white,
+                                       fontSize: 15
+                                     ),overflow: TextOverflow.ellipsis,
+                                      maxLines: 3,
+                                        textAlign: TextAlign.center
+
+                                  ),
+                                ),
+
                               ),
-                            );
+                            ));
                           },
                         );
                       }).toList(),
@@ -146,16 +175,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       : Container(),
             ),
           )
-          // Expanded(
-          //   flex: Flex.l,
-          //   child: TabBarView(children: [
-          //       MyAsk(),
-          //       MyAsk(),
-          //       MyAsk(),
-          //     ]),
-          // ),
+
         ],
       ),
     );
+
+
+
+
   }
+
+
+  void showAlertBox()
+  {
+    Get.defaultDialog
+      (
+
+        title: 'Are you sure!',
+        titleStyle: TextStyle(fontSize: 20),
+        middleText: 'if you want to logout please press Yes otherwise No',
+        backgroundColor: Colors.white,
+        radius:5,
+        textCancel: 'No',
+
+        textConfirm: 'yes',
+        onCancel: (){},
+        onConfirm: ()
+        {  controller.logout();
+
+        }
+    );
+
+
+
+
+  }
+
 }
+

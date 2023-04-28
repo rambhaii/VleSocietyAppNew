@@ -30,6 +30,7 @@ const getPressMedia = "${BASE_URL}api/Transaction/getPressMedia";
 const getPressMediaDetails = "${BASE_URL}/api/Transaction/getPressMediaDetails";
 const getAboutCsc = "${BASE_URL}api/Transaction/getAboutCscDetails";
 const getPrivacy = "${BASE_URL}api/Transaction/getPrivacyPolicy";
+const getPrivacy1 = "${BASE_URL}api/Transaction/getPrivacyPolicy";
 const getAward = "${BASE_URL}api/Transaction/getAwardList";
 const getCommunitylikeDislike = "${BASE_URL}/api/Dashboard/communityLikeDislike";
 const getFaq = "${BASE_URL}/api/Transaction/getFaq";
@@ -46,6 +47,8 @@ const postPostReport = "${BASE_URL}/api/Dashboard/postPostReport";
 const guestUserLogin = "${BASE_URL}/api/UserMaster/guestUserLogin";
 const socialSignInUp = "${BASE_URL}/api/UserMaster/socialSignInUp";
 const getReferalPointsDetail = "${BASE_URL}/api/UserMaster/getReferalPointsDetail";
+const getUserDetails = "${BASE_URL}/api/UserMaster/getUserDetails";
+const getServicesCSC = "${BASE_URL}/api/Dashboard/getServicesCSC";
 
 const String kUriPrefix = 'https://vlesocietyapp.page.link';
 const String kHomepageLink = '/homepage';

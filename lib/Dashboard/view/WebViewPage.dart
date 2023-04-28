@@ -79,7 +79,7 @@ import '../../UtilsMethod/BaseController.dart';
     60.0,
     ),
     ),
-      body:url!=null?
+     /* body:url!=null?
       WebViewWidget(
        // controller: controller,
           controller:
@@ -92,7 +92,7 @@ import '../../UtilsMethod/BaseController.dart';
       ):Center(
         child: BaseController().errorSnack("404 Not Found "),
 
-      )
+      )*/
 
     );
   }

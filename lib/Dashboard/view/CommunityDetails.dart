@@ -1,11 +1,15 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/view/profile/testimonials.dart';
 
@@ -13,6 +17,7 @@ import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import '../../Widget/CustomAppBarWidget.dart';
 import '../controller/CommunityDetails.dart';
+import '../controller/DashboardController.dart';
 import 'GallaryCommunity.dart';
 
 class CommunityDetails extends StatefulWidget {
@@ -26,6 +31,7 @@ class CommunityDetails extends StatefulWidget {
 class _CommunityDetailsState extends State<CommunityDetails>
 {
   late  CommunityDetailsController controller;
+  DashboardController controller1 = Get.put(DashboardController());
   @override
   void initState() {
     controller=Get.put(CommunityDetailsController(cid: widget.cid));
@@ -37,12 +43,74 @@ class _CommunityDetailsState extends State<CommunityDetails>
     int count;
     return  Scaffold(
       appBar: PreferredSize(
+        child: Stack(
+          children: [
+            Positioned(
+                top: -80.h,
+                right: 60.w,
+                child: Container(
+                  height: 150.h,
+                  width: 150.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xffcdf55a),
+                  ),
+                )),
+            ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: AppBar(
+                  backgroundColor: Colors.white.withOpacity(0.5),
+                  leading: Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.amber.withOpacity(0.1),
+                      backgroundImage:
+                      NetworkImage(BASE_URL + controller1.image),
+                    ),
+                  ),
+                  leadingWidth: 60,
+                  title:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        controller1.userName.toString(),
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      Text(
+                        controller1.points.toString()+" Points",
+                        style: smallTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: Colors.green),
+                      ),
+                    ],
+                  )
+                  ,
+
+                  elevation: 0.0,
+
+                ),
+              ),
+            ),
+          ],
+        ),
+        preferredSize: Size(
+          double.infinity,
+          60.0,
+        ),
+      ),
+    /*  PreferredSize(
           preferredSize: Size(
             double.infinity,
             60.0,
           ),
           child: CustomAppBar(title: GetStorage().read(AppConstant.userName),
-              image:BASE_URL+GetStorage().read(AppConstant.profileImg))),
+              image:BASE_URL+GetStorage().read(AppConstant.profileImg))
+      ),*/
 
           body:Obx(()=> controller.communityModel.value.data!=null?Container
             (
@@ -62,7 +130,6 @@ class _CommunityDetailsState extends State<CommunityDetails>
                       width: double.infinity,
                       height: 200,
                       child:
-
                       StaggeredGrid.count(crossAxisCount: 4,
                         mainAxisSpacing: 4,
                         crossAxisSpacing: 4,
@@ -78,11 +145,6 @@ class _CommunityDetailsState extends State<CommunityDetails>
                                 errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
                               ),
-
-
-
-                             // imageContainer(controller.communityModel.value.data!.imageList!.length==4?4: Random().nextInt(2)+1),
-                            //  controller.communityModel.value.data!.imageList![0].image
                           ),
                           StaggeredGridTile.count(
                               crossAxisCellCount: 1,
@@ -109,18 +171,21 @@ class _CommunityDetailsState extends State<CommunityDetails>
                                     errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
                                     ),
-                                  // Center(
-                                  //     child: Text("10+",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),)),
-                                ),Padding(
+                                   )
+                                ,Padding(
                                   padding: const EdgeInsets.only(top: 28.0),
                                   child: Center(child: TextButton(onPressed: ()
                                       {final data= controller.communityModel.value.data!;
                                            Get.to(GalleryPage(cid:data.id.toString(),));
                                        },
-                                    child: Text(
+                                    child:
+                                    Text(
                                         ((controller.communityModel.value.data!.imageList!.length)-2).toString()+"+"
                                         ,style: TextStyle(fontSize: 30,fontWeight: FontWeight.w900,
-                                    color: Colors.black)),)),
+                                    color: Colors.black)
+                                    )
+                                    ,)
+                                  ),
                                 )]
                           ),],)
 
@@ -188,10 +253,26 @@ class _CommunityDetailsState extends State<CommunityDetails>
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          controller.communityModel.value.data!.description.toString(),
-                          style: bodyText2Style,
+
+                        Html(
+                            data:controller.communityModel.value.data!.description.toString(),
+                            style: {
+                              "body": Style(
+                                fontSize: FontSize(12.0),
+                              ),
+                              "body ol li, body ul li": Style(
+                                fontSize: FontSize(10.0),
+                              ),
+
+                            },
+                            onLinkTap: (String? url, RenderContext context, Map<String,
+                                String> attributes,
+                                element)
+                            async{
+                              await launch(url!);
+                            }
                         ),
+
                         const SizedBox(
                           height: 10,
                         ),

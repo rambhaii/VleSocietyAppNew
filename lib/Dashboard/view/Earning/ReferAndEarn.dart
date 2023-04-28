@@ -7,12 +7,16 @@ import 'package:flutter_html/style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 
+import '../../../AppConstant/AppConstant.dart';
 import '../../../AppConstant/textStyle.dart';
+import '../../../Notification/FirebaseDynamicLink.dart';
 import '../profile/FCQ.dart';
 
 
@@ -115,8 +119,13 @@ class ReferAndEarn extends StatefulWidget {
                                children: [
                                  Container(
                                    child: Column(
-                                     children: [
-                                       Image(image: AssetImage("assets/images/team.png",),height: 240,)
+                                     children:
+                                     [
+                                       Lottie.asset('assets/json/blackline.json',
+                                           frameRate: FrameRate.max
+                                           ,fit:BoxFit.fill,
+                                         width: 240
+                                       )
                                      ],
                                    ),
                                  ),
@@ -143,16 +152,26 @@ class ReferAndEarn extends StatefulWidget {
                                child: Padding(
                                  padding: const EdgeInsets.all(8.0),
                                  child: Row(
-                                   children: [
-                                     Image(image: AssetImage("assets/images/ratus.png")),
+                                   children:
+                                   [
+                                     Lottie.asset('assets/json/gift.json',
+                                         frameRate: FrameRate.max
+                                     ),
                                      Container(
                                          padding: EdgeInsets.only(left: 10),
                                          child: Text("Invite Friends on VLE Community",
                                            style: TextStyle(fontSize: 10),)),
                                      Spacer(),
                                      InkWell(
-                                       onTap: (){
-                                         Share.share(subject: "", "AppLink ");
+                                       onTap: ()
+                                       async {
+                                         String generateDeeplink =
+                                             await FirebaseDynamicLinkService
+                                             .buildDynamicLinks(
+                                               "App link",
+                                               "",
+                                               "",
+                                             false,1,GetStorage().read(AppConstant.id));
                                        },
                                          child: Text("Invite",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
                                      )
@@ -168,7 +187,7 @@ class ReferAndEarn extends StatefulWidget {
                    ),
                    Container(
                      width: MediaQuery.of(context).size.width/1.07,
-                     height:150.h,
+                     height:130.h,
                      decoration: BoxDecoration(
                          borderRadius: BorderRadius.circular(5),
                          border: Border.all(width: .5)
@@ -224,15 +243,12 @@ class ReferAndEarn extends StatefulWidget {
                                            children:
                                            [
                                              Text("Your Friend registers on Community",style: TextStyle(fontSize: 12),),
-
-                                            Text(controller.referalModel.value.data!.referalUse!=null?"Friend earn ${ controller.referalModel.value.data!.referalUse.toString()} points":"Friend earn 0 points ",
+                                             Text(controller.referalModel.value.data!.referalUse!=null?"Friend earn ${ controller.referalModel.value.data!.referalUse.toString()} points":"Friend earn 0 points ",
                                               maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.green),overflow: TextOverflow.ellipsis,
                                              )],
                                          ),
                                        ):Container(),
-
                                        Spacer(),
-
                                        Container(
                                          margin: EdgeInsets.only(top: 15),
                                          height: 70,
@@ -251,20 +267,6 @@ class ReferAndEarn extends StatefulWidget {
                                                Text( controller.referalModel.value.data!.referalUse!=null?"${ controller.referalModel.value.data!.referalUse.toString()} points you earn  ":"0 point you ",maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.black),overflow: TextOverflow.ellipsis,
                                                )
                                              ),
-
-                                             // Positioned(
-                                             //     top: -10,
-                                             //     right: 20,
-                                             //     child: Container(
-                                             //       height: 20,
-                                             //       width: 20,
-                                             //       decoration: BoxDecoration(
-                                             //           shape: BoxShape.circle,
-                                             //           border: Border.all(width: 1,
-                                             //             color: Colors.black,
-                                             //           ),),
-                                             //       child: Icon(Icons.add,color: Colors.white,size: 10,),
-                                             //     ))
                                            ],
                                          ),
                                        ),
@@ -276,10 +278,10 @@ class ReferAndEarn extends StatefulWidget {
                        ),
                      ),
                    ),
-                   SizedBox(height: 90,),
+                   SizedBox(height: 50.h,),
                    Container(
                        width: MediaQuery.of(context).size.width/1.07,
-                       height: 100,
+                       height: 80.h,
                        decoration: BoxDecoration(
                            borderRadius: BorderRadius.circular(5),
                            color: Color.fromRGBO(212, 213, 224, 1.0)
@@ -316,14 +318,15 @@ class ReferAndEarn extends StatefulWidget {
                                      child:
                                      InkWell(
                                        onTap: () async
-                                       {
-                                         await WhatsappShare.share
-                                           (
-                                           text: "App Link",
-                                           linkUrl: 'https://www.animationmedia.org/',
-                                           phone: '911234567890',
-                                         );
-                                       },
+                                        {
+                                     String generateDeeplink =
+                                     await FirebaseDynamicLinkService
+                                         .buildDynamicLinks(
+                                     "App link",
+                                     "",
+                                    "",
+                                     false,2,GetStorage().read(AppConstant.id));
+                                     },
                                        child: Row(
                                          crossAxisAlignment: CrossAxisAlignment.center,
                                          mainAxisAlignment: MainAxisAlignment.center,

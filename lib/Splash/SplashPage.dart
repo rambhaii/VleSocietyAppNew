@@ -32,18 +32,20 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return
+      Scaffold(
       backgroundColor: const Color(0xffffffff),
       body: Stack(
         children: <Widget>[
          //  Positioned(child: Image.asset("assets/images/team.png"),height: 400,width: Get.width,),
-          Positioned(child:  Lottie.asset('assets/json/team.json',
-              frameRate: FrameRate.max
-          ),height: 400,width: Get.width,),
+          Positioned(child:
+          Lottie.asset('assets/json/splashanimation.json',
+              frameRate: FrameRate.max)
+             ,height: 450,width: Get.width,),
           Positioned(
             bottom: -120,
             child:  RotationTransition(
-                turns: AlwaysStoppedAnimation(-40 / 360),
+             turns: AlwaysStoppedAnimation(-40 / 360),
               child: Lottie.asset('assets/json/blackline.json',
                   frameRate: FrameRate.max
                   ,fit:BoxFit.fill),),height: 700,width: Get.width,),

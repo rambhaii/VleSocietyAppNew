@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vlesociety/Auth/controller/login_controller.dart';
 
@@ -118,7 +119,8 @@ class _RegistrationState extends State<Registration> {
                           child: Column(
                             children: [
                               SizedBox(height: 25,),
-                              EditTextWidget(controller: _controller.etName, hint: 'Name',
+                              EditTextWidget(
+                                controller: _controller.etName, hint: 'Name',
                                 validator: (value){
                                 if(value.toString().isEmpty)
                                   {
@@ -142,6 +144,7 @@ class _RegistrationState extends State<Registration> {
                                   return null;
                                 },
                               ),
+
 
                               SizedBox(height: 15,),
                               EditTextWidget(controller: _controller.etMobile, hint: 'Mobile',
@@ -217,7 +220,8 @@ class _RegistrationState extends State<Registration> {
                                           );
                                         }).toList(),
                                         hint: Text(" Select State",style: subtitleStyle.copyWith(color: Colors.grey.withOpacity(0.7)),),
-                                        onChanged: (newValue) {
+                                        onChanged: (newValue)
+                                        {
                                           print("dbvbsdovb");
                                           _controller.selectedState=newValue;
                                           _controller.etSate.text=_controller.selectedState.stateId;
@@ -270,7 +274,8 @@ class _RegistrationState extends State<Registration> {
                                 margin: EdgeInsets.only(right: 35),
                                 alignment: Alignment.centerRight,
                                 width: Get.width,
-                                child: RawMaterialButton(onPressed: (){
+                                child: RawMaterialButton(onPressed: ()
+                                {
                                   if(_controller.formKey.currentState!.validate())
                                     {
                                       _controller.signUpNetworkApi(deviceId);
@@ -290,9 +295,6 @@ class _RegistrationState extends State<Registration> {
                 ),
 
                 const SizedBox(height: 35,),
-
-
-
                 Text.rich(
                   TextSpan(
                     style: smallTextStyle,
@@ -351,5 +353,31 @@ class _RegistrationState extends State<Registration> {
       ),
     );
   }
+  static String? birthDateValidator(String value)
+  {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy');
+    final String formatted = formatter.format(now);
+    String str1 = value;
+    List<String> str2 = str1.split('/');
+    String month = str2.isNotEmpty ? str2[0] : '';
+    String day = str2.length > 1 ? str2[1] : '';
+    String year = str2.length > 2 ? str2[2] : '';
+    if (value.isEmpty) {
+      return 'BirthDate is Empty';
+    } else if (int.parse(month) > 13) {
+      return 'Month is invalid';
+    } else if (int.parse(day) > 32) {
+      return 'Day is invalid';
+    } else if ((int.parse(year) > int.parse(formatted))) {
+      return 'Year is invalid';
+    } else if((int.parse(year) < 1920)){
+      return 'Year is invalid';
+    }
+    return null;
+  }
+
+
+
 }
 
