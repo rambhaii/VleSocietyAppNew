@@ -30,12 +30,13 @@ import '../../Notification/FirebaseNotification.dart';
 import '../../Widget/CircularButton.dart';
 import '../../Widget/CustomIcon.dart';
 import '../controller/NotificationController.dart';
+import 'ArticalSearch.dart';
 import 'SearchFeedArtical.dart';
 import 'SearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
-class HomeDashboard extends StatefulWidget
-{
+
+class HomeDashboard extends StatefulWidget {
   const HomeDashboard({super.key});
 
   @override
@@ -44,17 +45,19 @@ class HomeDashboard extends StatefulWidget
 
 class _HomeDashboardState extends State<HomeDashboard> {
   DashboardController controller = Get.put(DashboardController());
-
   DateTime? currentBackPressTime;
   NotificationServices notificationServices = NotificationServices();
+
   @override
-  void initState()
-  {
-    if(controller.isDob==true)
-    {
-    Future.delayed(Duration.zero, () => UtilsMethod.dateOfBirth(context,controller.userName.toString()));
+  void initState() {
+    if (controller.isDob == true) {
+      Future.delayed(
+          Duration.zero,
+          () =>
+              UtilsMethod.dateOfBirth(context, controller.userName.toString()));
     }
     super.initState();
+    controller.getgetUserDetailsNetworkApi();
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);
@@ -67,29 +70,18 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 
   @override
-  Widget build(BuildContext context)
-  {
-
-    print("rryrtyyui   "+controller.countvalue.value.toString());
-    controller.getgetUserDetailsNetworkApi();
+  Widget build(BuildContext context) {
 
 
-
-    SystemChrome.setSystemUIOverlayStyle
-      (
+    SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-
-
-
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
         extendBodyBehindAppBar: true,
         extendBody: true,
-        appBar:
-        PreferredSize(
-          child:
-          Stack(
+        appBar: PreferredSize(
+          child: Stack(
             children: [
               Positioned(
                   top: -80.h,
@@ -108,69 +100,62 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   child: AppBar(
                     backgroundColor: Colors.white.withOpacity(0.5),
                     leading: InkWell(
-                      onTap: ()
-                      {
-
-                        Get.to( Profile());
+                      onTap: () {
+                        Get.to(Profile());
                       },
                       child: Padding(
-
                         padding: EdgeInsets.only(left: 8.0),
                         child: CircleAvatar(
                           radius: 10,
                           backgroundColor: Colors.amber.withOpacity(0.1),
-                          backgroundImage:
-                              NetworkImage(BASE_URL + GetStorage().read(AppConstant.profileImg).toString()),
+                          backgroundImage: NetworkImage(BASE_URL +
+                              GetStorage()
+                                  .read(AppConstant.profileImg)
+                                  .toString()),
                         ),
                       ),
                     ),
                     leadingWidth: 60,
-                    title:
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              GetStorage().read(AppConstant.userName).toString(),
-                              style: TextStyle(color: Colors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "${controller.points} Points",
-                              style: smallTextStyle.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 11,
-                                  color: Colors.green),
-                            ),
-                          ],
-                        )
-                    ,
-
+                    title: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          GetStorage().read(AppConstant.userName).toString(),
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                        Text(
+                          "${ GetStorage().read(AppConstant.points).toString()==null?"0":GetStorage().read(AppConstant.points).toString()} Points",
+                          style: smallTextStyle.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                              color: Colors.green),
+                        ),
+                      ],
+                    ),
                     elevation: 0.0,
-                    actions: [
-                      controller.selectedIndex.value <= 1
-                          ?
-                      RawMaterialButton(
+                    actions:
+                    [
+                      Obx(() =>
+                      controller.selectedIndex.value <= 1 ? RawMaterialButton(
                               constraints: BoxConstraints(
                                   maxHeight: 30.h, minWidth: 30.w),
-                              onPressed: ()
-                              {
+                              onPressed: () {
                                 if (controller.selectedIndex.value == 0)
                                 {
+                                  print("sdfdfgdgfgh");
                                   Get.to(SearchScreen());
-
-                                }
-                                else if (controller.selectedIndex.value == 1) {
-                                  if (controller.selectedIndexOfArtical.value == 1) {
-                                    Get.to(FeedArticalSearch());
+                                } else if (controller.selectedIndex.value == 1)
+                                {
+                                  if (controller.selectedIndexOfArtical.value == 1)
+                                  {
+                                    Get.to(ArticalSearch());
                                   }
                                   else
                                   {
-                                    controller.getArticleBySearchKeyNetworkApi(
-                                        "", "", "");
-
+                                    Get.to(FeedArticalSearch());
                                   }
                                 }
-
                               },
                               shape: CircleBorder(),
                               child: Image.asset(
@@ -179,15 +164,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                 width: 23,
                                 fit: BoxFit.fill,
                               ),
-                            ) :
-                      Container(),
+                            ) : Container(),
+                      ),
+
+
+
+
+
+
+
+
+
+
+
                       RawMaterialButton(
                         constraints:
-                        BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
-                        onPressed: ()
-                        {
+                            BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
+                        onPressed: () {
                           //controllerNotification.getNotificationListNetworkApi();
-                          Get.to(()=>chats());
+                          Get.to(() => chats());
                         },
                         shape: CircleBorder(),
                         child: Image.asset(
@@ -197,40 +192,46 @@ class _HomeDashboardState extends State<HomeDashboard> {
                           fit: BoxFit.fill,
                         ),
                       ),
-                     Obx(() =>  Padding(
-                       padding: const EdgeInsets.only(top: 5.0,right: 15),
-                       child: badges.Badge(
-                         position: badges.BadgePosition.topEnd(top: -8, end: -5) ,
-                         badgeContent: Text(controller.countvalue.value.toString()),
-                         child: Icon(Icons.notifications,size: 30,color: Colors.orange[300]),
-                         showBadge:controller.countvalue.value!=0?true:false,
-                         ignorePointer: false,
-                         onTap: ()
-                         async {
-                           controller.countvalue.value=0;
-                           final SharedPreferences prefs = await SharedPreferences.getInstance();
-                           await prefs.setInt( "count", 0);
-                           Get.to(()=>notification());
-                            },
-                         badgeStyle: badges.BadgeStyle(
-                           shape: badges.BadgeShape.circle,
-                           badgeColor: Colors.red,
-                           padding: EdgeInsets.all(5),
-                           borderRadius: BorderRadius.circular(50),
-                           borderSide: BorderSide(color: Colors.red, width: 1),),
-                          badgeAnimation: badges.BadgeAnimation.rotation(
-                           animationDuration: Duration(seconds: 1),
-                           colorChangeAnimationDuration: Duration(seconds: 1),
-                           loopAnimation: false,
-                           curve: Curves.fastOutSlowIn,
-                           colorChangeAnimationCurve: Curves.easeInCubic,
-                         ),
-                       ),
-                     ))
-                     ,
+                      Obx(() => Padding(
+                            padding: const EdgeInsets.only(top: 5.0, right: 15),
+                            child: badges.Badge(
+                              position:
+                                  badges.BadgePosition.topEnd(top: -8, end: -5),
+                              badgeContent:
+                                  Text(controller.countvalue.value.toString()),
+                              child: Icon(Icons.notifications,
+                                  size: 30, color: Colors.orange[300]),
+                              showBadge: controller.countvalue.value != 0
+                                  ? true
+                                  : false,
+                              ignorePointer: false,
+                              onTap: () async {
+                                controller.countvalue.value = 0;
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setInt("count", 0);
+                                Get.to(() => notification());
+                              },
+                              badgeStyle: badges.BadgeStyle(
+                                shape: badges.BadgeShape.circle,
+                                badgeColor: Colors.red,
+                                padding: EdgeInsets.all(5),
+                                borderRadius: BorderRadius.circular(50),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1),
+                              ),
+                              badgeAnimation: badges.BadgeAnimation.rotation(
+                                animationDuration: Duration(seconds: 1),
+                                colorChangeAnimationDuration:
+                                    Duration(seconds: 1),
+                                loopAnimation: false,
+                                curve: Curves.fastOutSlowIn,
+                                colorChangeAnimationCurve: Curves.easeInCubic,
+                              ),
+                            ),
+                          )),
 
-
-                   /*   RawMaterialButton(
+                      /*   RawMaterialButton(
                         constraints:
                                    BoxConstraints(maxHeight: 40.h, minWidth: 40.w),
                         onPressed: ()
@@ -277,31 +278,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
             60.0,
           ),
         ),
-        body: RefreshIndicator
-          (
-          onRefresh: ()
-          {
-            if(controller.selectedIndex.value==0)
-              {
-                return controller.getCommunityNetworkApi();
-              }
-            else{
-              return Future(() => true
-              );
+        body: RefreshIndicator(
+          onRefresh: () {
+            if (controller.selectedIndex.value == 0)
+            {
+              return controller.getCommunityNetworkApi();
+            } else {
+              return Future(() => true);
             }
-
           },
-          child:
-          SingleChildScrollView(
-               controller: controller.scrollController,
+          child: SingleChildScrollView(
+              controller: controller.scrollController,
               physics: const BouncingScrollPhysics(),
               child: SafeArea(
-            child: Obx(
-                () => _widgetOptions.elementAt(controller.selectedIndex.value)),
-          )),
+                child: Obx(() =>
+                    _widgetOptions.elementAt(controller.selectedIndex.value)),
+              )),
         ),
         bottomNavigationBar: PreferredSize(
-          child:  ClipRRect(
+          child: ClipRRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
               child: Obx(
@@ -357,16 +352,13 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   selectedItemColor: Colors.red[800],
                   unselectedItemColor: Colors.black,
                   showUnselectedLabels: true,
-                  onTap: (int index)
-                  {
-                   /* setState(()
+                  onTap: (int index) {
+                    /* setState(()
                     {
 
                     });*/
-                    switch (index)
-                    {
+                    switch (index) {
                       case 0:
-
                         controller.selectedIndex.value = 0;
                         break;
                       case 1:
@@ -394,16 +386,13 @@ class _HomeDashboardState extends State<HomeDashboard> {
         ),
         floatingActionButton: controller.selectedIndex.value <= 2
             ? FloatingActionButton(
-                onPressed: ()
-                {
-                  if(controller.userType=="Guest")
-                     {UtilsMethod.PopupBox(context,"Post");}
-                   else
-                      {
-                        controller.getCommmunityCategoryNetworkApi();
-                        _showBottomSheet();
-                      }
-
+                onPressed: () {
+                  if (controller.userType == "Guest") {
+                    UtilsMethod.PopupBox(context, "Post");
+                  } else {
+                    controller.getCommmunityCategoryNetworkApi();
+                    _showBottomSheet();
+                  }
                 },
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -436,30 +425,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
       ),
     );
   }
-  void showAlert(BuildContext context)
-  {
+
+  void showAlert(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          content: Text("hi"),
-        ));
+              content: Text("hi"),
+            ));
   }
+
   Future<void> _loadData() async {
     controller.getCommunityNetworkApi();
   }
 
-
-
-
-
-
-
-  final List<Widget> _widgetOptions =  [
-     HomePage(),
-     ArticalPage(),
-     CSCHome(),
-     QuizPage(),
-     ServicePage(),
+  final List<Widget> _widgetOptions = [
+    HomePage(),
+    ArticalPage(),
+    CSCHome(),
+    QuizPage(),
+    ServicePage(),
   ];
 
   void _showBottomSheet() {
@@ -500,7 +484,6 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                 Border.all(width: 0.5, color: Colors.black38),
                             borderRadius: BorderRadius.circular(10)),
                       ),
-
                       Obx(
                         () => controller.isCategorySelected.value == false
                             ? Column(
@@ -597,8 +580,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                                                       .data![
                                                                           index]
                                                                       .image
-                                                                      .toString()))
-                                                      ),
+                                                                      .toString()))),
                                                     ),
                                                     SizedBox(
                                                       height: 8,
@@ -675,8 +657,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                                       child: Obx(() => Text(
                                                             controller.fileLength !=
                                                                     0
-                                                                ? "${controller
-                                                                        .fileLength}  file Selected"
+                                                                ? "${controller.fileLength}  file Selected"
                                                                 : "",
                                                             style:
                                                                 subtitleStyle,
@@ -708,8 +689,6 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                           ),
                                         )))),
                       ),
-
-
                     ],
                   )),
             ),

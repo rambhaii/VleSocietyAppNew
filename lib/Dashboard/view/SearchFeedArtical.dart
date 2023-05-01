@@ -27,19 +27,20 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
 
   DashboardController controller = Get.find();
   FocusNode inputNode = FocusNode();
-// to open keyboard call this function;
-  void openKeyboard(){
+
+  void openKeyboard()
+  {
     FocusScope.of(context).requestFocus(inputNode);
+
   }
 
   @override
   Widget build(BuildContext context)
   {
     controller.getFeedArticalNetworkApi("");
-    return Scaffold(
-      appBar: AppBar(title: Text("kjshjdfg"),
+    return Scaffold
+      (
 
-      ),
         body: SingleChildScrollView(
           child: Container(
                 child: Column(
@@ -97,53 +98,81 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
                             )),
                       ),
                       Container(
-                        child: Expanded(
-                          child:
-                          Obx(() =>Padding(
-                            padding:EdgeInsets.all(5) ,
-                            child:  controller.feedArticalModel.value.data != null ?
-                              ListView.separated(
-                                padding: EdgeInsets.all(10),
-                                shrinkWrap: true,
-                                reverse: true,
-                                physics: NeverScrollableScrollPhysics(),
-
-                                itemCount: controller.feedArticalModel.value.data!.length,
-                                separatorBuilder: (BuildContext context, int index) => Divider(
-                                  height: 5,
-                                  thickness: 1.6,
-                                  color: Colors.grey.withOpacity(0.2),
-                                ),
-                                itemBuilder: (BuildContext context, int index)
-                                {
-                                  final datas = controller.feedArticalModel.value.data![index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 6.0,bottom: 6.0),
-                                    child: InkWell(
-                                      onTap: (){
-                                        _showBottomSheetFeedArtcal(context, datas);
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Expanded(child: Text(
-                                            datas.title.toString(),
-                                            style: bodyText1Style,overflow: TextOverflow.ellipsis,
-                                            maxLines: 3,
-                                          ),),
-                                          SizedBox(width: 10,),
-
-                                        ],
+                        child: Obx(() => controller
+                            .feedArticalModel.value.data !=
+                            null
+                            ? ListView.separated(
+                          padding: EdgeInsets.all(15),
+                          shrinkWrap: true,
+                          reverse: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: controller
+                              .feedArticalModel.value.data!.length,
+                          separatorBuilder:
+                              (BuildContext context, int index) =>
+                              Divider(
+                                height: 15,
+                                thickness: 1.9,
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
+                          itemBuilder:
+                              (BuildContext context, int index)
+                          {
+                            final datas = controller
+                                .feedArticalModel
+                                .value
+                                .data![index];
+                            print("" + datas.url.toString());
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 6.0, bottom: 6.0),
+                              child: InkWell(
+                                onTap: () {
+                                  _showBottomSheetFeedArtcal(
+                                      context, datas);
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        datas.title.toString(),
+                                        style: bodyText1Style,
+                                        overflow:
+                                        TextOverflow.ellipsis,
+                                        maxLines: 3,
                                       ),
                                     ),
-                                  );
-                                },
-                              ):Center(child: const CircularProgressIndicator()),
-
-                          )
-
-                          ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    ClipRRect(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl:
+                                        datas.url.toString(),
+                                        height: 75,
+                                        width: 75,
+                                        placeholder: (context,
+                                            url) =>
+                                            Center(
+                                                child:
+                                                const CircularProgressIndicator()),
+                                        errorWidget: (context, url,
+                                            error) =>
+                                        const Icon(Icons.error),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                            : Container()),
                         ),
-                      )
+
                     ])),
         ),
         );
@@ -187,12 +216,12 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
                         height: 20,
                       ),
 
-                      /*  ClipRRect(
+                        ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: CachedNetworkImage(
                           fit: BoxFit.cover,
                           //imageUrl: BASE_URL + datum.image.toString(),
-                          imageUrl: BASE_URL + "datum.image.toString()",
+                          imageUrl: datum.url.toString(),
                           height: 200,
                           width: double.infinity,
                           placeholder: (context, url) =>
@@ -200,7 +229,7 @@ class _FeedArticalSearchState extends State<FeedArticalSearch> {
                           errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
                         ),
-                      ),*/
+                      ),
                       const SizedBox(
                         height: 10,
                       ),

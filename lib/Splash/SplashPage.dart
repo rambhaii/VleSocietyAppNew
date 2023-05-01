@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -24,7 +25,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   {
 
     Future.delayed(Duration(seconds: 5)).then((value) =>
-        Get.to(()=>SplashPage1(),transition: Transition.fadeIn,duration: Duration(milliseconds: 1000))
+        Get.off(()=>SplashPage1(),transition: Transition.fadeIn,duration: Duration(milliseconds: 1000))
     );
     // TODO: implement initState
     super.initState();
@@ -35,38 +36,39 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     return
       Scaffold(
       backgroundColor: const Color(0xffffffff),
-      body: Stack(
+      body:
+      Stack(
         children: <Widget>[
          //  Positioned(child: Image.asset("assets/images/team.png"),height: 400,width: Get.width,),
-          Positioned(child:
-          Lottie.asset('assets/json/splashanimation.json',
-              frameRate: FrameRate.max)
-             ,height: 450,width: Get.width,),
+
           Positioned(
-            bottom: -120,
+            top: -150.h,
             child:  RotationTransition(
-             turns: AlwaysStoppedAnimation(-40 / 360),
+              alignment: Alignment.center,
+              turns: AlwaysStoppedAnimation(-60 / 360),
               child: Lottie.asset('assets/json/blackline.json',
                   frameRate: FrameRate.max
-                  ,fit:BoxFit.fill),),height: 700,width: Get.width,),
-
-           Center(
+                  ,fit:BoxFit.fill),),height: 700.h,width: Get.width,),
+          Center(
              child: Column(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 SizedBox(height: 200,),
-                 Text(
-                    'Become A Member of \n    India\'s Largest',
-                    style: heading3,
-                 ),
-                 SizedBox(height: 20,),
-                 Text(
-                   ' Village Level Entrepreneur \n           Society',
-                   style: heading3,
-                 ),
+               mainAxisAlignment: MainAxisAlignment.start,
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children:
+               [
+                 SizedBox(height: 150.h,),
+                 Text('Become A Member of \nIndia\'s Largest', style: heading3,),
+                 SizedBox(height: 10,),
+                 Text('Village Level Entrepreneur \nVLE Society', style: heading3,),
                ],
              ),
            ),
+          Positioned(
+            top: 250.h,
+            child: Lottie.asset('assets/json/splashanimation.json',
+              frameRate: FrameRate.max,
+              height: 600.h,
+            )
+            ,height: 500.h,width: Get.width,),
 
         ],
       ),

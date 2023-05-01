@@ -32,7 +32,7 @@ class ReferAndEarn extends StatefulWidget {
 
    @override
    Widget build(BuildContext context) {
-     controller.getReferalPointsDetailNetworkApi();
+
 
      return Scaffold(
        appBar: PreferredSize(

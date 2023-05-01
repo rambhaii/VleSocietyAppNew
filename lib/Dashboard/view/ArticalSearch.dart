@@ -29,9 +29,15 @@ class _ArticalSearchState extends State<ArticalSearch> {
   void openKeyboard(){
     FocusScope.of(context).requestFocus(inputNode);
   }
-
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.getArticleBySearchKeyNetworkApi("", "", "");
+  }
+  @override
+  Widget build(BuildContext context)
+  {
     return Scaffold(
         body: Container(
             child: Column(
@@ -69,7 +75,8 @@ class _ArticalSearchState extends State<ArticalSearch> {
                   ),
                   suffixIcon: InkWell(
                       onTap: () {
-                        if (keyMessage.isNotEmpty) {
+                        if (keyMessage.isNotEmpty)
+                        {
                           controller.getArticleBySearchKeyNetworkApi(keyMessage, "","");
                         }
                       },
@@ -132,7 +139,7 @@ class _ArticalSearchState extends State<ArticalSearch> {
                        ),
                      );
                    },
-                 ):Center(child: const CircularProgressIndicator()))),
+                 ):Center())),
                )
     ])));
   }

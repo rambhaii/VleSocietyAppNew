@@ -13,7 +13,7 @@ import 'package:vlesociety/UtilsMethod/app_exception.dart';
 
 
 class BaseClient{
-  static const int TIME_OUT_DURATION = 40;
+  static const int TIME_OUT_DURATION = 60;
   Future<dynamic> post(String url,dynamic body)async
   {
     // print("dkbvksjbvsd");
@@ -24,9 +24,7 @@ class BaseClient{
     var payload=body;
     try {
       var response=await http.post(uri,
-          headers:   {
-             'x-api-key': 'api@vlesociety.com',
-          },
+          headers:   {'x-api-key': 'api@vlesociety.com',},
           body: payload).timeout(Duration(seconds: TIME_OUT_DURATION));
       return _processResponse(response);
     } on SocketException {

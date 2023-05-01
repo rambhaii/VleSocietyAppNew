@@ -47,7 +47,8 @@ class _SearchScreenState extends State<SearchScreen> {
   {
     controller.getSearchListNetworkApi("", "");
     return new Scaffold(
-      body: Container(
+      body:
+      Container(
         child: Column(
           children: <Widget>
           [
@@ -86,8 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             {
                               if (keyMessage.isNotEmpty)
                               {
-                                controller.getSearchListNetworkApi(
-                                    keyMessage, "");
+                                controller.getSearchListNetworkApi(keyMessage, "");
                               }
                             },
                             child: Icon(

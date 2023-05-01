@@ -369,7 +369,7 @@ class LoginController extends GetxController
         .get(getPrivacy + "?lng=eng")
         .catchError(BaseController().handleError);
 
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"].toString() == "1") {
 
       privacyModel.value = privacyModelFromJson(response);
       return;

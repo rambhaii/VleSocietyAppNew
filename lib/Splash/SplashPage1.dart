@@ -26,7 +26,7 @@ class _SplashPage1State extends State<SplashPage1> {
   }
   login1Route(){
     Future.delayed(Duration(seconds: 5)).then((value) =>
-        Get.to(()=>LogInPage1(),transition: Transition.fade,duration: Duration(milliseconds: 1000))
+        Get.off(()=>LogInPage1(),transition: Transition.fade,duration: Duration(milliseconds: 1000))
     );
   }
   @override
@@ -35,134 +35,36 @@ class _SplashPage1State extends State<SplashPage1> {
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       body: Stack(
-        children: <Widget>[
-          Positioned(child:  Lottie.asset('assets/json/hello.json'),height: 400,width: Get.width,),
-        /*  Center(
-            child: SizedBox(
-              width: 94.0,
-              height: 86.0,
-              child: Stack(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: 14.0,
-                      height: 14.0,
-                      child: SvgPicture.string(
-                        _svg_q82u2h,
-                        allowDrawingOutsideViewBox: true,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: SizedBox(
-                      width: 17.0,
-                      height: 17.0,
-                      child: SvgPicture.string(
-                        _svg_eenepy,
-                        allowDrawingOutsideViewBox: true,
-                      ),
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 13.0, middle: 0.5309),
-                    Pin(size: 13.0, start: 2.0),
-                    child: SvgPicture.string(
-                      _svg_rksti6,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 18.6, start: 14.0),
-                    Pin(size: 18.6, end: 0.5),
-                    child: SvgPicture.string(
-                      _svg_k85fp9,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 37.8, end: 9.5),
-                    Pin(size: 38.0, end: 5.5),
-                    child: SvgPicture.string(
-                      _svg_a6uno0,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 33.3, end: 14.0),
-                    Pin(size: 29.3, middle: 0.248),
-                    child: SvgPicture.string(
-                      _svg_f1b0qd,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 34.4, start: 13.5),
-                    Pin(size: 1.0, middle: 0.5),
-                    child: SvgPicture.string(
-                      _svg_vzh86l,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(-0.032, -0.037),
-                    child: SizedBox(
-                      width: 32.0,
-                      height: 32.0,
-                      child: SvgPicture.string(
-                        _svg_k3cvq,
-                        allowDrawingOutsideViewBox: true,
-                      ),
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 7.0, end: 4.0),
-                    Pin(size: 7.0, end: 0.0),
-                    child: SvgPicture.string(
-                      _svg_x8ouoh,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(-0.026, -0.029),
-                    child: SizedBox(
-                      width: 18.0,
-                      height: 18.0,
-                      child: SvgPicture.string(
-                        _svg_sp35b4,
-                        allowDrawingOutsideViewBox: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),*/
-          Center(child: Container(
-            height: 220.h,
-            child: Image.asset("assets/images/icons.png"),
-          )),
-          
+        children: <Widget>
+        [
+          Positioned(
+            left: 20.h,
+            top: 30.h,
+            child:  Lottie.asset('assets/json/csc.json',frameRate: FrameRate.max
+             ,fit:BoxFit.fill),height: 300,width: Get.width,),
+
+          Positioned(
+            top: 240.h,
+            child: Image.asset("assets/images/icons.png")
+            ,height: 200.h,width: Get.width,),
+
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 400,),
+                SizedBox(height: 350.h,),
                 Text(
-                  'Welcome To VLE\nSociety',
-                  style: heading3.copyWith(fontSize: 30),textAlign: TextAlign.center,
+                  'WELCOME TO CSC VLE Society',
+                  style: heading3.copyWith(fontSize: 25),textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 40,),
+                SizedBox(height: 10,),
+                Text('Many Voices,One Movement',
+                  style: heading3.copyWith(fontSize: 25,fontWeight: FontWeight.w300),textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 10,),
                 Text(
-                  ' help to each other',
-                  style: heading3.copyWith(fontSize: 25,fontWeight: FontWeight.w300),
+                    ' Towards a Digitally Empowered & Networked Society ',
+                  style: heading3.copyWith(fontSize: 12,fontWeight: FontWeight.w300),textAlign: TextAlign.center,
                 ),
               ],
             ),

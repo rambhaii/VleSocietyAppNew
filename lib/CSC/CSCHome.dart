@@ -130,7 +130,8 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                         );
                       }).toList(),
                     )
-                  : Container(
+                  :
+              Container(
                       height: 130.h,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -140,8 +141,8 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 10,),
-          Column(children: [
-           Obx(
+          controller.articleModelByCategory.value.data!.isNotEmpty? Column(children:
+          [Obx(
              ()=> controller.articleModelByCategory.value.data != null?
          Column(
            children: [
@@ -205,13 +206,9 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
             )
            ],
          ):
-
-         Center(
-           child: CupertinoActivityIndicator(),
-         ),
+             Center(child: CupertinoActivityIndicator(),),
        ),
-       controller.isLoadingCSCPage.value?const LoadingWidget():Container(),
-       ],),
+            controller.isLoadingCSCPage.value?const LoadingWidget():Container(),],):Container(),
 
           SizedBox(height: 25,),
           Padding(

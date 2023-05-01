@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     padding: const EdgeInsets.only(top: 60.0,left: 5,right: 5),
                                     child: Text(i.title.toString(),
                                      style: bodyText1Style.copyWith(
-                                         color: Colors.white,
+                                         color: Colors.black54,
                                        fontSize: 15
                                      ),overflow: TextOverflow.ellipsis,
                                       maxLines: 3,

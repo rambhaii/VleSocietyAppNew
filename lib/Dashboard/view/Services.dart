@@ -82,13 +82,19 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                if (value == 0)
                {
                  controller.getServiceNetworkApi();
+                 controller.serviceModel.value.data!.clear();
+                 controller.serviceModel.refresh();
+
                }
                if (value == 1)
                {
+
                  controller. getServicesGovernmentNetworkApi("");
                }
                if (value == 2)
                {
+                 controller.serviceCSCModel.value.data!.clear();
+                 controller.serviceCSCModel.refresh();
                  controller.getServicesCSCNetworkApi();
                }
 
@@ -364,9 +370,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                            controller.serviceCSCModel.value.data![index].title.toString(),
                            controller.serviceCSCModel.value.data![index].image.toString()));
 
-                       // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
-                       //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
-                     },
+                           },
                      child: Column(
                        children: [
                          Container(
@@ -427,69 +431,6 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
   }
   void _showBottomSheetFilter(BuildContext context,String cat_Id)
   {
-
-   /* showModalBottomSheet(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.60),
-      isScrollControlled: true,
-      backgroundColor: Colors.white70,
-      builder: (context)
-      {
-        return Obx(() => loginController.stateData.value.data!=null?
-        Padding(
-          padding: const EdgeInsets.only(left: 150),
-          child: ClipRRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-              child: Container(
-                color: Colors.red,
-                  padding: EdgeInsets.all(10),
-                  height: Get.height,
-                  width: 10,
-                  child:
-                  GridView.count
-                    (
-                    childAspectRatio:2,
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 10,
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: List.generate(loginController.stateData.value.data!.length, (index)
-                    {
-                      return GestureDetector(
-                        onTap: ()
-                        {
-                       //   selectedSize1 = index;
-                          controller.getArticleWithFilterNetworkApi(cat_Id,loginController.stateData.value.data![index].stateId.toString());
-                          setState(()
-                          {
-                            //controller.getArticleByCategoryNetworkApi( controller.communityCategoryModel.value.data![index].id.toString());
-                          //  filter=1;
-                            //isCategory=false;
-                          });
-                        },
-
-                        child: Container(
-                          child: Text(loginController.stateData.value.data![index].stateTitle.toString()
-                            ,  style: bodyText1Style.copyWith(
-                             *//* color: selectedSize1 == index
-                                  ? Colors.black
-                                  : Colors.grey,*//*
-                            ),
-
-
-                          ),
-                        ),
-                      );
-                    },),
-                  )),
-            ),
-          ),
-        ):Center())
-        ;
-      },
-    );*/
-
     showDialog(
       context: context,
       builder: (_) =>

@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/model/AwardModel.dart';
@@ -59,6 +60,7 @@ import '../view/profile/Certificates.dart';
 import '../view/profile/FCQ.dart';
 import '../view/profile/PressMediaDetails.dart';
 import '../view/profile/PressMida.dart';
+import '../view/profile/TestimonialsDetails.dart';
 import '../view/profile/testimonials.dart';
 import '../view/profile/transaction.dart';
 import 'dart:async';
@@ -228,9 +230,6 @@ class DashboardController extends GetxController {
     getreportPostApiNetworkApi();
     getQuizNetworkApi();
     addItemsQuize();
-    getFeedArticalNetworkApi("");
-
-    print("dfkjghdfkjhgiueryt" + isLoadingPage.value.toString());
     super.onInit();
   }
 
@@ -483,6 +482,7 @@ class DashboardController extends GetxController {
     _storage.remove(AppConstant.block);
     _storage.remove(AppConstant.zip);
     _storage.remove(AppConstant.dob);
+    _storage.remove(AppConstant.points);
     Get.delete<LoginController>();
     final _auth = FirebaseAuth.instance;
     final _googleSignIn = GoogleSignIn();
@@ -520,10 +520,10 @@ class DashboardController extends GetxController {
     var response = await BaseClient()
         .get(getArticalApi + "?lng=eng")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"].toString() == "1") {
       articleModel.value = articleModelFromJson(response);
-
-      if (articleModel.value.page! >= 9) {
+      if (articleModel.value.page! >= 9)
+      {
         isLoadingPageArtical.value = true;
         setCategoryOfArtical.value = 2;
       }
@@ -534,19 +534,21 @@ class DashboardController extends GetxController {
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
-  getArticleByCategoryNetworkApi(String cat_id) async {
-
+  getArticleByCategoryNetworkApi(String cat_id) async
+  {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getArticalApi + "?lng=eng&csc_id=8&post_category_id=${cat_id}")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
-
+    print("articalmodel"+response);
+    Get.context!.loaderOverlay.hide();
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
       articleModelByCategory.value = articleModelFromJson(response);
-
       return;
     }
     articleModelByCategory.value = articleModelFromJson(response);
-    BaseController().errorSnack(jsonDecode(response)["message"]);
+    //BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
   getArticleWithFilterNetworkApi(String cat_id, String state_id) async {
@@ -723,9 +725,11 @@ class DashboardController extends GetxController {
   }
 
   getTestimonialsData() async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getTestimonialslist + "?lng=eng&limit=200&page=0")
         .catchError(BaseController().handleError);
+    Get.context!.loaderOverlay.hide();
 
     if (jsonDecode(response)["status"] == 1) {
 
@@ -738,30 +742,35 @@ class DashboardController extends GetxController {
   }
 
   getPressMediataListNetWorkApi() async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getPressMedia + "?lng=eng&limit=200&page=0")
         .catchError(BaseController().handleError);
+    Get.context!.loaderOverlay.hide();
 
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
 
       pressMediaData.value = pressMediaDataFromJson(response);
       Get.to(() => PressMedia());
       return;
-    }
+     }
     pressMediaData.value = pressMediaDataFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
-  getPressMediaDetailsNetWorkApi(String pressMedia_id) async {
+  getPressMediaDetailsNetWorkApi(String pressMedia_id,BuildContext context) async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getPressMediaDetails +
             "?lng=eng&limit=200&page=0&pressMedia_id=${pressMedia_id}")
         .catchError(BaseController().handleError);
-
+    Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       pressMediaDetailsModel.value = pressMediaDetailsModelFromJson(response);
+      Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft,
+          duration: Duration(milliseconds: 700), child:PressMediaDetails()));
 
-      Get.to(() => PressMediaDetails());
       return;
     }
     pressMediaDetailsModel.value = pressMediaDetailsModelFromJson(response);
@@ -769,11 +778,12 @@ class DashboardController extends GetxController {
   }
 
   getAboutCscNetworkApi() async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getAboutCsc + "?lng=eng")
         .catchError(BaseController().handleError);
-
-    if (jsonDecode(response)["status"] == 1) {
+    Get.context!.loaderOverlay.hide();
+    if (jsonDecode(response)["status"].toString() == "1") {
       aboutCscModel.value = aboutCscModelFromJson(response);
       Get.to(() => AboutCSC());
       return;
@@ -787,7 +797,7 @@ class DashboardController extends GetxController {
         .get(getPrivacy1 + "?lng=eng")
         .catchError(BaseController().handleError);
 
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"].toString()== '1') {
       privacyModel.value = privacyModelFromJson(response);
       return;
     }
@@ -823,10 +833,11 @@ class DashboardController extends GetxController {
   }
 
   getFaQNetworkApi() async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getFaq + "?lng=eng&limit=200&page=0")
         .catchError(BaseController().handleError);
-
+    Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       faqModel.value = faqModelFromJson(response);
       Get.to(Faq());
@@ -899,7 +910,7 @@ class DashboardController extends GetxController {
     Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       articleModelWithSearchKey.value = articleModelFromJson(response);
-      Get.to(ArticalSearch());
+
       return;
     }
     articleModelWithSearchKey.value = articleModelFromJson(response);
@@ -937,7 +948,6 @@ class DashboardController extends GetxController {
 
   getServicesGovernmentNetworkApi(String state_id) async {
     Get.context!.loaderOverlay.show();
-
     var response = await BaseClient()
         .get(getServicesGovernment +
             "?lng=eng&limit=200&page=0&state_id=${state_id}")
@@ -945,11 +955,10 @@ class DashboardController extends GetxController {
     Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       governmentServiceModel.value = serviceModelFromJson(response);
-
       return;
     }
     governmentServiceModel.value = serviceModelFromJson(response);
-    //BaseController().errorSnack(jsonDecode(response)["message"]);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
   getServicesGovernmentSubCategoryNetworkApi(
@@ -1067,11 +1076,13 @@ class DashboardController extends GetxController {
   }
 
   getFeedArticalNetworkApi(String searchkey) async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
-        .get(getFeedArtical +
-            "?lng=eng&limit=${20}&page=${0}&searchkey=${searchkey}")
+        .get(getFeedArtical + "?lng=eng&limit=${20}&page=${0}&searchkey=${searchkey}")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
+    Get.context!.loaderOverlay.hide();
+    if (jsonDecode(response)["status"] == 1)
+    {
       feedArticalModel.value = feedArticalModelFromJson(response);
       isLoadingPageArtical.value = true;
       isLoadingVleNewsPage.value = true;
@@ -1122,9 +1133,11 @@ class DashboardController extends GetxController {
   }
 
   getReferalPointsDetailNetworkApi() async {
+    Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getReferalPointsDetail + "?lng=eng")
         .catchError(BaseController().handleError);
+    Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       referalModel.value = referalModelFromJson(response);
       Get.to(() => ReferAndEarn());
@@ -1135,11 +1148,14 @@ class DashboardController extends GetxController {
   }
 
   getgetUserDetailsNetworkApi() async {
+    print("skdjfdfjhgkjhg");
     var response = await BaseClient()
         .get(getUserDetails + "?lng=eng&ID=${_storage.read(AppConstant.id)}")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
+     if (jsonDecode(response)["status"].toString() == "1")
+     {
       points = jsonDecode(response)["Data"]["points"] ?? "";
+      _storage.write(AppConstant.points, jsonDecode(response)["Data"]["points"]??"");
       dob = jsonDecode(response)["Data"]["dob"] ?? "";
 
       print("fjghkgfdhfhgjfdgh" + jsonDecode(response)["Data"]["dob"] ?? "");

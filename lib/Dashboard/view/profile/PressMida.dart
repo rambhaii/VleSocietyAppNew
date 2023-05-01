@@ -57,7 +57,7 @@ class PressMedia extends StatelessWidget {
                  ),
                  child: InkWell(
                    onTap: (){
-                     controller.getPressMediaDetailsNetWorkApi(data.id.toString());
+                     controller.getPressMediaDetailsNetWorkApi(data.id.toString(),context);
                    },
                    child: Row(
                      children: [
