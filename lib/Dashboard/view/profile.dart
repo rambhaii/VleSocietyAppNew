@@ -1073,13 +1073,15 @@ class _ProfileState extends State<Profile> {
                                             },
                                           ),
                                         )),
-                                    SizedBox(
+                                    SizedBox
+                                      (
                                       height: 10,
                                     ),
                                     Padding(
                                         padding: EdgeInsets.only(left: 80),
                                         child: Center(
-                                          child: Obx(() {
+                                          child: Obx(()
+                                          {
                                             int ind = loginController
                                                 .stateData.value.data!
                                                 .indexWhere((element) =>
