@@ -40,6 +40,8 @@ class OtypVerifyPage extends StatelessWidget {
                    width: 150,
                    height: 40,
                    child: OTPTextField(
+
+
                      length: 4,
                      width: MediaQuery.of(context).size.width,
                      fieldWidth: 30,

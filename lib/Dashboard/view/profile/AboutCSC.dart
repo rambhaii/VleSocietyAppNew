@@ -9,6 +9,8 @@ import 'package:vlesociety/AppConstant/APIConstant.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Widget/CustomAppBarWidget.dart';
+
+import '../SingleImageView.dart';
 class AboutCSC extends StatefulWidget {
   const AboutCSC({Key? key}) : super(key: key);
 
@@ -56,15 +58,21 @@ class _AboutCSCState extends State<AboutCSC> {
                             shape:RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)
                             ),
-                            child: Container(
-                              height: 170.h,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: DecorationImage(
-                                      image: NetworkImage(BASE_URL+controller.aboutCscModel.value.data!.
-                                      image.toString()),fit: BoxFit.fill
-                                  )
+                            child: InkWell(
+                            onTap: (){
+                            Get.to(SingleImageView(BASE_URL +  controller.aboutCscModel.value.data!.
+                            image.toString()));
+                            },
+                              child: Container(
+                                height: 170.h,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    image: DecorationImage(
+                                        image: NetworkImage(BASE_URL+controller.aboutCscModel.value.data!.
+                                        image.toString()),fit: BoxFit.fill
+                                    )
+                                ),
                               ),
                             ),
                           ),

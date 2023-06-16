@@ -4,7 +4,9 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -46,7 +48,7 @@ class _LogInPage1State extends State<LogInPage1> {
       if (kDebugMode)
       {
         deviceId = value;
-        print("deviceId"+deviceId);
+        print("devicsdfdfgeId"+deviceId);
       }
     });
   }
@@ -67,10 +69,11 @@ class _LogInPage1State extends State<LogInPage1> {
                     Container(
                       margin: EdgeInsets.only(
                           left: 20, right: 20, top: 20, bottom: 20),
-                      height: 70,
-                      width: 70,
-                      child: Image.asset("assets/images/icons.png"),
-                    ),
+                      height: 90.h,
+                      width: 90.w,
+                      child:Lottie.asset('assets/json/csc.json',frameRate: FrameRate.max
+                          ,fit:BoxFit.fill),),
+
                     const Text.rich(
                       TextSpan(
                         style: TextStyle(
@@ -160,8 +163,11 @@ class _LogInPage1State extends State<LogInPage1> {
                         child: Form(
                           key: _keyForm,
                           child: TextFormField(
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                              ],
                               controller: _controller.etMobile,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.phone,
                               decoration: const InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black),
@@ -175,18 +181,23 @@ class _LogInPage1State extends State<LogInPage1> {
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 4, vertical: 8),
                               ),
-                              validator: (value) {
-                                if (value.toString().isEmpty) {
+                              validator: (value)
+                              {
+                                if (value.toString().isEmpty)
+                                {
                                   return "Please enter mobile No.";
                                 }
-                                if (value!.length != 10) {
+                                if (value!.length != 10)
+                                {
                                   return "Please enter 10 digits mobile number";
                                 }
+
                               },
                               maxLength: 10,
                               style: titleStyle),
-                        )),
-                  ],
+                        )
+                    ),
+                     ],
                 ),
                 const SizedBox(
                   height: 36,

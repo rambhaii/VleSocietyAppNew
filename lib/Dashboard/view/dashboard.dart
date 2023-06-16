@@ -147,14 +147,15 @@ class _HomeDashboardState extends State<HomeDashboard>
                     title: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children:
+                      [
                         Text(
                           GetStorage().read(AppConstant.userName).toString(),
                           style: TextStyle(color: Colors.black, fontSize: 16),
                         ),
                         Text(
-                          "${GetStorage().read(AppConstant.points)==null?"0":GetStorage().read(AppConstant.points)
-                              .toString()} Points",
+                      //    "${GetStorage().read(AppConstant.points)==null?"0":GetStorage().read(AppConstant.points).toString()} Points",
+                          "${controller.pointData.value==null?"0":controller.pointData.value} Points",
                           style: smallTextStyle.copyWith(
                               fontWeight: FontWeight.w500,
                               fontSize: 11,
@@ -226,45 +227,48 @@ class _HomeDashboardState extends State<HomeDashboard>
                           fit: BoxFit.fill,
                         ),
                       ),
-                      Obx(() => Padding(
-                            padding: const EdgeInsets.only(top: 5.0, right: 15),
-                            child: badges.Badge(
-                              position:
-                                  badges.BadgePosition.topEnd(top: -8, end: -5),
-                              badgeContent:
-                                  Text(controller.countvalue.value.toString()),
-                              child: Icon(Icons.notifications,
-                                  size: 30, color: Colors.orange[300]),
-                              showBadge: controller.countvalue.value != 0
-                                  ? true
-                                  : false,
-                              ignorePointer: false,
-                              onTap: () async
-                              {
-                                controller.countvalue.value = 0;
-                                final SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setInt("count", 0);
-                                Get.to(() => notification());
-                              },
-                              badgeStyle: badges.BadgeStyle(
-                                shape: badges.BadgeShape.circle,
-                                badgeColor: Colors.red,
-                                padding: EdgeInsets.all(5),
-                                borderRadius: BorderRadius.circular(50),
-                                borderSide:
-                                    BorderSide(color: Colors.red, width: 1),
-                              ),
-                              badgeAnimation: badges.BadgeAnimation.rotation(
-                                animationDuration: Duration(seconds: 1),
-                                colorChangeAnimationDuration:
-                                    Duration(seconds: 1),
-                                loopAnimation: false,
-                                curve: Curves.fastOutSlowIn,
-                                colorChangeAnimationCurve: Curves.easeInCubic,
+                      Obx(() => InkWell(
+                        onTap: () async {
+                          controller.countvalue.value = 0;
+                          controller.countervalue.value = 0;
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.setInt("count", controller.countervalue.value);
+                          Get.to(() => notification());
+                        },
+                        child: Padding(
+                              padding: const EdgeInsets.only(top: 10.0, right: 15),
+                              child: badges.Badge(
+                                position:
+                                    badges.BadgePosition.topEnd(top: -8, end: -5),
+                                badgeContent:
+                                    Text(controller.countvalue.value.toString()),
+                                child: Icon(Icons.notifications,
+                                    size: 30, color: Colors.orange[300]),
+                                showBadge: controller.countvalue.value != 0
+                                    ? true
+                                    : false,
+                                ignorePointer: false,
+
+                                badgeStyle: badges.BadgeStyle(
+                                  shape: badges.BadgeShape.circle,
+                                  badgeColor: Colors.red,
+                                  padding: EdgeInsets.all(5),
+                                  borderRadius: BorderRadius.circular(50),
+                                  borderSide:
+                                      BorderSide(color: Colors.red, width: 1),
+                                ),
+                                badgeAnimation: badges.BadgeAnimation.rotation(
+                                  animationDuration: Duration(seconds: 1),
+                                  colorChangeAnimationDuration:
+                                      Duration(seconds: 1),
+                                  loopAnimation: false,
+                                  curve: Curves.fastOutSlowIn,
+                                  colorChangeAnimationCurve: Curves.easeInCubic,
+                                ),
                               ),
                             ),
-                          )),
+                      )),
 
                       /*   RawMaterialButton(
                         constraints:
@@ -320,7 +324,8 @@ class _HomeDashboardState extends State<HomeDashboard>
             if (controller.selectedIndex.value == 0)
             {
               return controller.getCommunityNetworkApi();
-            } else {
+            } else
+            {
               return Future(() => true);
             }
           },
@@ -431,6 +436,7 @@ class _HomeDashboardState extends State<HomeDashboard>
                     UtilsMethod.PopupBox(context, "Post");
                   } else {
                     controller.getCommmunityCategoryNetworkApi();
+                    controller.urlvalue.value="";
                     _showBottomSheet();
                   }
                 },
@@ -487,6 +493,7 @@ class _HomeDashboardState extends State<HomeDashboard>
   ];
 
   void _showBottomSheet() {
+
     TextEditingController etmessage = TextEditingController();
     String catId = "";
     controller.imagesList!.clear();
@@ -499,7 +506,8 @@ class _HomeDashboardState extends State<HomeDashboard>
       barrierColor: Colors.black.withOpacity(0.1),
       isScrollControlled: true,
       backgroundColor: Colors.white70,
-      builder: (context) {
+      builder: (context) 
+      {
         return Padding(
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -520,8 +528,7 @@ class _HomeDashboardState extends State<HomeDashboard>
                         width: 40,
                         height: 7,
                         decoration: BoxDecoration(
-                            border:
-                                Border.all(width: 0.5, color: Colors.black38),
+                            border: Border.all(width: 0.5, color: Colors.black38),
                             borderRadius: BorderRadius.circular(10)),
                       ),
                       Obx(
@@ -676,132 +683,137 @@ class _HomeDashboardState extends State<HomeDashboard>
                                               ]),
                                           width: double.infinity,
                                           child:
-                                        Obx(() =>   Column(
-                                          children: [
-                                            TextFormField(
-                                              onChanged: (value)
-                                              {
-                                                value.toString().contains("https")?
-                                                controller.urlvalue.value=value
-                                                    :Container()  ;
+                                        Obx(() =>   SingleChildScrollView(
+                                          child: Column(
+                                            children: 
+                                            [
+                                              TextFormField(
+                                                onChanged: (value)
+                                                {
 
-                                              },
-                                              minLines: 5,
-                                              maxLines: null,
-                                              controller: etmessage,
-                                              keyboardType:
-                                              TextInputType.multiline,
-                                              decoration: InputDecoration(
-                                                alignLabelWithHint: true,
-                                                border: InputBorder.none,
-                                                hintText: "Write Here.....",
+                                                  print("kjdfh"+value);
+                                                  value.toString().contains("https") || value.toString().contains("Https")?
+                                                     controller.urlvalue.value=value
+                                                      :controller.urlvalue.value="" ;
+
+                                                },
+                                                minLines: null,
+                                                maxLines:10,
+                                                controller: etmessage,
+                                                keyboardType:
+                                                TextInputType.multiline,
+                                                decoration: InputDecoration(
+                                                  alignLabelWithHint: true,
+                                                  border: InputBorder.none,
+                                                  hintText: "Write Here.....",
+                                                ),
                                               ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                              children: [
-                                                Expanded(
-                                                    child: Obx(() =>
-                                                        Column(
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                                children: [
+                                                  Expanded(
+                                                      child:
+                                                          Column(
 
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children:
-                                                          [
-                                                            Container(
-                                                              height: 200,
-                                                              child:AnyLinkPreview(
-                                                                link: controller.urlvalue.value,
-                                                                displayDirection: UIDirection.uiDirectionHorizontal,
-                                                                showMultimedia: false,
-                                                                bodyMaxLines: 5,
-                                                                bodyTextOverflow: TextOverflow.ellipsis,
-                                                                titleStyle: TextStyle(
-                                                                  color: Colors.black,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 15,
-                                                                ),
-                                                                bodyStyle: TextStyle(color: Colors.grey, fontSize: 12),
-                                                                errorBody: 'Show my custom error body',
-                                                                errorTitle: 'Show my custom error title',
-                                                                errorWidget: Container(
-                                                                  color: Colors.grey[300],
-                                                                  child: Text('Oops!'),
-                                                                ),
-                                                                errorImage: "https://google.com/",
-                                                                cache: Duration(days: 7),
-                                                                backgroundColor: Colors.grey[300],
-                                                                borderRadius: 12,
-                                                                removeElevation: false,
-                                                                boxShadow: [BoxShadow(blurRadius: 3, color: Colors.grey)],
-                                                                onTap: (){}, // This disables tap event
-                                                              ) ,
-                                                            ),
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children:
+                                                            [
+                                                              Obx(() => controller.urlvalue.value.toString().contains("https") || controller.urlvalue.value.toString().contains("Https")?
+                                                              Container(
+                                                                height: 100,
+                                                                width: Get.width.w,
+                                                                child:AnyLinkPreview(
+                                                                  link: controller.urlvalue.value.toString(),
+
+                                                                  bodyStyle: TextStyle(color: Colors.grey, fontSize: 12),
+
+                                                                  errorWidget: Center(
+                                                                    child: Container(
+                                                                      color: Colors.grey[300],
+                                                                      child: Text('This Url Wrong, Please Enter valid url'),
+                                                                    ),
+                                                                  ),
 
 
-                                                            Text(controller.fileLength != 0 ? "${controller.fileLength}  Upload file" : "",style: subtitleStyle),
-                                                            controller.imagesList!=null?
-                                                            Container(
-                                                              height:50.h,
-                                                              width: MediaQuery.of(context).size.width,
-                                                              child: ListView.builder(
-                                                                  scrollDirection: Axis.horizontal,
-                                                                  itemCount: controller.imagesList!.length,
-                                                                  shrinkWrap: true,
-                                                                  physics: BouncingScrollPhysics(),
-                                                                  itemBuilder: (context,int index)
-                                                                  {
 
-                                                                    final data=controller.imagesList![index].path;
-                                                                    print("jkgh"+data);
-                                                                    return Container(
-                                                                        height: 50.h,
-                                                                        width: 50.w,
-                                                                        child:Container(
-                                                                          decoration: BoxDecoration(
-                                                                            borderRadius: BorderRadius.circular(60),
-                                                                            border: Border.all(),
-                                                                            image: DecorationImage(
-                                                                                image: FileImage(File(data)),
-                                                                                fit: BoxFit.fill),
-                                                                          ),
-                                                                        )
+                                                                  borderRadius: 12,
+                                                                  removeElevation: false,
 
 
-                                                                    );
-                                                                  }),
-                                                            ):Center()
-                                                          ],
-                                                        )
-                                                    )
-                                                ),
-                                                IconButton(
-                                                    onPressed: ()
-                                                    {
+                                                                  onTap: (){}, // This disables tap event
+                                                                ) ,
+                                                              ):Container()),
+                                                              SizedBox(height: 10,),
+
+
+                                                              Text(controller.fileLength != 0 ? "${controller.fileLength}  Upload file" : "",style: subtitleStyle),
+                                                              controller.imagesList!=null?
+                                                              Container(
+                                                                height:50.h,
+                                                                width: MediaQuery.of(context).size.width,
+                                                                child: ListView.builder(
+                                                                    scrollDirection: Axis.horizontal,
+                                                                    itemCount: controller.imagesList!.length,
+                                                                    shrinkWrap: true,
+                                                                    physics: BouncingScrollPhysics(),
+                                                                    itemBuilder: (context,int index)
+                                                                    {
+                                                                      final data=controller.imagesList![index].path;
+                                                                      print("jkgh"+data);
+                                                                      return Padding(
+                                                                        padding: const EdgeInsets.all(5.0),
+                                                                        child: Container(
+                                                                            height: 50.h,
+                                                                            width: 50.w,
+                                                                            child:Container(
+                                                                              decoration: BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(60),
+                                                                                border: Border.all(),
+                                                                                image: DecorationImage(
+                                                                                    image: FileImage(File(data)),
+                                                                                    fit: BoxFit.fill),
+                                                                              ),
+                                                                            )
+
+
+                                                                        ),
+                                                                      );
+                                                                    }),
+                                                              ):Center()
+                                                            ],
+                                                          )
+
+                                                  ),
+                                                  IconButton(
+                                                      onPressed: ()
+                                                      {
+                                                        controller
+                                                            .selectMultipleImage();
+                                                      },
+                                                      icon: Icon(
+                                                          Icons.attach_file)),
+                                                  CircularButton(
+                                                    onPress: () {
+                                                      if (etmessage
+                                                          .text.isEmpty) {
+                                                        Fluttertoast.showToast(
+                                                            msg: "Thank You");
+                                                      }
+                                                      controller.urlvalue.value="";
                                                       controller
-                                                          .selectMultipleImage();
+                                                          .postCommunityNetworkApi(
+                                                          catId,
+                                                          etmessage.text);
+                                                      Get.back();
                                                     },
-                                                    icon: Icon(
-                                                        Icons.attach_file)),
-                                                CircularButton(
-                                                  onPress: () {
-                                                    if (etmessage
-                                                        .text.isEmpty) {
-                                                      Fluttertoast.showToast(
-                                                          msg: "Thank You");
-                                                    }
-                                                    controller
-                                                        .postCommunityNetworkApi(
-                                                        catId,
-                                                        etmessage.text);
-                                                    Get.back();
-                                                  },
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         )),
                                         )))),
                       ),
@@ -817,7 +829,9 @@ class _HomeDashboardState extends State<HomeDashboard>
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+        now.difference(currentBackPressTime!) > Duration(seconds: 2))
+    {
+      controller.urlvalue.value="";
       currentBackPressTime = now;
       final snackBar = const SnackBar(
         content: const Text('Press again to exit'),

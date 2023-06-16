@@ -136,8 +136,10 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                  shrinkWrap: true,
                  primary: false,
                  padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                 crossAxisSpacing: 2,
-                 mainAxisSpacing: 1,
+               /*  crossAxisSpacing: 2,
+                 mainAxisSpacing: 1,*/
+                     crossAxisSpacing: 1.5,
+                     mainAxisSpacing: 18,
                  crossAxisCount: 3,
                  children: List.generate(
                    controller.serviceModel.value.data!.length,
@@ -190,7 +192,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                            ,
                            style: smallTextStyle
                                .copyWith(
-                               fontSize: 14.sp),
+                               fontSize: 13.sp),
                            maxLines: 2,
                            overflow:
                            TextOverflow.ellipsis,
@@ -219,8 +221,8 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                              shrinkWrap: true,
                              primary: false,
                              padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                             crossAxisSpacing: 2,
-                             mainAxisSpacing: 1,
+                                 crossAxisSpacing: 1.5,
+                                 mainAxisSpacing: 18,
                              crossAxisCount: 3,
                              children: List.generate(
                                controller.governmentServiceModel.value.data!.length,
@@ -320,7 +322,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                                        ,
                                        style: smallTextStyle
                                            .copyWith(
-                                           fontSize: 14.sp),
+                                           fontSize: 13.sp),
                                        maxLines: 2,
                                        overflow:
                                        TextOverflow.ellipsis,
@@ -402,8 +404,10 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                  shrinkWrap: true,
                  primary: false,
                  padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                 crossAxisSpacing: 2,
-                 mainAxisSpacing: 1,
+               /*  crossAxisSpacing: 2,
+                 mainAxisSpacing: 1,*/
+                     crossAxisSpacing: 1.5,
+                     mainAxisSpacing: 18,
                  crossAxisCount: 3,
                  children: List.generate(
                    controller.serviceCSCModel.value.data!.length,
@@ -503,7 +507,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                          ),
                          Text(
                            controller.serviceCSCModel.value.data![index].title.toString(),
-                           style: smallTextStyle.copyWith(fontSize: 14.sp),
+                           style: smallTextStyle.copyWith(fontSize: 13.sp),
                            maxLines: 2,
                            overflow:
                            TextOverflow.ellipsis,

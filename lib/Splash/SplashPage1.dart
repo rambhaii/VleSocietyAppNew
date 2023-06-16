@@ -40,7 +40,8 @@ class _SplashPage1State extends State<SplashPage1> {
           Positioned(
             left: 20.h,
             top: 30.h,
-            child:  Lottie.asset('assets/json/csc.json',frameRate: FrameRate.max
+            child:  Lottie.asset('assets/json/csc.json',
+                frameRate: FrameRate.max
              ,fit:BoxFit.fill),height: 300,width: Get.width,),
 
           Positioned(

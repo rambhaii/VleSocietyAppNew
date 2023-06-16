@@ -152,14 +152,13 @@ class _PointRedeemState extends State<PointRedeem> with TickerProviderStateMixin
                               crossAxisAlignment:CrossAxisAlignment.start,
                             children:
                             [
-                              Text(controller.transactionsModel.value.avlPoint.toString()!=null?"₹ "+controller.transactionsModel.value.avlPoint.toString():"₹ 0",style: heading3.copyWith(fontSize: 18,fontWeight: FontWeight.w200, ),),
+                              Text(controller.points.toString().toString()!=null?"₹ "+controller.points.toString().toString():"₹ 0",style: heading3.copyWith(fontSize: 18,fontWeight: FontWeight.w200, ),),
                               SizedBox(height: 5,),
                               Text("Withdrawable Balance",style:subtitleStyle ,)
                             ],
                           ),
                             Spacer(),
                             //Text("History",style:subtitleStyle.copyWith(color: Colors.green))
-
                           ],
                         ),
                     ),
@@ -204,7 +203,7 @@ class _PointRedeemState extends State<PointRedeem> with TickerProviderStateMixin
                                 ),
                               ),
                              Spacer(),
-                            int.parse(controller.transactionsModel.value.avlPoint.toString())>=1000?
+                            int.parse(controller.points.toString())>=1000?
                                InkWell(
                                onTap: ()
                                async {  print("dsjdfgh  "+controller.selectedComunityIndex.value.toString());

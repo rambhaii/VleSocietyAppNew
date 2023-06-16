@@ -90,6 +90,7 @@ class DashboardController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final ScrollController sFcrollController1 = ScrollController();
   final ScrollController scrollController2 = ScrollController();
+  final ScrollController scrollControllerTrasaction = ScrollController();
   final formKey=GlobalKey<FormState>();
   final formKey1=GlobalKey<FormState>();
   final upiformKey=GlobalKey<FormState>();
@@ -121,24 +122,24 @@ class DashboardController extends GetxController {
   }
   var selectedState;
   RxInt countvalue = 0.obs;
-  int? countervalue=0;
+  RxInt countervalue=0.obs;
   Future<void> counter() async
   {
     print("fjgjfg");
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      countervalue = prefs.getInt('count');
-      if(countervalue==null)
+       countervalue.value = prefs.getInt('count')!;
+      if(countervalue.value==null)
         {
-          countervalue=0;
+          countervalue.value=0;
         }
 
       if (counter!= null)
       {
-        print("dfgfghghgh"+countervalue.toString());
-        countervalue = countervalue! + 1;
-        await prefs.setInt("count", countervalue!);
-        countvalue.value = countervalue!;
+        print("dfgfghghgh"+countervalue.value.toString());
+        countervalue.value = countervalue.value! + 1;
+        await prefs.setInt("count", countervalue.value!);
+        countvalue.value = countervalue.value!;
 
       }
     } catch (e)
@@ -153,6 +154,7 @@ class DashboardController extends GetxController {
   RxInt selectedIndex = 0.obs;
   RxInt selectedIndexOfArtical = 0.obs;
   RxInt selectedComunityIndex = 0.obs;
+  RxInt selectedTrasactionIndex = 0.obs;
   RxInt selectedTabRedeemIndex = 0.obs;
   RxInt selectedServicesIndex = 0.obs;
   RxBool isCategorySelected = false.obs;
@@ -216,10 +218,12 @@ class DashboardController extends GetxController {
   String points = "0";
   String dob = "";
   RxBool isLoadingPage = false.obs;
+  RxBool isLoadingMyAsk = false.obs;
   RxBool isLoadingPageArtical = false.obs;
   RxBool isLoadingQuizePage = false.obs;
   RxBool isLoadingCSCPage = false.obs;
   RxBool isLoadingVleNewsPage = false.obs;
+  RxBool isLoadingTransactionPage = false.obs;
   RxBool isLoadinginsertialAds = false.obs;
 
   RxInt setCategoryOfArtical = 0.obs;
@@ -249,6 +253,7 @@ class DashboardController extends GetxController {
     getreportPostApiNetworkApi();
     getQuizNetworkApi();
     addItemsQuize();
+    addTransaction();
 
 
     super.onInit();
@@ -332,18 +337,29 @@ class DashboardController extends GetxController {
   {
 
     print("objedfdfgdfct");
-    print(isLoadingPageArtical.value);
+    print(isLoadingMyAsk.value);
     print( selectedIndex.value);
     print(setSelectedCategoryOfArtical.value);
 
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.position.pixels) {
-        if (isLoadingPage.value && selectedIndex.value == 0) {
+        if (isLoadingPage.value && selectedIndex.value == 0 && selectedComunityIndex.value == 0)
+        {
 
           start = start + int.parse(communityModel.value.page!.toString());
           getCommunityLoadingNetworkApi(start);
-        } else if (isLoadingPageArtical.value && selectedIndex.value == 1 &&
+        }
+        else if(isLoadingMyAsk.value && selectedIndex.value == 0 && selectedComunityIndex.value == 1)
+          {
+
+            start = start + int.parse(myAskModel.value.page!.toString());
+            getMyAskLoadingNetworkApi(start);
+            print("jhgj");
+          }
+
+
+        else if (isLoadingPageArtical.value && selectedIndex.value == 1 &&
             setSelectedCategoryOfArtical.value == 1)
         {
           print("djdfh");
@@ -375,6 +391,49 @@ class DashboardController extends GetxController {
       }
     });
   }
+  addTransaction() async
+  {
+    scrollControllerTrasaction.addListener(()
+    {
+      print("djfkhkg");
+      if (scrollControllerTrasaction.position.maxScrollExtent == scrollControllerTrasaction.position.pixels)
+      {
+        if (isLoadingTransactionPage.value)
+        {
+          start = start + int.parse(transactionsModel.value.page!.toString());
+          getTransactionLoadingNetworkApi(start);
+        }
+      }
+    });
+  }
+
+  getTransactionLoadingNetworkApi(int end) async {
+
+  print("dkjhjg");
+
+    var response = await BaseClient()
+        .get(gettransactionHistory + "?lng=eng&limit=${15}&page=${end}&user_id=${_storage.read(AppConstant.id)}")
+        .catchError(BaseController().handleError);
+    print("dfgfghghfj"+response);
+
+    if (jsonDecode(response)["status"] == 1)
+    {
+      if (isLoadingTransactionPage.value == true)
+      {
+        print("dkjhjg");
+        transactionsModel.value.data!.addAll(transactionsModelFromJson(response).data!);
+        transactionsModel.refresh();
+      }
+    } else
+    {
+      print("dkjhjghgfgdfgdgd");
+      isLoadingTransactionPage.value = false;
+      Fluttertoast.showToast(msg: "No more data available !");
+    }
+  }
+
+
+
 
   RxList reportMessageList = [
     "Harashment",
@@ -399,7 +458,7 @@ class DashboardController extends GetxController {
   }
 
   getCommunityLoadingNetworkApi(int end) async {
-
+  print("djfgjfgfg");
     var response = await BaseClient()
         .get(getCommunityApi +
             "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${end}")
@@ -417,6 +476,28 @@ class DashboardController extends GetxController {
       Fluttertoast.showToast(msg: "No more data availabel ! ");
     }
   }
+
+  getMyAskLoadingNetworkApi(int end) async {
+
+    var response = await BaseClient()
+        .get(getMyAsk +
+        "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${end}")
+        .catchError(BaseController().handleError);
+
+    if (jsonDecode(response)["status"] == 1) {
+      if (isLoadingMyAsk.value == true) {
+        myAskModel.value.data!.addAll(communityModelFromJson(response).data!);
+        //controller.end=controller.communityModel.value.page!;
+        myAskModel.refresh();
+      }
+    } else {
+      isLoadingMyAsk.value = false;
+      Fluttertoast.showToast(msg: "No more data availabel ! ");
+    }
+  }
+
+
+
 
   getFeedArticalLoadingNetworkApi(int end) async {
 
@@ -462,7 +543,8 @@ class DashboardController extends GetxController {
         .get(getCommunityApi +
             "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=${10}&page=${0}")
         .catchError(BaseController().handleError);
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"] == 1)
+    {
       communityModel.value = communityModelFromJson(response);
       isLoadingPage.value = true;
       start = 0;
@@ -612,17 +694,28 @@ class DashboardController extends GetxController {
     }
   }
 
-  getAskApi() async {
+  getAskApi() async
+  {
+    print("krjhkjfgh");
     var response = await BaseClient()
-        .get(getMyAsk +
-            "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=100&page=0")
+        .get(getMyAsk + "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=10&page=0")
         .catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
 
-    if (jsonDecode(response)["status"] == 1) {
+    if (jsonDecode(response)["status"] == 1)
+    {
       myAskModel.value = communityModelFromJson(response);
-      return;
+
+     if(myAskModel.value.page.toString()=="10")
+     {
+       isLoadingMyAsk.value = true;
+       start = 0;
+       end = 10;
+     }
+     return;
     }
+    isLoadingMyAsk.value = false;
+    myAskModel.value = communityModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
@@ -649,7 +742,8 @@ class DashboardController extends GetxController {
   {
     Get.context!.loaderOverlay.show();
     var response = await BaseClient()
-        .get(getArticalApi + "?lng=eng&csc_id=8&post_category_id=${cat_id}")
+       // .get(getArticalApi + "?lng=eng&csc_id=8&post_category_id=${cat_id}")
+        .get(getArticalApi + "?lng=eng&post_category_id=${cat_id}")
         .catchError(BaseController().handleError);
     print("articalmodel"+response);
     Get.context!.loaderOverlay.hide();
@@ -820,15 +914,20 @@ class DashboardController extends GetxController {
 
     Get.context!.loaderOverlay.show();
     var response = await BaseClient()
-        .get(gettransactionHistory +
-            "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=500&page=0&txn_status=${filter}")
+        .get(gettransactionHistory + "?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=15&page=0&txn_status=${filter}")
         .catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
 
     if (jsonDecode(response)["status"] .toString()== "1")
-    {
-      transactionsModel.value = transactionsModelFromJson(response);
+    { transactionsModel.value = transactionsModelFromJson(response);
       Get.to(transaction());
+      if(transactionsModel.value.page.toString()=="15")
+      {
+        isLoadingTransactionPage.value = true;
+       /* start = 0;
+        end = 15;*/
+      }
+
       return;
     }
     transactionsModel.value = transactionsModelFromJson(response);
@@ -1017,6 +1116,8 @@ class DashboardController extends GetxController {
         .get(getCommunity_search +
             "?lng=eng&limit=10&page=0&user_id=${_storage.read(AppConstant.id)}&searchkey=${searchKey}&post_category_master_id=${post_category_master_id}")
         .catchError(BaseController().handleError);
+    print("gfghjkhjkjkjkl"+getCommunity_search +
+        "?lng=eng&limit=10&page=0&user_id=${_storage.read(AppConstant.id)}&searchkey=${searchKey}&post_category_master_id=${post_category_master_id}");
    Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       communityModelBySerachKey.value = communityModelFromJson(response);
@@ -1234,7 +1335,7 @@ class DashboardController extends GetxController {
     if (jsonDecode(response)["status"] == 1)
     {
       feedArticalModel.value = feedArticalModelFromJson(response);
-      print("djfhgj");
+
       isLoadingPageArtical.value = true;
       isLoadingVleNewsPage.value = true;
       setCategoryOfArtical.value = 1;
@@ -1283,7 +1384,8 @@ class DashboardController extends GetxController {
     return false;
   }
 
-  getReferalPointsDetailNetworkApi() async {
+  getReferalPointsDetailNetworkApi() async
+  {
     print('kjdfghkj');
     Get.context!.loaderOverlay.show();
     var response = await BaseClient()
@@ -1298,8 +1400,9 @@ class DashboardController extends GetxController {
     referalModel.value = referalModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
-
-  getgetUserDetailsNetworkApi() async {
+  RxString pointData="0".obs;
+  getgetUserDetailsNetworkApi() async
+  {
 
     var response = await BaseClient()
         .get(getUserDetails + "?lng=eng&ID=${_storage.read(AppConstant.id)}")
@@ -1307,9 +1410,26 @@ class DashboardController extends GetxController {
      if (jsonDecode(response)["status"].toString() == "1")
      {
        print("");
-      points = jsonDecode(response)["Data"]["points"] ?? "";
+        points = jsonDecode(response)["Data"]["points"] ?? "";
+       pointData.value=jsonDecode(response)["Data"]["points"] ?? "";
+       dob = jsonDecode(response)["Data"]["dob"] ?? "";
       _storage.write(AppConstant.points, jsonDecode(response)["Data"]["points"]??"");
-      dob = jsonDecode(response)["Data"]["dob"] ?? "";
+      _storage.write(AppConstant.id, jsonDecode(response)["Data"]["ID"]??"");
+       _storage.write(AppConstant.userId, jsonDecode(response)["Data"]["user_login"]??"");
+       _storage.write(AppConstant.userName, jsonDecode(response)["Data"]["display_name"]??"");
+       _storage.write(AppConstant.profileImg, jsonDecode(response)["Data"]["profile"]??"");
+       _storage.write(AppConstant.email, jsonDecode(response)["Data"]["user_email"]??"");
+       _storage.write(AppConstant.phone, jsonDecode(response)["Data"]["mobile_no"]??"");
+       _storage.write(AppConstant.block, jsonDecode(response)["Data"]["block"]??"");
+       _storage.write(AppConstant.stateId, jsonDecode(response)["Data"]["state_id"]??"");
+       _storage.write(AppConstant.cityId, jsonDecode(response)["Data"]["city_id"]??"");
+       _storage.write(AppConstant.zip, jsonDecode(response)["Data"]["zip_code"]??"");
+       _storage.write(AppConstant.userType, jsonDecode(response)["Data"]["u_type"]??"");
+       _storage.write(AppConstant.dob, jsonDecode(response)["Data"]["dob"]??"");
+
+
+
+
       userDetails.value = userDetailsFromJson(response);
       return;
     }
@@ -1386,7 +1506,7 @@ class DashboardController extends GetxController {
   }
   getSettingsNetworkApi() async {
     var response = await BaseClient()
-        .get(getSettings + "?lng=eng&user_id=${_storage.read(AppConstant.id)}")
+        .get(getSettings + "?lng=eng")
         .catchError(BaseController().handleError);
     if (jsonDecode(response)["status"].toString() == "1")
     {

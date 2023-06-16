@@ -14,6 +14,7 @@ import '../../../AppConstant/APIConstant.dart';
 import '../../../AppConstant/AppConstant.dart';
 import '../../../Widget/CustomAppBarWidget.dart';
 import '../../controller/DashboardController.dart';
+import '../SingleImageView.dart';
 
 class TestimonialsDetails extends StatelessWidget {
     String desc;
@@ -63,13 +64,18 @@ class TestimonialsDetails extends StatelessWidget {
                     await launch(url!);
                   }),
               SizedBox(height: 10,),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                alignment: Alignment.topCenter,
-                child: CircleAvatar(
-                  radius: 60.r,
-                  backgroundColor: Colors.blue,
-                  backgroundImage: NetworkImage(BASE_URL+url.toString()),
+              InkWell(
+                  onTap: (){
+                    Get.to(SingleImageView(BASE_URL +  url.toString()));
+                  },
+                child: Container(
+                  padding: EdgeInsets.only(top: 5),
+                  alignment: Alignment.topCenter,
+                  child: CircleAvatar(
+                    radius: 60.r,
+                    backgroundColor: Colors.blue,
+                    backgroundImage: NetworkImage(BASE_URL+url.toString()),
+                  ),
                 ),
               ),
               Container(

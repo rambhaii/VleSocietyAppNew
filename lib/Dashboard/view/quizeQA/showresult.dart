@@ -13,6 +13,7 @@ import 'package:timeago/timeago.dart';
 import 'package:vlesociety/AppConstant/textStyle.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../../../AppConstant/AppConstant.dart';
 import '../../../AppConstant/textStyle.dart';
 
 import '../../controller/quize_controller.dart';
@@ -151,25 +152,29 @@ class _showresultState extends State<showresult> {
                           // Create the Pdf document
                           final pw.Document doc = pw.Document();
                           final directory = await getTemporaryDirectory();
-                          final file = File('${directory.path}/my_goal.pdf');
+                          final file = File('${directory.path}/MyResult.pdf');
 
-                          doc.addPage(
-                            pw.Page(
+                         /* doc.addPage(
+                            pw.MultiPage(
 
                               margin: const pw.EdgeInsets.all(10),
                               pageFormat: PdfPageFormat.a4,
+                              orientation: pw.PageOrientation.portrait,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+
                               build: (pw.Context context)
                               {
-                                return pw.Column(
+                                return <pw.Widget>
+                                [
+                                pw.Wrap(
 
-                                    crossAxisAlignment: pw.CrossAxisAlignment.start,
                                     children: [
 
                                       pw.Container(
                                           margin: pw.EdgeInsets.only(left: 15,right: 15,top: 20),
                                           child: pw.Row(
                                               children: [
-                                                pw.Text("Name : ${"Uday"}"),
+                                                pw.Text("Name : ${GetStorage().read(AppConstant.userName) }"+  +"Total correct Answer : ${widget.ttCorrect}"+"  "+"Total Incorrect Answer :  ${widget.ttInCorrect}"),
                                                 pw.SizedBox(width: 10),
                                                 pw.Text("Total correct Answer : ${widget.ttCorrect}"),
                                                 pw.SizedBox(width: 10),
@@ -183,7 +188,7 @@ class _showresultState extends State<showresult> {
                                         final data= controller.quizqModel.value.data!.questionList![index];
                                         return pw.
                                         Container(
-                                          margin: pw.EdgeInsets.only(left: 15,right: 15,top: 20),
+                                          margin: pw.EdgeInsets.only(left: 15,right: 15,top: 10),
                                           child: pw.Column
                                             (
 
@@ -242,21 +247,125 @@ class _showresultState extends State<showresult> {
 
                                       )
                                     ]
-                                );
-
-
+                                ),
+                                 ];
 
                               },
                             ),
-                          );
+                          );*/
+                          /*
                           await file.writeAsBytes(await doc.save());
 
                       await Share.shareFiles(
                       [file.path],
                       text: 'Check out my goal details',
                       subject: 'My goal details',
-                      );
+                      );*/
+                          doc.addPage(
+                            pw.MultiPage(
+                              pageFormat: PdfPageFormat.a4,
+                              orientation: pw.PageOrientation.portrait,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              build: (pw.Context context)
+                              {
+                                return <pw.Widget>
+                                [
+                                  pw.Wrap(
+                                    children: <pw.Widget>[
+                                      pw.Header(text: "Name :${GetStorage().read(AppConstant.userName) }"
+                                      ),
+                                      pw.Container(
 
+                                        width: PdfPageFormat.a4.width,
+                                        child: pw.Row(
+                                          mainAxisSize: pw.MainAxisSize.min,
+                                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                          children: <pw.Widget>[
+
+
+
+                                            pw.Expanded(
+                                              child: pw.Column(
+                                                mainAxisSize: pw.MainAxisSize.min,
+                                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                children: <pw.Widget>[
+                                                  pw.SizedBox(height: 8.0),
+                                                  for (int i = 0; i < controller.quizqModel.value.data!.questionList!.length; i++)
+                                                    pw.Column(
+                                                      mainAxisSize: pw.MainAxisSize.min,
+                                                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                      children: <pw.Widget>[
+                                                        pw.Padding
+                                                          (
+
+                                                            padding: pw.EdgeInsets.only(right: 0),
+                                                            child:pw.Text("${i+1} "+controller.quizqModel.value.data!.questionList![i].question.toString(),style: pw.TextStyle(
+                                                                color: PdfColors.black,
+                                                                fontSize: 16,
+                                                                letterSpacing: 1.5,height: 1.2
+                                                            ))
+                                                        ),
+                                                        pw.SizedBox(height: 1,),
+                                                        pw.Padding(
+                                                          padding:pw.EdgeInsets.only(left: 0,top: 0,bottom: 0),
+                                                          child: pw.Column(
+                                                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                            children:
+                                                            [
+                                                              pw.Text("1. "+controller.quizqModel.value.data!.questionList![i].optA.toString(),
+                                                                  style: pw.TextStyle(color:controller.quizqModel.value.data!.questionList![i].answer.toString().contains("A")
+                                                                      ?PdfColors.green:PdfColors.black,
+                                                                      fontSize: 10
+                                                                  ) ),
+                                                              pw.Text("2. "+controller.quizqModel.value.data!.questionList![i].optB.toString(),style: pw.TextStyle(color:controller.quizqModel.value.data!.questionList![i].answer.toString().contains("B")
+                                                                  ?PdfColors.green:PdfColors.black,
+                                                                  fontSize: 10
+                                                              )
+                                                              ),
+
+
+                                                              pw.Text("3. "+controller.quizqModel.value.data!.questionList![i].optC.toString(),style: pw.TextStyle(color:controller.quizqModel.value.data!.questionList![i].answer.toString().contains("C")
+                                                                  ?PdfColors.green:PdfColors.black,
+                                                                  fontSize: 10
+                                                              ) ),
+                                                              pw.Text("4. "+controller.quizqModel.value.data!.questionList![i].optD.toString(),style: pw.TextStyle(color:controller.quizqModel.value.data!.questionList![i].answer.toString().contains("D")
+                                                                  ?PdfColors.green:PdfColors.black,
+                                                                  fontSize: 10
+                                                              )
+                                                              ),
+
+
+
+                                                            ],
+                                                          ),
+
+
+                                                        )
+
+
+
+                                                      ],
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ];
+                              },
+                            ),
+                          );
+
+                          await file.writeAsBytes(await doc.save());
+
+                          await Share.shareFiles(
+                            [file.path],
+                            text: 'Check out my goal details',
+                            subject: 'My goal details',
+                          );
 
 
 

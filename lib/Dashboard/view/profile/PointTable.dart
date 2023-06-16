@@ -38,6 +38,8 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
   void initState()
   {
     super.initState();
+    controller.selectedTabRedeemIndex.value = 0;
+    controller.selectedTrasactionIndex.value = 0;
     controller.getBankListNetworkApi();
     controller.getPointsMaster_listNetworkApi();
     tabController1 = TabController(length: 2, vsync: this);
@@ -105,7 +107,9 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context)
   {
-    return Scaffold(
+
+    return
+      Scaffold(
       bottomNavigationBar: getAd(),
       appBar: PreferredSize(
         child: Stack(
@@ -122,7 +126,7 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
                   ),
                 )
             ),
-            ClipRRect(
+            Obx(() => ClipRRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                 child: AppBar(
@@ -135,17 +139,32 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
                   title:Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children:
-                    [ Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
+                    [
+                      Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
+                      Text(
+                        //    "${GetStorage().read(AppConstant.points)==null?"0":GetStorage().read(AppConstant.points).toString()} Points",
+                        "${controller.pointData.value==null?"0":controller.pointData.value} Points",
+                        style: smallTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: Colors.green),
+                      ),
                     ],
                   ),
                   elevation: 0.0,
                   actions: [
                     RawMaterialButton(
                       constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
-                      onPressed: () {Get.off(()=>Profile());},
-                      shape: CircleBorder(
-                          side: BorderSide(width: 0.5, color: Colors.black)),
-                      child: Image.asset("assets/images/menu.png", height: 15, width: 20, fit: BoxFit.fill,),
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      shape: CircleBorder(),
+                      child: Image.asset(
+                        "assets/images/back.png",
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     SizedBox(
                       width: 8,
@@ -154,7 +173,7 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
                   ],
                 ),
               ),
-            ),
+            ))
           ],
         ),
         preferredSize: Size(
@@ -162,698 +181,701 @@ class _PointTableState extends State<PointTable> with TickerProviderStateMixin
           60.0,
         ),
       ),
-      body:
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
+      body: SingleChildScrollView(
+        child:
+       Obx(() =>
+           Column(
+         children: [
+           Container(
 
-              height: 35,
-              child: TabBar(
-                  onTap: (value)
-                  {
-                    controller.selectedTabRedeemIndex.value = value;
-                    if (value == 1)
-                    {
-                      controller.getAskApi();
-                    }
-                  },
+             height: 35,
+             child: TabBar(
+                 onTap: (value)
+                 {
+                   controller.selectedTabRedeemIndex.value = value;
+                   if (value == 1)
+                   {
+                     controller.getAskApi();
+                   }
+                 },
 
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.black.withOpacity(0.56),
-                  isScrollable: true,
-                  controller: tabController1,
-                  labelStyle: heading3.copyWith(fontSize: 16),
-                  unselectedLabelStyle: heading3.copyWith(fontSize: 16),
-                  indicatorPadding: EdgeInsets.all(10),
-                  indicatorColor: Colors.transparent,
+                 labelColor: Colors.black,
+                 unselectedLabelColor: Colors.black.withOpacity(0.56),
+                 isScrollable: true,
+                 controller: tabController1,
+                 labelStyle: heading3.copyWith(fontSize: 16),
+                 unselectedLabelStyle: heading3.copyWith(fontSize: 16),
+                 indicatorPadding: EdgeInsets.all(10),
+                 indicatorColor: Colors.transparent,
 
-                  padding: EdgeInsets.zero,
-                  tabs: [
-                    const Tab(
-                      child: Text("Earn Points"),
-                    ),
-                    const Tab(
-                      child: Text("Redeem Points"),
-                    ),
-                  ]),
-            ),
-            Obx(
-                  () => Container(
-                child: controller.selectedTabRedeemIndex.value == 0
-                    ? FadeTransition(opacity: _animation!, child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
+                 padding: EdgeInsets.zero,
+                 tabs: [
+                   const Tab(
+                     child: Text("Earn Points"),
+                   ),
+                   const Tab(
+                     child: Text("Redeem Points"),
+                   ),
+                 ]),
+           ),
+           Container(
+             child: controller.selectedTabRedeemIndex.value == 0
+                 ? FadeTransition(opacity: _animation!, child: Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: SingleChildScrollView(
 
-                        child:
-
-
-
-                                  Obx(() =>controller.pointsModelDetails.value.data!=null?
-                                  ListView.builder(
-                                      itemCount:controller.pointsModelDetails.value.data!.length ,
-                                      physics: ScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemBuilder: (context,index)
-                                      {
-                                        final data=controller.pointsModelDetails.value.data![index];
-                                        return Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Card(
-                                            child: Container(
-                                              padding: EdgeInsets.all(5),
-                                             // height:80.h,
-                                              decoration: BoxDecoration(
-                                              ),
-                                              child: InkWell(
-                                                onTap: ()
-                                                {
-
-                                                  print(index.toString());
-                                                  if(index.toString()=="0")
-                                                    {
-                                                      print("djkhfhj");
-                                                      controller.getReferalPointsDetailNetworkApi();
-                                                    }
-                                                  else if(index.toString()=="1")
-                                                    {
-                                                      Get.off(HomeDashboard());
-                                                    }
-                                                  else if(index.toString()=="2")
-                                                  {
-                                                    Get.off(HomeDashboard());
-                                                  }
-                                                  else if(index.toString()=="3")
-                                                  {
-                                                    Get.off(HomeDashboard());
-                                                  }
-                                                  else if(index.toString()=="4")
-                                                  {
-
-                                                  }
-                                                },
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(left: 8,right: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        height: 60.h,
-                                                        width: 60.w,
-                                                        decoration: BoxDecoration(
-                                                            shape: BoxShape.circle,
-                                                            color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.02)
-                                                        ),
-                                                        child: Center(child:
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children:
-                                                          [
-                                                            Text(data.points.toString()+"",
-                                                              style: heading3.copyWith
-                                                              (
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w200) ,
-                                                            ),
-                                                            Text("Points",
-                                                              style: heading3.copyWith
-                                                                (
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.w200) ,
-                                                            ),
-
-
-                                                          ],
-                                                        )
-                                                        ),
-
-
-                                                      ),
-                                                      SizedBox(width: 20.w,),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children:
-                                                          [
-                                                             Row(
-                                                              children:
-                                                              [
-                                                                Container(
-                                                                  height: 30.h,
-                                                                  width: 30.w,
-                                                                  decoration: BoxDecoration(
-                                                                      shape: BoxShape.circle,
-                                                                      color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.1)
-                                                                  ),
-                                                                  child: Center(child: Image(
-                                                                    image: NetworkImage(BASE_URL+data.icon.toString()),
-                                                                  )
-                                                                  ),
-
-                                                                ),
-                                                                Text("  "+data.title.toString(),style:smallTextStyle.copyWith(fontWeight: FontWeight.w900) ,maxLines: 1,overflow: TextOverflow.ellipsis,),
-                                                              ],
-                                                            ),
-                                                            Text(data.description.toString(),style:smallTextStyle.copyWith(fontSize: 14) ,maxLines: 2,overflow: TextOverflow.ellipsis,),
+                 child:
 
 
 
-                                                          ],
-                                                        ),
-                                                      ),
+                 controller.pointsModelDetails.value.data!=null?
+                 ListView.builder(
+                     itemCount:controller.pointsModelDetails.value.data!.length ,
+                     physics: ScrollPhysics(),
+                     shrinkWrap: true,
+                     itemBuilder: (context,index)
+                     {
+                       final data=controller.pointsModelDetails.value.data![index];
+                       return Padding(
+                         padding: const EdgeInsets.all(5.0),
+                         child: Card(
+                           child: Container(
+                             padding: EdgeInsets.all(5),
+                             // height:80.h,
+                             decoration: BoxDecoration(
+                             ),
+                             child: InkWell(
+                               onTap: ()
+                               {
 
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      })
-                                      :Container()
-                                    ,),
+                                 print(index.toString());
+                                 if(index.toString()=="0")
+                                 {
+                                   print("djkhfhj");
+                                   controller.getReferalPointsDetailNetworkApi();
+                                 }
+                                 else if(index.toString()=="1")
+                                 {
+                                   Get.off(HomeDashboard());
+                                 }
+                                 else if(index.toString()=="2")
+                                 {
+                                   Get.off(HomeDashboard());
+                                 }
+                                 else if(index.toString()=="3")
+                                 {
+                                   Get.off(HomeDashboard());
+                                 }
+                                 else if(index.toString()=="4")
+                                 {
 
-
-
-
-                      ),
-                    ))
-                    : controller.selectedTabRedeemIndex.value == 1
-                    ?   SingleChildScrollView(
-          child:
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0,right: 10,top: 30),
-            child:
-            Form(
-              key: controller.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                [
-                  Container(
-                    height: 150.h,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(color: Colors.grey)
-                    ),
-
-                    child:
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children:
-                      [
-                        Container(
-                          color: Colors.orangeAccent.withOpacity(0.1),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0,right: 8.0,top: 8.0),
-                            child: Row(
-                              children:
-                              [
-                                Column(
-                                  crossAxisAlignment:CrossAxisAlignment.start,
-                                  children:
-                                  [
-                                    Text(controller.transactionsModel.value.avlPoint.toString()!=null?"₹ "+controller.transactionsModel.value.avlPoint.toString():"₹ 0",style: heading3.copyWith(fontSize: 18,fontWeight: FontWeight.w200, ),),
-                                    SizedBox(height: 5,),
-                                    Text("Withdrawable Balance",style:subtitleStyle ,)
-                                  ],
-                                ),
-                                Spacer(),
-                                //Text("History",style:subtitleStyle.copyWith(color: Colors.green))
-
-                              ],
-                            ),
-                          ),
-                        ),
-                        Divider(height: 0.8,color: Colors.grey,thickness: 1,),
-                        SizedBox(height: 20,),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column
-                            (
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:
-                            [
-                              Row(
-                                children:
-                                [
-                                  Text("₹",style: titleStyle,),
-                                  Container(
-                                    width: 200.w,
-                                    child: Column(
-                                      children: [
-                                        EditTextWidgetAmount(
-                                          controller: controller.etAmount,
-                                          hint: 'Enter Amount to withdraw',
-                                          type: TextInputType.number,
-                                          validator: (value)
-                                          {
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Enter Amount to withdraw";
-                                            }
-                                            if(int.parse(value.toString())<=9999)
-                                            {
-
-                                              return "Your amount less then 1000";
-                                            }
-
-                                            return null;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  int.parse(controller.transactionsModel.value.avlPoint.toString())>=1000?
-                                  InkWell(
-                                    onTap: ()
-                                    async {  print("dsjdfgh  "+controller.selectedComunityIndex.value.toString());
-                                    if(controller.selectedComunityIndex.value.toString() == "0")
-                                    {
-                                      if(controller.formKey.currentState!.validate())
-                                      {
-                                        bool? status=await controller.postRedeemNetworkApi("1");
-                                        if(status)
-                                        {
-                                          controller.etAmount.clear();
-                                          controller.etupiId.clear();
-                                          controller.getgetUserDetailsNetworkApi();
+                                 }
+                               },
+                               child: Padding(
+                                 padding: const EdgeInsets.only(left: 8,right: 10),
+                                 child: Row(
+                                   children: [
+                                     Container(
+                                       height: 60.h,
+                                       width: 60.w,
+                                       decoration: BoxDecoration(
+                                           shape: BoxShape.circle,
+                                           color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.02)
+                                       ),
+                                       child: Center(child:
+                                       Column(
+                                         crossAxisAlignment: CrossAxisAlignment.center,
+                                         mainAxisAlignment: MainAxisAlignment.center,
+                                         children:
+                                         [
+                                           Text(data.points.toString()+"",
+                                             style: heading3.copyWith
+                                               (
+                                                 fontSize: 14,
+                                                 fontWeight: FontWeight.w200) ,
+                                           ),
+                                           Text("Points",
+                                             style: heading3.copyWith
+                                               (
+                                                 fontSize: 14,
+                                                 fontWeight: FontWeight.w200) ,
+                                           ),
 
 
-                                        }
-                                      }
-                                    }
-                                    else if(controller.selectedComunityIndex.value.toString() == "1")
-                                    {
-                                      if(controller.formKey.currentState!.validate())
-                                      {
-                                        bool? status=await  controller.postRedeemNetworkApi("2");
-                                        if(status)
-                                        {
-                                          controller.getgetUserDetailsNetworkApi();
-                                          controller.etAmount.clear();
-                                          controller.etSignature.clear();
-                                          controller.etAccountNumber.clear();
-                                          controller.etBranchName.clear();
-                                          controller.etIFSCECODE.clear();
-                                          controller.etAddress.clear();
-                                          controller.etIFSCECODE.clear();
-
-                                        }
-                                      }
-                                    }
+                                         ],
+                                       )
+                                       ),
 
 
-                                    },
-                                    child:
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 10.0),
-                                      child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                                              border: Border.all(color: Colors.grey)
-                                          ),
-                                          child: Text("Withdraw",style:subtitleStyle.copyWith(fontSize: 20,color: Colors.orangeAccent.withOpacity(0.6)),)),
-                                    ),
-                                  )
-                                      : InkWell(
-                                    onTap: ()
-                                    async {
+                                     ),
+                                     SizedBox(width: 20.w,),
+                                     Expanded(
+                                       child: Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+
+                                         children:
+                                         [
+                                           Row(
+                                             children:
+                                             [
+                                               Container(
+                                                 height: 30.h,
+                                                 width: 30.w,
+                                                 decoration: BoxDecoration(
+                                                     shape: BoxShape.circle,
+                                                     color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.1)
+                                                 ),
+                                                 child: Center(child: Image(
+                                                   image: NetworkImage(BASE_URL+data.icon.toString()),
+                                                 )
+                                                 ),
+
+                                               ),
+                                               Padding(
+                                                 padding: const EdgeInsets.only(left: 8.0),
+                                                 child: Container(
+                                                   width: 170.w,
+                                                   child: Text(data.title.toString(),style:smallTextStyle.copyWith(fontWeight: FontWeight.w900) ,
+                                                     maxLines: 3,overflow: TextOverflow.ellipsis,),
+                                                 ),
+                                               ),
+                                             ],
+                                           ),
+                                           Text(data.description.toString(),style:smallTextStyle.copyWith(fontSize: 14) ,maxLines: 2,overflow: TextOverflow.ellipsis,),
 
 
 
-                                    },
-                                    child:
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 10.0),
-                                      child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                                              border: Border.all(color: Colors.grey)
-                                          ),
-                                          child: Text("Withdraw",style:subtitleStyle.copyWith(fontSize: 20,color: Colors.grey.withOpacity(0.6)),)),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Withdrawal amount greater then 1000 ",style: subtitleStyle.copyWith(fontSize: 14),),
-                              )
-                            ],
-                          ),
-                        ),
+                                         ],
+                                       ),
+                                     ),
 
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Container(
-                    height: 35,
-                    child: TabBar(
-                        onTap: (value)
-                        {
-                          controller.selectedComunityIndex.value = value;
-                          if (value == 1)
-                          {
-
-                          }
-                        },
-                        labelColor: Colors.black,
-                        unselectedLabelColor: Colors.black.withOpacity(0.56),
-                        isScrollable: true,
-                        controller: tabController,
-                        labelStyle: bodyText1Style.copyWith(fontSize: 20),
-                        unselectedLabelStyle: bodyText2Style.copyWith(fontSize: 12),
-                        indicatorPadding: EdgeInsets.zero,
-                        indicatorColor: Colors.red,
-                        dividerColor: Colors.lightBlue,
-                        padding: EdgeInsets.zero,
-                        tabs:
-                        [
-                          const
-                          Tab(child: Text("UPI",style: TextStyle(fontSize: 20),),
-                          ),
-                          const Tab(
-                            child: Text("Bank Account",style: TextStyle(fontSize: 20)),
-                          ),
-                        ]),
-                  ),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  Obx(
-                        () => Container(
-                      child: controller.selectedComunityIndex.value == 0
-                          ? FadeTransition(opacity: _animation!, child:
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 200.w,
-                              child:
-                              Column(
-                                children:
-                                [
-                                  EditTextWidgetAmount(
-                                    controller: controller.etupiId,
-                                    hint: 'Enter Your UPI ID',
-                                    validator: (value){
-                                      String pattern = '[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}';
-                                      RegExp regExp = RegExp(pattern);
-                                      if(value.toString().isEmpty)
-                                      {
-                                        return "Please Enter Your UPI ID";
-                                      }
-                                      if (!regExp.hasMatch(value.toString()))
-                                      {
-                                        return 'Please Enter valid UPI ID';
-                                      }
-
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 50,),
-                            InkWell(
-                              onTap: (){
-                                UtilsMethod.PopupBoxTrasction(context,"");
-                              },
-                              child:
-                              Text.rich(
-
-                                TextSpan(
-                                  style: smallTextStyle,
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                      'To get Information on processing fees and  withdrawing \n cash from your account ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12,
-                                          height: 2,
-                                          letterSpacing: 0.2),
-                                    ),
-                                    TextSpan(
-                                      text: 'click here',
-                                      style: TextStyle(
-                                        color: const Color(0xff006eff),
-                                        fontWeight: FontWeight.w300,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
+                                   ],
+                                 ),
+                               ),
+                             ),
+                           ),
+                         ),
+                       );
+                     })
+                     :Container()
+                   ,
 
 
-                                  ],
-                                ),
-                                textHeightBehavior:
-                                TextHeightBehavior(applyHeightToFirstAscent: false),
-
-                                softWrap: false,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ))
-                          : controller.selectedComunityIndex.value == 1
-                          ?
-                      Column(
-                        children: [
-                          Container(
-                            height: 460.h,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                border: Border.all(color: Colors.grey)
-                            ),
-                            child:
-                            Column(
-                              children:
-                              [
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 40.h,
-                                  color: Colors.orangeAccent.withOpacity(0.1),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0,right: 8.0,top: 8.0),
-                                    child:  Text("Bank Details",style:subtitleStyle ,),
-                                  ),
-                                ),
-                                Divider(height: 0.8,color: Colors.grey,thickness: 1,),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                                    children:
-                                    [
-                                      Container(
-                                        width: 200.w,
-                                        child:
-                                        EditTextWidgetAmount(
-                                          controller: controller.etAccountNumber,
-                                          hint: 'Enter Account Number',
-                                          type: TextInputType.number,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Account Number";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 150,top: 30),
-                                        child: EditTextWidgetAmount(
-                                          hint: 'Re-Enter Account Number',
-                                          type: TextInputType.number,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Enter Account Number";
-                                            }
-                                            if(controller.etAccountNumber.text.toString()!=value.toString())
-                                            {
-                                              return "Please Enter Confirms Account Number";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 150,top: 30),
-                                        child: EditTextWidgetAmount(
-                                          hint: 'Enter Branch Name',
-                                          controller: controller.etBranchName,
-                                          type: TextInputType.text,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Enter Branch Name";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 150,top: 30),
-                                        child: EditTextWidgetAmount(
-                                          hint: 'Enter Bank IFSC CODE',
-                                          controller: controller.etIFSCECODE,
-                                          type: TextInputType.text,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Enter Bank IFSC CODE";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 150,top: 30),
-                                        child: EditTextWidgetAmount(
-                                          hint: 'Enter Bank Address',
-                                          controller: controller.etAddress,
-                                          type: TextInputType.text,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Enter Bank Address";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Padding(
-                                          padding: const EdgeInsets.only(left: 3.0,right: 150),
-                                          child: Obx(() => controller.bankModel.value.data!=null?
-                                          DropdownButton(
-
-                                            // Initial Value
-                                            value: controller.selectedState,
-                                            isExpanded: true,
-
-                                            // Down Arrow Icon
-                                            icon: const Icon(Icons.keyboard_arrow_down),
-                                            underline: Container(
-                                              height: 1,
-                                              color: Colors.black,
-                                            ),
-
-                                            // Array list of items
-                                            items: controller.bankModel.value.data!.map((BankDatum items)
-                                            {
-                                              return DropdownMenuItem(
-                                                value: items,
-                                                child: Text(" "+items.bankName.toString(),style:subtitleStyle),
-                                              );
-                                            }).toList(),
-
-                                            hint: Text("Select Bank",
-                                              style: subtitleStyle.copyWith(color: Colors.grey),),
-
-                                            onChanged: (newValue)
-                                            {
-                                              controller.selectedState=newValue;
-                                              controller.etSate.text=controller.selectedState.id;
-                                              controller.bankModel.refresh();
-
-                                            },
-                                          ):Center()
-                                          )
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 150,top: 30),
-                                        child: EditTextWidgetAmount(
-                                          hint: 'Remark',
-                                          controller: controller.etSignature,
-                                          type: TextInputType.text,
-                                          validator: (value){
-                                            if(value.toString().isEmpty)
-                                            {
-                                              return "Please Verify Account ";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
 
 
-                          ),
-                          SizedBox(height: 50,),
-                          InkWell(
-                            onTap: (){
-                              UtilsMethod.PopupBoxTrasction(context,"");
-                            },
-                            child: Text.rich(
-                              TextSpan(
-                                style: smallTextStyle,
-                                children: [
-                                  TextSpan(
-                                    text:
-                                    'To get Information on processing fees and  withdrawing \n cash from your account ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 12,
-                                        height: 2,
-                                        letterSpacing: 0.2),
-                                  ),
-                                  TextSpan(
-                                    text: 'click here',
-                                    style: TextStyle(
-                                      color: const Color(0xff006eff),
-                                      fontWeight: FontWeight.w300,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
+               ),
+             ))
+                 : controller.selectedTabRedeemIndex.value == 1
+                 ?   SingleChildScrollView(
+               child:
+               Padding(
+                 padding: const EdgeInsets.only(left: 10.0,right: 10,top: 30),
+                 child:
+                 Form(
+                   key: controller.formKey,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children:
+                     [
+                       Container(
+                         height: 150.h,
+                         width: MediaQuery.of(context).size.width,
+                         decoration: BoxDecoration(
+                             borderRadius: BorderRadius.all(Radius.circular(10)),
+                             border: Border.all(color: Colors.grey)
+                         ),
+
+                         child:
+                         Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                           mainAxisAlignment: MainAxisAlignment.start,
+                           children:
+                           [
+                             Container(
+                               color: Colors.orangeAccent.withOpacity(0.1),
+                               child: Padding(
+                                 padding: const EdgeInsets.only(left: 8.0,right: 8.0,top: 8.0),
+                                 child: Row(
+                                   children:
+                                   [
+                                     Column(
+                                       crossAxisAlignment:CrossAxisAlignment.start,
+                                       children:
+                                       [
+                                         Text(controller.pointData.value!=null?"₹ "+controller.pointData.value:"₹ 0",
+                                           style: heading3.copyWith(fontSize: 18,fontWeight: FontWeight.w200, ),),
+                                         SizedBox(height: 5,),
+                                         Text("Withdrawable Balance",style:subtitleStyle ,)
+                                       ],
+                                     ),
+                                     Spacer(),
+                                     //Text("History",style:subtitleStyle.copyWith(color: Colors.green))
+
+                                   ],
+                                 ),
+                               ),
+                             ),
+                             Divider(height: 0.8,color: Colors.grey,thickness: 1,),
+                             SizedBox(height: 20,),
+                             Padding(
+                               padding: const EdgeInsets.only(left: 8.0),
+                               child: Column
+                                 (
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children:
+                                 [
+                                   Row(
+                                     children:
+                                     [
+                                       Text("₹",style: titleStyle,),
+                                       Container(
+                                         width: 200.w,
+                                         child: Column(
+                                           children: [
+                                             EditTextWidgetAmount(
+                                               controller: controller.etAmount,
+                                               hint: 'Enter Amount to withdraw',
+                                               type: TextInputType.number,
+                                               validator: (value)
+                                               {
+                                                 if(value.toString().isEmpty)
+                                                 {
+                                                   return "Please Enter Amount to withdraw";
+                                                 }
+                                                 if(int.parse(value.toString())<=999)
+                                                 {
+                                                   return "Your amount less than 1000";
+                                                 }
+
+                                                 return null;
+                                               },
+                                             ),
+                                           ],
+                                         ),
+                                       ),
+                                       Spacer(),
+                                       int.parse(controller.pointData.value.toString())>=1000?
+                                       InkWell(
+                                         onTap: ()
+                                         async {
+                                           print("dsjdfgh  "+controller.selectedTrasactionIndex.value.toString());
+                                           if(controller.selectedTrasactionIndex.value.toString() == "0")
+                                           {
+                                             if(controller.formKey.currentState!.validate())
+                                             {
+                                               bool? status=await controller.postRedeemNetworkApi("1");
+                                               if(status)
+                                               {
+                                                 controller.etAmount.clear();
+                                                 controller.etupiId.clear();
+                                                 controller.getgetUserDetailsNetworkApi();
+
+                                               }
+                                             }
+                                           }
+                                           else if(controller.selectedTrasactionIndex.value.toString() == "1")
+                                           {
+                                             if(controller.formKey.currentState!.validate())
+                                             {
+                                               bool? status=await  controller.postRedeemNetworkApi("2");
+                                               if(status)
+                                               {
+                                                 controller.getgetUserDetailsNetworkApi();
+                                                 controller.etAmount.clear();
+                                                 controller.etSignature.clear();
+                                                 controller.etAccountNumber.clear();
+                                                 controller.etBranchName.clear();
+                                                 controller.etIFSCECODE.clear();
+                                                 controller.etAddress.clear();
+                                                 controller.etIFSCECODE.clear();
+
+                                               }
+                                             }
+                                           }
+
+                                           },
+                                         child:
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 10.0),
+                                           child: Container(
+                                               padding: EdgeInsets.all(8),
+                                               decoration: BoxDecoration(
+                                                   borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                   border: Border.all(color: Colors.grey)
+                                               ),
+                                               child: Text("Withdraw",style:subtitleStyle.copyWith(fontSize: 20,color: Colors.orangeAccent.withOpacity(0.6)),)),
+                                         ),
+                                       )
+                                           : InkWell(
+                                         onTap: ()
+                                         async {
 
 
-                                ],
-                              ),
-                              textHeightBehavior:
-                              TextHeightBehavior(applyHeightToFirstAscent: false),
 
-                              softWrap: false,
-                            ),
-                          ),
-                        ],
-                      )
-                          : Container(),
-                    ),
-                  )
+                                         },
+                                         child:
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 10.0),
+                                           child: Container(
+                                               padding: EdgeInsets.all(8),
+                                               decoration: BoxDecoration(
+                                                   borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                   border: Border.all(color: Colors.grey)
+                                               ),
+                                               child: Text("Withdraw",style:subtitleStyle.copyWith(fontSize: 20,color: Colors.grey.withOpacity(0.6)),)),
+                                         ),
+                                       )
+                                     ],
+                                   ),
+                                   Padding(
+                                     padding: const EdgeInsets.all(8.0),
+                                     child: Text("Withdrawal amount greater than 1000 ",style: subtitleStyle.copyWith(fontSize: 14),),
+                                   )
+                                 ],
+                               ),
+                             ),
+
+                           ],
+                         ),
+                       ),
+                       SizedBox(
+                         height: 8,
+                       ),
+                       Container(
+                         height: 35,
+                         child: TabBar(
+                             onTap: (value)
+                             {
+                               controller.selectedTrasactionIndex.value = value;
+                               if (value == 1)
+                               {
+
+                               }
+                             },
+                             labelColor: Colors.black,
+                             unselectedLabelColor: Colors.black.withOpacity(0.56),
+                             isScrollable: true,
+                             controller: tabController,
+                             labelStyle: bodyText1Style.copyWith(fontSize: 20),
+                             unselectedLabelStyle: bodyText2Style.copyWith(fontSize: 12),
+                             indicatorPadding: EdgeInsets.zero,
+                             indicatorColor: Colors.red,
+                             dividerColor: Colors.lightBlue,
+                             padding: EdgeInsets.zero,
+                             tabs:
+                             [
+                               const
+                               Tab(child: Text("UPI",style: TextStyle(fontSize: 20),),
+                               ),
+                               const Tab(
+                                 child: Text("Bank Account",style: TextStyle(fontSize: 20)),
+                               ),
+                             ]),
+                       ),
+                       SizedBox(
+                         height: 40.h,
+                       ),
+                       Container(
+                         child: controller.selectedTrasactionIndex.value == 0
+                             ? FadeTransition(opacity: _animation!, child:
+                         Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Column(
+                             mainAxisAlignment: MainAxisAlignment.start,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 width: 200.w,
+                                 child:
+                                 Column(
+                                   children:
+                                   [
+                                     EditTextWidgetAmount(
+                                       controller: controller.etupiId,
+                                       hint: 'Enter Your UPI ID',
+                                       validator: (value){
+                                         String pattern = '[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}';
+                                         RegExp regExp = RegExp(pattern);
+                                         if(value.toString().isEmpty)
+                                         {
+                                           return "Please Enter Your UPI ID";
+                                         }
+                                         if (!regExp.hasMatch(value.toString()))
+                                         {
+                                           return 'Please Enter valid UPI ID';
+                                         }
+
+                                         return null;
+                                       },
+                                     ),
+                                   ],
+                                 ),
+                               ),
+                               SizedBox(height: 50,),
+                               InkWell(
+                                 onTap: (){
+                                   UtilsMethod.PopupBoxTrasction(context,"");
+                                 },
+                                 child:
+                                 Text.rich(
+
+                                   TextSpan(
+                                     style: smallTextStyle,
+                                     children: [
+                                       TextSpan(
+                                         text:
+                                         'To get Information on processing fees and  withdrawing \n cash from your account ',
+                                         style: TextStyle(
+                                             fontWeight: FontWeight.w300,
+                                             fontSize: 12,
+                                             height: 2,
+                                             letterSpacing: 0.2),
+                                       ),
+                                       TextSpan(
+                                         text: 'click here',
+                                         style: TextStyle(
+                                           color: const Color(0xff006eff),
+                                           fontWeight: FontWeight.w300,
+                                           decoration: TextDecoration.underline,
+                                         ),
+                                       ),
 
 
-                ],
-              ),
-            ),
-          ),
-        )
-                    : Container(),
-              ),
-            )
-          ],
-        ),
+                                     ],
+                                   ),
+                                   textHeightBehavior:
+                                   TextHeightBehavior(applyHeightToFirstAscent: false),
+
+                                   softWrap: false,
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ))
+                             : controller.selectedTrasactionIndex.value == 1
+                             ?
+                         Column(
+                           children: [
+                             Container(
+                               //height: 500.h,
+                               width: MediaQuery.of(context).size.width,
+                               decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.all(Radius.circular(10)),
+                                   border: Border.all(color: Colors.grey)
+                               ),
+                               child:
+                               Column(
+                                 children:
+                                 [
+                                   Container(
+                                     width: MediaQuery.of(context).size.width,
+                                     height: 40.h,
+                                     color: Colors.orangeAccent.withOpacity(0.1),
+                                     child: Padding(
+                                       padding: const EdgeInsets.only(left: 8.0,right: 8.0,top: 8.0),
+                                       child:  Text("Bank Details",style:subtitleStyle ,),
+                                     ),
+                                   ),
+                                   Divider(height: 0.8,color: Colors.grey,thickness: 1,),
+                                   Padding(
+                                     padding: const EdgeInsets.all(8.0),
+                                     child: Column(
+                                       crossAxisAlignment: CrossAxisAlignment.start,
+
+                                       children:
+                                       [
+                                         Container(
+                                           width: 200.w,
+                                           child:
+                                           EditTextWidgetAmount(
+                                             controller: controller.etAccountNumber,
+                                             hint: 'Enter Account Number',
+                                             type: TextInputType.number,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Account Number";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 150,top: 30),
+                                           child: EditTextWidgetAmount(
+                                             hint: 'Re-Enter Account Number',
+                                             type: TextInputType.number,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Enter Account Number";
+                                               }
+                                               if(controller.etAccountNumber.text.toString()!=value.toString())
+                                               {
+                                                 return "Please Enter Confirms Account Number";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 150,top: 30),
+                                           child: EditTextWidgetAmount(
+                                             hint: 'Enter Branch Name',
+                                             controller: controller.etBranchName,
+                                             type: TextInputType.text,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Enter Branch Name";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 150,top: 30),
+                                           child: EditTextWidgetAmount(
+                                             hint: 'Enter Bank IFSC CODE',
+                                             controller: controller.etIFSCECODE,
+                                             type: TextInputType.text,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Enter Bank IFSC CODE";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 150,top: 30),
+                                           child: EditTextWidgetAmount(
+                                             hint: 'Enter Bank Address',
+                                             controller: controller.etAddress,
+                                             type: TextInputType.text,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Enter Bank Address";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                         SizedBox(height: 10,),
+                                         Padding(
+                                             padding: const EdgeInsets.only(left: 3.0,right: 150),
+                                             child: controller.bankModel.value.data!=null?
+                                             DropdownButton(
+
+                                               // Initial Value
+                                               value: controller.selectedState,
+                                               isExpanded: true,
+
+                                               // Down Arrow Icon
+                                               icon: const Icon(Icons.keyboard_arrow_down),
+                                               underline: Container(
+                                                 height: 1,
+                                                 color: Colors.black,
+                                               ),
+
+                                               // Array list of items
+                                               items: controller.bankModel.value.data!.map((BankDatum items)
+                                               {
+                                                 return DropdownMenuItem(
+                                                   value: items,
+                                                   child: Text(" "+items.bankName.toString(),style:subtitleStyle),
+                                                 );
+                                               }).toList(),
+
+                                               hint: Text("Select Bank",
+                                                 style: subtitleStyle.copyWith(color: Colors.grey),),
+
+                                               onChanged: (newValue)
+                                               {
+                                                 controller.selectedState=newValue;
+                                                 controller.etSate.text=controller.selectedState.id;
+                                                 controller.bankModel.refresh();
+
+                                               },
+                                             ):Center()
+
+                                         ),
+                                         Padding(
+                                           padding: const EdgeInsets.only(right: 150,top: 20),
+                                           child: EditTextWidgetAmount(
+                                             hint: 'Remark',
+                                             controller: controller.etSignature,
+                                             type: TextInputType.text,
+                                             validator: (value){
+                                               if(value.toString().isEmpty)
+                                               {
+                                                 return "Please Verify Account ";
+                                               }
+                                               return null;
+                                             },
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                   )
+                                 ],
+                               ),
+
+
+                             ),
+                             SizedBox(height: 50,),
+                             InkWell(
+                               onTap: (){
+                                 UtilsMethod.PopupBoxTrasction(context,"");
+                               },
+                               child: Text.rich(
+                                 TextSpan(
+                                   style: smallTextStyle,
+                                   children: [
+                                     TextSpan(
+                                       text:
+                                       'To get Information on processing fees and  withdrawing \n cash from your account ',
+                                       style: TextStyle(
+                                           fontWeight: FontWeight.w300,
+                                           fontSize: 12,
+                                           height: 2,
+                                           letterSpacing: 0.2),
+                                     ),
+                                     TextSpan(
+                                       text: 'click here',
+                                       style: TextStyle(
+                                         color: const Color(0xff006eff),
+                                         fontWeight: FontWeight.w300,
+                                         decoration: TextDecoration.underline,
+                                       ),
+                                     ),
+
+
+                                   ],
+                                 ),
+                                 textHeightBehavior:
+                                 TextHeightBehavior(applyHeightToFirstAscent: false),
+
+                                 softWrap: false,
+                               ),
+                             ),
+                           ],
+                         )
+                             : Container(),
+                       )
+
+
+                     ],
+                   ),
+                 ),
+               ),
+             )
+                 : Container(),
+           ),
+         ],
+       ),)
       )
 
 

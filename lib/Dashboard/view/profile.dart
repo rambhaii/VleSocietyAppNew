@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -40,6 +41,7 @@ import '../../Auth/model/StateModel.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import '../../Widget/CircularButton.dart';
 import '../../Widget/EditTextWidget.dart';
+import '../../Widget/loading_widget.dart';
 import '../controller/DashboardController.dart';
 import 'Earning/ReferAndEarn.dart';
 import 'package:http/http.dart' as http;
@@ -150,7 +152,8 @@ class _ProfileState extends State<Profile> {
           children: [
             Positioned(
               right: 15,
-              child: RawMaterialButton(
+              child:
+              RawMaterialButton(
                 constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
                 onPressed: () {
                   Navigator.pop(context, true);
@@ -181,11 +184,59 @@ class _ProfileState extends State<Profile> {
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                                 child: InkWell(
-                                  onTap: ()
-                                  {
+                                    onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            Dialog(
+                                              alignment: Alignment.center,
+                                              insetPadding:EdgeInsets.all(20) ,
+                                              backgroundColor: Colors.transparent,
+                                              child:
+                                              Container(
+                                                height: 300,
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(10)
+                                                ),
+                                                child:
+                                                Padding(
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Column(
+                                                    children:
+                                                    [
+                                                      GetStorage()
+                                                          .read(
+                                                          AppConstant.profileImg)
+                                                          .toString()!=null?
+                                                      CachedNetworkImage(
+                                                        fit: BoxFit.cover,
+                                                        imageUrl: BASE_URL + GetStorage()
+                                                            .read(
+                                                            AppConstant.profileImg)
+                                                            .toString(),
+                                                        height: 280,
+                                                        width: double.infinity,
+                                                        placeholder: (context, url) => Center(
+                                                            child: const CupertinoActivityIndicator()),
+                                                        errorWidget: (context, url, error) =>
+                                                            CircleAvatar(
+                                                                backgroundColor:
+                                                                Colors.amber.withOpacity(0.1),
+                                                                child: const Icon(
+                                                                  Icons.image_not_supported_outlined,
+                                                                  color: Colors.black26,
+                                                                )),
+                                                      ): LoadingWidget()
 
-                                    bottomSheet();
-                                  },
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                      );
+                                    },
                                   child: Container(
                                     height: 65,
                                     width: 65,
@@ -217,7 +268,8 @@ class _ProfileState extends State<Profile> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
+                                  children:
+                                  [
                                     Text(
                                       controller.userName.toString(),
                                       style: titleStyle.copyWith(fontSize: 18),
@@ -228,10 +280,11 @@ class _ProfileState extends State<Profile> {
                                       height: 5,
                                     ),
                                     Text(
-                                      controller.points.toString() + " Points",
+                                      //    "${GetStorage().read(AppConstant.points)==null?"0":GetStorage().read(AppConstant.points).toString()} Points",
+                                      "${controller.pointData.value==null?"0":controller.pointData.value} Points",
                                       style: smallTextStyle.copyWith(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 13,
+                                          fontSize: 11,
                                           color: Colors.green),
                                     ),
                                   ],
@@ -248,7 +301,7 @@ class _ProfileState extends State<Profile> {
                                     bottomSheet();
                                   },
                                   child: Text(
-                                    "EDIT",
+                                    "EDIT PROFILE",
                                     style: titleStyle.copyWith(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900),
@@ -274,15 +327,19 @@ class _ProfileState extends State<Profile> {
                         ),
                         SizedBox(height: 3, width: 10),
                         ListTile(
-                          onTap: () {
-                            Get.to(() => HomeDashboard());
+                          onTap: ()
+                          {
+                            controller.selectedIndex.value =0;
+                            Get.to(() => HomeDashboard()
+                            );
                           },
                           contentPadding: EdgeInsets.only(left: 20, right: 20),
                           title: Text("HOME",
                               style: titleStyle.copyWith(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 19,
-                                  height: .5)),
+                                  height: .5)
+                          ),
                         ),
                         ListTile(
                           onTap: ()
@@ -513,9 +570,9 @@ class _ProfileState extends State<Profile> {
                                       UtilsMethod.PopupBox(context, "share");
                                     } else {
                                       await WhatsappShare.share(
-                                        text: "App Link",
+                                        text: "Download VLE Society App",
                                         linkUrl:
-                                            'https://www.animationmedia.org/',
+                                            'https://play.google.com/store/apps/details?id=com.vlesociety',
                                         phone: '911234567890',
                                       );
                                     }
@@ -573,23 +630,23 @@ class _ProfileState extends State<Profile> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        GestureDetector(
-                          onTap: ()
-                          {
-                            termsAndPolicey();
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                            onTap: ()
+                               {
+                               termsAndPolicey();
                           },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
+                              child: Text(
                                 "TERM OF USE\nPRIVACY & POLICY",
                                 style: smallTextStyle.copyWith(
                                     color: Colors.cyan, height: 1.6),
                                 textAlign: TextAlign.center,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 15,
@@ -1349,12 +1406,14 @@ class _ProfileState extends State<Profile> {
                                     child: Text("Edit Interest",style:smallTextStyle.copyWith(fontWeight: FontWeight.w500) ,),),*/
 
                                   Spacer(),
-                                  Container(child: CircularButton(onPress: () {
+                                  Container(child: CircularButton(onPress: ()
+                                  {
                                     if (loginController.formKey.currentState!
                                         .validate()) {
-                                      loginController
-                                          .signUpProfileImgNetworkApi();
+                                     loginController.signUpProfileImgNetworkApi();
+                                     controller.getgetUserDetailsNetworkApi();
                                       Get.back();
+
                                     }
                                   })),
                                   /*  CircleAvatar(

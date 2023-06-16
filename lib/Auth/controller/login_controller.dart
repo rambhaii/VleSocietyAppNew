@@ -26,6 +26,7 @@ import '../view/VerifyOTP.dart';
 class LoginController extends GetxController
 {
   var stateData=StateModel().obs;
+  RxList list=[].obs;
   var cityModel=CityModel().obs;
   var privacyModel=PrivacyModel().obs;
   TextEditingController etMobile=TextEditingController();
@@ -38,9 +39,15 @@ class LoginController extends GetxController
   TextEditingController etZip=TextEditingController();
   TextEditingController etblock=TextEditingController();
   TextEditingController etSate=TextEditingController();
+  TextEditingController etSateName=TextEditingController();
   TextEditingController etCity=TextEditingController();
+  TextEditingController etNameCity=TextEditingController();
   final formKey=GlobalKey<FormState>();
   GetStorage _storage=GetStorage();
+
+
+
+
 
  loginNetworkApi(String device_id )async
  {
@@ -51,14 +58,15 @@ class LoginController extends GetxController
      "lng":language,
      "mobile":etMobile.text,
      "fcm_id":device_id,
-      "referral_id":_storage.read(AppConstant.referId).toString().trim(),
+      "referral_id":_storage.read(AppConstant.referId).toString().trim().isNotEmpty?_storage.read(AppConstant.referId).toString().trim():"",
 
       };
+  print("dsfgfdghgfhfgh"+bodyRequest.toString());
   Get.context!.loaderOverlay.show();
   var response=await BaseClient().post(loginApi, bodyRequest).catchError(BaseController().handleError);
   Get.context!.loaderOverlay.hide();
 
-  print("vsdfbfd"+etMobile.text);
+  print("vsdfbfd"+etMobile.text+"    "+response);
   print(response);
   if(jsonDecode(response)["status"]==1)
     {
@@ -161,7 +169,7 @@ class LoginController extends GetxController
       "profile":"",
       "dob":"12/12/1950"
     };
-
+  print("jffghfkjg"+bodyRequest.toString());
     Get.context!.loaderOverlay.show();
     var response=await BaseClient().post(signUpApi, bodyRequest).catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
@@ -277,11 +285,25 @@ class LoginController extends GetxController
     if(jsonDecode(response)["status"]==1)
     {
 
+
       stateData.value=stateModelFromJson(response);
+
       return;
     }
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+
+   getData(filter) async
+  {
+
+
+    stateData.value =stateModelFromJson("");
+
+    return stateData;
+  }
+
+
+
   getCityNetworkApi(String id)async{
     Get.context!.loaderOverlay.show();
     var response=await BaseClient().get(getCityApi+"?lng=eng&state_id=${id}").catchError(BaseController().handleError);
@@ -322,11 +344,11 @@ class LoginController extends GetxController
     if(etSate.text.isEmpty)
     {
       BaseController().warningSnack("Please Select State");
-      return;
+      return ;
     }
     if(etCity.text.isEmpty){
       BaseController().warningSnack("Please Select City");
-      return;
+      return ;
     }
     var bodyRequest=
     {
@@ -366,8 +388,9 @@ class LoginController extends GetxController
       _storage.write(AppConstant.userType, jsonDecode(response)["Data"]["u_type"]??"");
      // Get.back();
      // Get.offAll(() => HomeDashboard());
-      return;
+      return ;
     }
+
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
   getPrivacyNetworkApi() async {

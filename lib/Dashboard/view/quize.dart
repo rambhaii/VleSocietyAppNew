@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:ui';
 
 import 'package:blinking_text/blinking_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,8 +13,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/APIConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
+import 'package:vlesociety/Dashboard/model/Quiz_Model/ContestQuize.dart';
 import 'package:vlesociety/Dashboard/view/quizeQA/question.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../Ads/AdHelper.dart';
@@ -21,6 +24,7 @@ import '../../AppConstant/textStyle.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import '../../Widget/loading_widget.dart';
 import 'QuizeDetails.dart';
+import 'SingleImageView.dart';
 
 class QuizPage extends StatelessWidget
 {
@@ -80,53 +84,61 @@ class QuizPage extends StatelessWidget
                         autoPlayAnimationDuration: Duration(milliseconds: 800),
 
                       ),
-                      items: controller.contestQuize.value.data!.map((i) {
+                      items: controller.contestQuize.value.data!.map((i)
+                      {
                         var desc = parse(i.description);
+                        final data=i;
                         String parsedString = parse(desc.body!.text).documentElement!.text;
                         return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
+                          builder: (BuildContext context)
+                          {
+                            return InkWell(
+                              onTap: (){
+                                _showBottomSheet(context,data);
 
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 0.0,right: 3),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        imageUrl: BASE_URL + i.image.toString(),
-                                        height: 84,
-                                        width: 100,
-                                        placeholder: (context, url) =>
-                                            Center(child: const CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 0.0,right: 3),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: BASE_URL + i.image.toString(),
+                                          height: 84,
+                                          width: 100,
+                                          placeholder: (context, url) =>
+                                              Center(child: const CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 12.0,right: 8,top: 5),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(i.title.toString(),maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: bodyText1Style),SizedBox(height: 3,),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 12.0,right: 8,top: 5),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(i.title.toString(),maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: bodyText1Style),SizedBox(height: 3,),
 
-                                          Text(parsedString
-                                            ,maxLines: 3,overflow: TextOverflow.ellipsis,
-                                            style: bodyText2Style.copyWith(color: Colors.black.withOpacity(0.6)),),
+                                            Text(parsedString
+                                              ,maxLines: 3,overflow: TextOverflow.ellipsis,
+                                              style: bodyText2Style.copyWith(color: Colors.black.withOpacity(0.6)),),
 
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -448,4 +460,115 @@ class QuizPage extends StatelessWidget
     );
 
   }
+
+
+  void _showBottomSheet(BuildContext context, Datum datum)
+  {
+    showModalBottomSheet(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.12),
+      isScrollControlled: true,
+      backgroundColor: Colors.white70,
+      builder: (context) {
+        return ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+                padding: EdgeInsets.only(right: 10, top: 10, left: 10),
+                width: double.infinity,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 40,
+                      height: 6,
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 0.5, color: Colors.black26),
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        onTap: (){
+                          Get.to(SingleImageView(BASE_URL +  datum.image.toString()));
+                        },
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: BASE_URL + datum.image.toString(),
+                          height: 200,
+                          width: double.infinity,
+                          placeholder: (context, url) =>
+                              Center(child: const CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      height: Get.height / 2 + 20,
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children:
+                          [
+                            Text(
+                              datum.title.toString(),
+                              style: bodyText1Style.copyWith(fontSize: 17),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Divider(
+                              height: 3,
+                              thickness: 2,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Html(
+                                data: datum.description.toString(),
+                                style: {
+                                  "body": Style(
+                                      fontSize: FontSize(17.0),
+                                      //  letterSpacing: 1.2,
+                                      lineHeight: LineHeight(1.8),
+                                      textAlign: TextAlign.justify
+
+
+
+                                  ),
+                                },
+
+                                onLinkTap: (String? url,
+
+                                    Map<String, String> attributes,
+                                    element) async
+                                {
+                                  await launch(url!);
+                                }),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // ListView.separated(itemBuilder: itemBuilder, separatorBuilder: separatorBuilder, itemCount: itemCount)
+                  ],
+                )),
+          ),
+        );
+      },
+    );
+  }
+
 }

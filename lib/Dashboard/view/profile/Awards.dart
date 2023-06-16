@@ -8,12 +8,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:html/parser.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:vlesociety/AppConstant/APIConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
 import 'package:vlesociety/Dashboard/view/profile/TestimonialsDetails.dart';
+
+import '../../../AppConstant/AppConstant.dart';
+import '../../../AppConstant/textStyle.dart';
+import '../SingleImageView.dart';
 class Awords extends StatefulWidget {
   @override
   _AwordsState createState() => _AwordsState();
@@ -103,7 +108,24 @@ class _AwordsState extends State<Awords> {
                     ),
                   ),
                   leadingWidth: 60,
-                  title: Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),
+                  title: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                    [
+                      Text(
+                        GetStorage().read(AppConstant.userName).toString(),
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      Text(
+                        //    "${GetStorage().read(AppConstant.points)==null?"0":GetStorage().read(AppConstant.points).toString()} Points",
+                        "${controller.pointData.value==null?"0":controller.pointData.value} Points",
+                        style: smallTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: Colors.black),
+                      ),
+                    ],
                   ),
                   elevation: 0,
                   actions: [
@@ -179,15 +201,20 @@ class _AwordsState extends State<Awords> {
                                     width: 10.0
                                 ),
                               ),
-                              child: CachedNetworkImage(
-                                fit: BoxFit.fill,
-                                imageUrl: BASE_URL+ awarddata.image.toString(),
-                                height: 76.h,
-                                width: 76.w,
-                                placeholder: (context, url) =>
-                                    Center(child: const CircularProgressIndicator()),
-                                errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
+                              child: InkWell(
+                                onTap: (){
+                                  Get.to(SingleImageView(BASE_URL +  awarddata.image.toString()));
+                                },
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.fill,
+                                  imageUrl: BASE_URL+ awarddata.image.toString(),
+                                  height: 76.h,
+                                  width: 76.w,
+                                  placeholder: (context, url) =>
+                                      Center(child: const CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                                ),
                               ),
                             ),SizedBox(
                               height: 15.h,

@@ -39,7 +39,8 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _animation;
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     controller.getBannerNetworkApi();
     controller.getServicesCSCNetworkApi();
@@ -84,7 +85,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
             child:controller.bannerModel.value.data!= null ?
             Container(child: CarouselSlider(
               options: CarouselOptions(
-                height: 160.h,
+                height: 140.h,
                 viewportFraction: 1,
                 aspectRatio: 16/9,
                 initialPage: 0,
@@ -159,7 +160,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                           Container(
                             height: 100.h,
                             width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.only(left: 12.0.w, right: 12.w),
+                            margin: EdgeInsets.only(left: 10.0.w, right: 10.w),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: Colors.white,
@@ -168,7 +169,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
 
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 5.0,left: 20,right: 20),
+                            padding: const EdgeInsets.only(top: 5,left: 20,right: 20),
                             child: Text(i.title.toString(),
                                 style: bodyText1Style.copyWith(
                                     color: Colors.black,
@@ -194,7 +195,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
               ),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 0,),
           controller.articleModelByCategory.value.data!=null && controller.articleModelByCategory.value.data!.isNotEmpty?
           Container(
             height:130.h,
@@ -228,14 +229,14 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 10,),
+
                             ClipRRect(
                               borderRadius: BorderRadius.circular(5),
                               child: CachedNetworkImage(
                                 fit: BoxFit.fill,
                                 imageUrl: BASE_URL + data.image.toString(),
-                                height: 55.h,
-                                width: 75.h,
+                                height: 60.h,
+                                width: 80.h,
                                 placeholder: (context, url) =>
                                     Center(child: const CircularProgressIndicator()),
                                 errorWidget: (context, url, error) =>
@@ -243,7 +244,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 8.0,right: 8,top: 8,bottom: 8),
+                              padding: const EdgeInsets.only(left: 10.0,right: 10,top: 8,bottom: 8),
                               child: Text(data.title.toString(),
                                 style: bodyText1Style.copyWith(fontSize: 12.sp),overflow: TextOverflow.ellipsis,
                                 //   textAlign: TextAlign.justify,
@@ -256,6 +257,7 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                   );
                 }),
           ):Center(),
+
           SizedBox(height: 25,),
           Padding(
             padding: const EdgeInsets.only(left: 5),
@@ -267,116 +269,119 @@ class _CSCHomeState extends State<CSCHome> with TickerProviderStateMixin {
                 shrinkWrap: true,
                 primary: false,
                 padding: const EdgeInsets.only(left: 10,right: 10,top: 10),
-                crossAxisSpacing: 2,
-                mainAxisSpacing: 1,
+                crossAxisSpacing: 1.5,
+                mainAxisSpacing: 18,
                 crossAxisCount: 3,
+
                 children: List.generate(
                   controller.serviceCSCModel.value.data!.length,
-                      (index) => GestureDetector(
+                      (index) =>
+                        GestureDetector(
                     onTap: ()
-                      {
-                        if(controller.settingModel.value.data!.adsStatus.toString()=="1")
                         {
-                          InterstitialAd? interstitialAd;
-                          InterstitialAd.load(
-                              adUnitId:  AdHelper.interstitialAdUnitId,
-                              request: const AdRequest(),
-                              adLoadCallback: InterstitialAdLoadCallback(
-                                onAdLoaded: (ad)
-                                {
+                          if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                          {
+                            InterstitialAd? interstitialAd;
+                            InterstitialAd.load(
+                                adUnitId:  AdHelper.interstitialAdUnitId,
+                                request: const AdRequest(),
+                                adLoadCallback: InterstitialAdLoadCallback(
+                                  onAdLoaded: (ad)
+                                  {
 
-                                  interstitialAd = ad;
-                                  interstitialAd!.show();
-                                  interstitialAd!.fullScreenContentCallback =
-                                      FullScreenContentCallback(
-                                          onAdFailedToShowFullScreenContent: ((ad, error) {
-                                            ad.dispose();
-                                            interstitialAd!.dispose();
-                                            debugPrint(error.message);
-                                          }),
-                                          onAdDismissedFullScreenContent: (ad) {
-                                            ad.dispose();
-                                            interstitialAd!.dispose();
-                                            controller.serviceCSCModel.value.data![index].is_gosite=='0'?
-                                            controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
-                                                controller.serviceCSCModel.value.data![index].title.toString())
-                                                :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
-                                                controller.serviceCSCModel.value.data![index].url.toString(),
-                                                controller.serviceCSCModel.value.data![index].title.toString(),
-                                                controller.serviceCSCModel.value.data![index].image.toString()));
-                                          }
+                                    interstitialAd = ad;
+                                    interstitialAd!.show();
+                                    interstitialAd!.fullScreenContentCallback =
+                                        FullScreenContentCallback(
+                                            onAdFailedToShowFullScreenContent: ((ad, error) {
+                                              ad.dispose();
+                                              interstitialAd!.dispose();
+                                              debugPrint(error.message);
+                                            }),
+                                            onAdDismissedFullScreenContent: (ad) {
+                                              ad.dispose();
+                                              interstitialAd!.dispose();
+                                              controller.serviceCSCModel.value.data![index].is_gosite=='0'?
+                                              controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
+                                                  controller.serviceCSCModel.value.data![index].title.toString())
+                                                  :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
+                                                  controller.serviceCSCModel.value.data![index].url.toString(),
+                                                  controller.serviceCSCModel.value.data![index].title.toString(),
+                                                  controller.serviceCSCModel.value.data![index].image.toString()));
+                                            }
 
-                                      );
-                                },
-                                onAdFailedToLoad: (err) {
-                                  debugPrint(err.message);
-                                },
-                              ));
-                        }else
-                        {
-                          controller.serviceCSCModel.value.data![index].is_gosite=='0'?
-                          controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
-                              controller.serviceCSCModel.value.data![index].title.toString())
-                              :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
-                              controller.serviceCSCModel.value.data![index].url.toString(),
-                              controller.serviceCSCModel.value.data![index].title.toString(),
-                              controller.serviceCSCModel.value.data![index].image.toString()));
-                        }
-
-
+                                        );
+                                  },
+                                  onAdFailedToLoad: (err) {
+                                    debugPrint(err.message);
+                                  },
+                                ));
+                          }else
+                          {
+                            controller.serviceCSCModel.value.data![index].is_gosite=='0'?
+                            controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
+                                controller.serviceCSCModel.value.data![index].title.toString())
+                                :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
+                                controller.serviceCSCModel.value.data![index].url.toString(),
+                                controller.serviceCSCModel.value.data![index].title.toString(),
+                                controller.serviceCSCModel.value.data![index].image.toString()));
+                          }
 
 
-                      // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
-                      //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
+
+
+                        // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
+                        //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
                     },
                     child: Column(
-                      children: [
-                        Container(
-                          height: 55.h,
-                          width: 55.w,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors
-                                      .white
-                                      .withOpacity(
-                                      0.8),
-                                  offset: Offset(
-                                      -3.0, -3.0),
-                                  blurRadius: 10.0,
-                                ),
-                                BoxShadow(
-                                  color: Colors
-                                      .black
-                                      .withOpacity(
-                                      0.1),
-                                  offset: Offset(
-                                      3.0, 3.0),
-                                  blurRadius: 10.0,
-                                ),
-                              ],
-                              color: Colors.white,
-                              image: DecorationImage(
-                                  image: NetworkImage(BASE_URL +
-                                      controller.serviceCSCModel.value.data![index].image.toString()),fit: BoxFit.fill)),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          controller.serviceCSCModel.value.data![index].title.toString(),
-                          style: smallTextStyle.copyWith(fontSize: 14.sp),
-                          maxLines: 2,
-                          overflow:
-                          TextOverflow.ellipsis,
-                          textAlign:
-                          TextAlign.center,
-                        ),
-                      ],
+                        children: [
+                          Container(
+                            height: 55.h,
+                            width: 55.w,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors
+                                        .white
+                                        .withOpacity(
+                                        1),
+                                    offset: Offset(
+                                        -3.0, -3.0),
+                                    blurRadius: 10.0,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors
+                                        .black
+                                        .withOpacity(
+                                        0.1),
+                                    offset: Offset(
+                                        3.0, 3.0),
+                                    blurRadius: 10.0,
+                                  ),
+                                ],
+                                color: Colors.white,
+                                image: DecorationImage(
+                                    image: NetworkImage(BASE_URL +
+                                        controller.serviceCSCModel.value.data![index].image.toString()),fit: BoxFit.fill)),
+                          ),
+                          SizedBox(
+                            height: 5.h,
+                          ),
+                          Text(
+                            controller.serviceCSCModel.value.data![index].title.toString(),
+                            style: smallTextStyle.copyWith(fontSize: 13.sp),
+                            maxLines: 2,
+                            overflow:
+                            TextOverflow.ellipsis,
+                            textAlign:
+                            TextAlign.center,
+                          ),
+                        ],
                     ),
                   ),
-                ))
+                      ),
+                )
                 : Center(
               child: CupertinoActivityIndicator(),
             ),

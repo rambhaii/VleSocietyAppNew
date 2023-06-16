@@ -107,7 +107,7 @@ class ReferAndEarn extends StatefulWidget {
                      child: Stack(
                        children: [
                          Container(
-                           height: 210,
+                           height: 180.h,
                            width: MediaQuery.of(context).size.width,
                            decoration: BoxDecoration(
                              color:Color.fromRGBO(91, 105, 197, 1.0),
@@ -123,7 +123,7 @@ class ReferAndEarn extends StatefulWidget {
                                        Lottie.asset('assets/json/blackline.json',
                                            frameRate: FrameRate.max
                                            ,fit:BoxFit.fill,
-                                         width: 240
+                                            width: 200
                                        )
                                      ],
                                    ),
@@ -159,7 +159,7 @@ class ReferAndEarn extends StatefulWidget {
                                      Container(
                                          padding: EdgeInsets.only(left: 10),
                                          child: Text("Invite Friends on VLE Community",
-                                           style: TextStyle(fontSize: 16),)),
+                                           style: TextStyle(fontSize: 14),)),
                                      Spacer(),
                                      InkWell(
                                        onTap: ()
@@ -185,8 +185,8 @@ class ReferAndEarn extends StatefulWidget {
                      ),
                    ),
                    Container(
-                     width: MediaQuery.of(context).size.width/1.07,
-                     height:130.h,
+                     width: MediaQuery.of(context).size.width/1.05,
+                     height:190.h,
                      decoration: BoxDecoration(
                          borderRadius: BorderRadius.circular(5),
                          border: Border.all(width: .5)
@@ -224,8 +224,8 @@ class ReferAndEarn extends StatefulWidget {
                                              borderRadius: BorderRadius.circular(40)
                                          ),
                                          child: Container(
-                                           height: 40,
-                                           width: 40,
+                                           height: 35,
+                                           width: 35,
                                            decoration: BoxDecoration(
                                                shape: BoxShape.circle
                                            ),
@@ -234,7 +234,7 @@ class ReferAndEarn extends StatefulWidget {
                                        ),
                                        controller.referalModel.value.data!=null?
                                        Container(
-                                         width: MediaQuery.of(context).size.width/1.8,
+                                         width: 170.w,
                                          child: Column
                                            (
                                            crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,13 +250,13 @@ class ReferAndEarn extends StatefulWidget {
                                        Spacer(),
                                        Container(
                                          margin: EdgeInsets.only(top: 15),
-                                         height: 70,
-                                         width: 90,
+                                         height: 50.h,
+                                         width: 100.w,
                                          child: Stack(
                                            children: [
                                              Container(
-                                               height: 65,
-                                               width: 85,
+                                               height: 65.h,
+                                               width: 100.w,
                                                  padding: EdgeInsets.only(left: 3,right: 3),
                                                decoration: BoxDecoration(
                                                    border: Border.all(width: 1,color: Colors.black),
@@ -277,7 +277,7 @@ class ReferAndEarn extends StatefulWidget {
                        ),
                      ),
                    ),
-                   SizedBox(height: 50.h,),
+                   SizedBox(height: 20.h,),
                    Container(
                        width: MediaQuery.of(context).size.width/1.07,
                        height: 80.h,

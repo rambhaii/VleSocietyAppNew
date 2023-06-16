@@ -18,11 +18,11 @@ class FirebaseDynamicLinkService
     String url = "https://vlesocietyapp.page.link/";
     final DynamicLinkParameters dynamicLinkParams = DynamicLinkParameters(
 
-      uriPrefix: kUriPrefix,
-     //link: Uri.parse(kUriPrefix + kProductpageLink),
-      link: Uri.parse("https://www.google.com/refer?referral_id=${userId}&postId=${docId}"),
-      androidParameters: const AndroidParameters(
-        packageName: "com.vlesociety.vlesociety",
+        uriPrefix: kUriPrefix,
+
+        link: Uri.parse("https://www.google.com/refer?referral_id=${userId}&postId=${docId}"),
+        androidParameters: const AndroidParameters(
+        packageName: "com.vlesociety",
         minimumVersion: 30,
       ),
 
@@ -79,7 +79,8 @@ class FirebaseDynamicLinkService
   }
 
  static Future<void> initDynamicLinks() async
-  {
+  {GetStorage _storage=GetStorage();
+  _storage.write(AppConstant.referId,"0");
 
 
     final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
@@ -97,14 +98,10 @@ class FirebaseDynamicLinkService
         print(referral_id.toString());
         print("djkfhjg"+postId.toString());
         if (referral_id != null)
-        { /* GetStorage _storage=GetStorage();
-        _storage.write(AppConstant.referId,referral_id);
-         */
+        {
+        _storage.write(AppConstant.referId,referral_id.toString());
 
-          /* GeneratedRoute.navigateTo(
-          SignUpView.routeName,
-          args: code,
-        );*/
+
         }
       }
 

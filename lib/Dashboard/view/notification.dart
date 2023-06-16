@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:vlesociety/AppConstant/APIConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/view/dashboard.dart';
@@ -27,7 +28,12 @@ class _notificationState extends State<notification>
 {
   DashboardController controller = Get.find();
   NotificationController controllerNotification = Get.put(NotificationController());
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    controllerNotification.getNotificationListNetworkApi();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context)
   {
@@ -58,7 +64,9 @@ class _notificationState extends State<notification>
                     child: CircleAvatar(
                       radius: 10,
                       backgroundColor: Colors.amber.withOpacity(0.1),
-                      backgroundImage: NetworkImage(BASE_URL+controller.image),
+                      backgroundImage: NetworkImage(BASE_URL+GetStorage()
+                          .read(AppConstant.profileImg)
+                          .toString()),
                     ),
                   ),
                   leadingWidth: 60,
@@ -145,7 +153,7 @@ class _notificationState extends State<notification>
                            {
                              /*controllerNotification.notificationModel.value.data![index].isSeen==true;
                              controllerNotification.notificationModel.refresh();*/
-                             if(data.type.toString()=="1")
+                             if(int.parse(data.type.toString())<=3)
                              {
                                Get.to(()=>CommunityDetails(cid:data.typeId.toString() ,));
                              }

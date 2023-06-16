@@ -63,21 +63,21 @@ class CustomAppBar extends StatelessWidget {
               ),
               elevation: 0.0,
               actions: [
+
                 RawMaterialButton(
                   constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
                   onPressed: () {
-                    Get.to(() => Profile());
-//  controller.logout();
+                    Navigator.pop(context, true);
                   },
-                  shape: CircleBorder(
-                      side: BorderSide(width: 0.5, color: Colors.black)),
+                  shape: CircleBorder(),
                   child: Image.asset(
-                    "assets/images/menu.png",
-                    height: 15,
-                    width: 20,
+                    "assets/images/back.png",
+                    height: 40,
+                    width: 40,
                     fit: BoxFit.fill,
                   ),
                 ),
+
                 SizedBox(
                   width: 8,
                 )

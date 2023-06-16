@@ -15,6 +15,8 @@ import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/controller/NotificationController.dart';
 
+import '../Dashboard/view/CommunityDetails.dart';
+
 class NotificationServices
 {
 
@@ -46,8 +48,7 @@ class NotificationServices
   void initLocalNotifications(BuildContext context, RemoteMessage message)async
   {
 
-    DashboardController controller=Get.find();
-    controller.counter();
+
     var androidInitializationSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitializationSettings = const DarwinInitializationSettings();
     var initializationSetting = InitializationSettings
@@ -61,7 +62,7 @@ class NotificationServices
         initializationSetting,
         onDidReceiveNotificationResponse: (payload)
         {
-          // handle interaction when app is active for android
+
           handleMessage(context, message);
         }
     );
@@ -71,7 +72,7 @@ class NotificationServices
   async
   {
 
-
+  print("sdhfjfgjh");
 
 
 
@@ -80,15 +81,18 @@ class NotificationServices
     {
       if (kDebugMode)
       {
+        DashboardController controller=Get.find();
+        controller.counter();
         print("sdfdsfg"+message.toString());
         print("sdkfjhfkj"+message.notification!.title.toString());
         print(message.notification!.body.toString());
-        print("dhsfjhf"+message.data.toString());
-        print(message.data['type']);
+        print(message.data.toString());
+
         print(message.data['id']);
         print("dsfhfdg"+message.data['image']);
-        DashboardController controller=Get.find();
-        controller.counter();
+        print(message.data['community_id']);
+       /* DashboardController controller=Get.find();
+        controller.counter();*/
       }
 
       //show notifications when app is active
@@ -96,6 +100,7 @@ class NotificationServices
       {
         //calling this function to handle internation
         initLocalNotifications(context , message);
+
         showNotification(message);
       }else {
         showNotification(message);
@@ -103,7 +108,6 @@ class NotificationServices
     });
   }
 
-  // function to show visible notification when app is active
   Future<void> showNotification(RemoteMessage message)async
   {
     AndroidNotificationChannel channel = AndroidNotificationChannel
@@ -160,11 +164,9 @@ class NotificationServices
     });
   }
 
-  //handle tap on notification when app is in background or terminated
+
   Future<void> setupInteractMessage(BuildContext context)async{
 
-
-    // when app is terminated
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
 
@@ -172,10 +174,17 @@ class NotificationServices
     {
       handleMessage(context, initialMessage);
     }
+    FirebaseMessaging.onBackgroundMessage( (message)
+    async
+    {
+
+     } );
 
 
     //when app ins background
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    FirebaseMessaging.onMessageOpenedApp.listen((event)
+    {
+
       handleMessage(context, event);
 
     });
@@ -183,15 +192,21 @@ class NotificationServices
   }
 
 
-  void handleMessage(BuildContext context, RemoteMessage message) {
+  void handleMessage(BuildContext context, RemoteMessage message)
+  {
+  /* print("dfhdfgfgfghfhgkj");
+   print(message.data['type']);
+   print("dfhdfgfgfghfhgkj");
+    if(int.parse(message.data['type'].toString()) <=3)
+   {*/
+     Get.to(() => CommunityDetails(cid: message.data['community_id'],));
 
-   /* if(message.data['type'] =='msj'){
-      Navigator.push(context,
+     /* Navigator.push(context,
           MaterialPageRoute(builder: (context) => MessageScreen
           (
             id: message.data['id'] ,
-          )));
-    }*/
+          )));*/
+   // }
   }
 
 

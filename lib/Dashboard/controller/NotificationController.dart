@@ -53,7 +53,7 @@ class NotificationController extends GetxController
   {
 
     var response = await BaseClient()
-        .get(getNotificationList + "?lng=eng&limit=${20}&page=${start}&user_id==${_storage.read(AppConstant.id)}")
+        .get(getNotificationList + "?lng=eng&limit=${15}&page=${start}&user_id==${_storage.read(AppConstant.id)}")
         .catchError(BaseController().handleError);
 
     if (jsonDecode(response)["status"] == 1)
@@ -76,15 +76,20 @@ class NotificationController extends GetxController
 
   getNotificationListNetworkApi() async
   {
-
+     print("ksjdfhjh");
     Get.context!.loaderOverlay.show();
-    var response = await BaseClient().get(getNotificationList + "?lng=eng&limit=${10}&page=0&user_id==${_storage.read(AppConstant.id)}")
-        .catchError(BaseController().handleError);
+    var response = await BaseClient().get(getNotificationList + "?lng=eng&limit=${15}&page=0&user_id=${_storage.read(AppConstant.id)}").catchError(BaseController().handleError);
     Get.context!.loaderOverlay.hide();
+     print("ksjdfhjh"+getNotificationList + "?lng=eng&limit=${10}&page=0&user_id==${_storage.read(AppConstant.id)}");
     if (jsonDecode(response)["status"] == 1)
     {
       notificationModel.value = notificationModelFromJson(response);
-     isLoadingNotificationPage.value=true;
+      print("bfhj"+notificationModel.value.page.toString());
+      if(notificationModel.value.page.toString()=="15")
+      {
+
+        isLoadingNotificationPage.value = true;
+      }
 
       return;
      }

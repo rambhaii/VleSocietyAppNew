@@ -1,21 +1,24 @@
 import 'dart:ui';
 
 import 'package:adobe_xd/pinned.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vlesociety/Auth/controller/login_controller.dart';
 
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../AppConstant/textStyle.dart';
 import '../../Notification/FirebaseNotification.dart';
 import '../../Widget/CircularButton.dart';
 import '../../Widget/EditTextWidget.dart';
+import '../controller/login_controller.dart';
 import '../model/CityModel.dart';
 import '../model/StateModel.dart';
 
@@ -29,9 +32,10 @@ class Registration extends StatefulWidget {
 }
 
 class _RegistrationState extends State<Registration> {
-  LoginController _controller=Get.put(LoginController());
+  LoginController controller=Get.put(LoginController());
   NotificationServices notificationServices = NotificationServices();
   String deviceId="";
+
 
 
 
@@ -39,7 +43,7 @@ class _RegistrationState extends State<Registration> {
   @override
   void initState() {
     // TODO: implement initState
-    _controller.getStateNetworkApi();
+    controller.getStateNetworkApi();
     super.initState();
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
@@ -71,9 +75,10 @@ class _RegistrationState extends State<Registration> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 20,right: 20,top: 20,bottom: 20),
-                      height: 70,
-                      width: 70,
-                      child: Lottie.asset('assets/json/vle.json',fit:BoxFit.fill),),
+                      height: 90.h,
+                      width: 90.w,
+                      child: Lottie.asset('assets/json/csc.json',frameRate: FrameRate.max
+                          ,fit:BoxFit.fill),),
 
                     const Text.rich(
                       TextSpan(
@@ -111,13 +116,13 @@ class _RegistrationState extends State<Registration> {
                 Padding(
                   padding: const EdgeInsets.only(left: 40.0,right: 15),
                   child: Form(
-                    key: _controller.formKey,
+                    key: controller.formKey,
                     child: Column(
                       children:
                       [
                         SizedBox(height: 25,),
                         EditTextWidget(
-                          controller: _controller.etName, hint: 'Name',
+                          controller: controller.etName, hint: 'Name',
                           validator: (value){
                           if(value.toString().isEmpty)
                             {
@@ -127,7 +132,7 @@ class _RegistrationState extends State<Registration> {
                         },
                         ),
                         SizedBox(height: 15,),
-                        EditTextWidget(controller: _controller.etEmail, hint: 'Email',
+                        EditTextWidget(controller: controller.etEmail, hint: 'Email',
                           type: TextInputType.emailAddress,
                           validator: (value){
                             if(value.toString().isEmpty)
@@ -142,7 +147,7 @@ class _RegistrationState extends State<Registration> {
                           },
                         ),
                         SizedBox(height: 15,),
-                        EditTextWidget(controller: _controller.etMobile, hint: 'Mobile',
+                        EditTextWidget(controller: controller.etMobile, hint: 'Mobile',
                           isRead: true,
                           type: TextInputType.phone,
 
@@ -160,7 +165,7 @@ class _RegistrationState extends State<Registration> {
                           length: 10,
                         ),
                         SizedBox(height: 15,),
-                        EditTextWidget(controller: _controller.etblock, hint: 'Block',
+                        EditTextWidget(controller: controller.etblock, hint: 'Block',
                           type: TextInputType.text,
                           validator: (value){
                             if(value.toString().isEmpty)
@@ -173,7 +178,7 @@ class _RegistrationState extends State<Registration> {
 
                         ),
                         SizedBox(height: 15,),
-                        EditTextWidget(controller: _controller.etZip, hint: 'Pincode',
+                        EditTextWidget(controller: controller.etZip, hint: 'Pincode',
                           type: TextInputType.number,
                           validator: (value){
                             if(value.toString().isEmpty)
@@ -189,8 +194,9 @@ class _RegistrationState extends State<Registration> {
                           length: 6,
                         ),
                         SizedBox(height: 5,),
-                        Obx(()=>_controller.stateData.value.data!=null?DropdownButton(
-                            value: _controller.selectedState,
+
+                       /* Obx(()=>controller.stateData.value.data!=null?DropdownButton(
+                            value: controller.selectedState,
                             isExpanded: true,
                             underline: Container(
                               height: 5,
@@ -203,8 +209,11 @@ class _RegistrationState extends State<Registration> {
                                 ),
                               ),
                             ),
+
                             icon: const Icon(Icons.keyboard_arrow_down),
-                            items: _controller.stateData.value.data!.map((StateDatum items) {
+                            items:
+                             controller.stateData.value.data!.map((StateDatum items)
+                            {
                               return DropdownMenuItem(
                                 value: items,
                                 child: Text(" "+items.stateTitle.toString(),style:subtitleStyle),
@@ -214,17 +223,93 @@ class _RegistrationState extends State<Registration> {
                             onChanged: (newValue)
                             {
                               print("dbvbsdovb");
-                              _controller.selectedState=newValue;
-                              _controller.etSate.text=_controller.selectedState.stateId;
-                              _controller.stateData.refresh();
-                              _controller.cityModel.value.data=null;
-                              _controller.selectedCity=null;
-                              _controller.getCityNetworkApi(_controller.selectedState.stateId);
+                              controller.selectedState=newValue;
+                              controller.etSate.text=controller.selectedState.stateId;
+                              controller.stateData.refresh();
+                              controller.cityModel.value.data=null;
+                              controller.selectedCity=null;
+                              controller.getCityNetworkApi(controller.selectedState.stateId);
                             },
                           ):const Center(),
+                        ),*/
+                    Obx(()=>controller.stateData.value.data!=null?Container(
+
+                        alignment: Alignment.topRight,
+                        child: Column(
+                          children: [
+                            TypeAheadField(
+
+                              animationStart: 0,
+                              animationDuration: Duration.zero,
+                              textFieldConfiguration: TextFieldConfiguration(
+
+                                controller:controller.etSateName,
+                                  onChanged: (value)
+                                  {
+                                    print("dbvbsdovb"+value);
+                                    controller.selectedState=value;
+                                    controller.etSate.text=controller.selectedState.stateId;
+                                    controller.stateData.refresh();
+                                    controller.cityModel.value.data=null;
+                                    controller.selectedCity=null;
+
+                                  },
+
+
+                                  autofocus: true,
+                                  style: subtitleStyle,
+                                  decoration: InputDecoration(
+                                    hintText: "Select State",
+                                      hintStyle:subtitleStyle ,
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.black),
+                                      )
+                                  )
+
+                              ),
+                              suggestionsBoxDecoration: SuggestionsBoxDecoration(
+
+                                  color: Colors.lightBlue[50]
+                              ),
+                              suggestionsCallback: (pattern)
+                              {
+                                List<StateDatum> matches = <StateDatum>[];
+                                matches.addAll(controller.stateData.value.data!);
+                                matches.retainWhere((StateDatum s){
+                                  return s.stateTitle!.toLowerCase().contains(pattern.toLowerCase());
+                                });
+                                return matches;
+                              },
+
+                              itemBuilder: (context, StateDatum s)
+                              {
+                                return Card(
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      child:Text(s.stateTitle.toString()),
+                                    )
+                                );
+                              },
+
+                              onSuggestionSelected: (StateDatum s)
+                              {
+                                controller.selectedState = s;
+                                controller.getCityNetworkApi(s.stateId.toString());
+                                controller.etSate.text=s.stateId.toString();
+                                controller.etSateName.text = s.stateTitle.toString();
+                                controller.cityModel.value.data=null;
+                                controller.selectedCity=null;
+                              },
+
+
+                            )
+                          ],
                         ),
-                        Obx(()=>_controller.cityModel.value.data!=null?DropdownButton(
-                          value: _controller.selectedCity,
+                      ):Center()),
+
+                        SizedBox(height: 5,),
+                       /* Obx(()=>controller.cityModel.value.data!=null?DropdownButton(
+                          value: controller.selectedCity,
                           isExpanded: true,
                           underline: Container(
                             decoration: const BoxDecoration(
@@ -236,8 +321,9 @@ class _RegistrationState extends State<Registration> {
                               ),
                             ),
                           ),
+
                           icon: const Icon(Icons.keyboard_arrow_down),
-                          items: _controller.cityModel.value.data!.map((CityDatum items) {
+                          items: controller.cityModel.value.data!.map((CityDatum items) {
                             return DropdownMenuItem(
                               value: items,
                               child: Text(" "+items.name.toString(),style: subtitleStyle,),
@@ -245,14 +331,93 @@ class _RegistrationState extends State<Registration> {
                           }).toList(),
                           hint: Text(" Select City",style: subtitleStyle.copyWith(color: Colors.grey.withOpacity(0.7),)),
                           onChanged: (newValue) {
-                            _controller.selectedCity=newValue;
-                            _controller.etCity.text=_controller.selectedCity.id;
-                            _controller.cityModel.refresh();
+                            controller.selectedCity=newValue;
+                            controller.etCity.text=controller.selectedCity.id;
+                            controller.cityModel.refresh();
                           },
                         ):const Center(),
-                        ),
+                        ),*/
+                        Obx(()=>controller.cityModel.value.data!=null?Container(
+
+                          alignment: Alignment.topRight,
+                          child: Column(
+                            children: [
+                              TypeAheadField(
+
+                                animationStart: 0,
+                                animationDuration: Duration.zero,
+                                textFieldConfiguration: TextFieldConfiguration(
+
+                                    controller:controller.etNameCity,
+                                    onChanged: (value)
+                                    {
+                                      print("dbvbsdovb"+value);
+
+
+
+                                      controller.selectedCity=value;
+                                      controller.etCity.text=controller.selectedCity.id;
+                                      controller.cityModel.refresh();
+
+
+                                    },
+
+
+                                    autofocus: true,
+                                    style: subtitleStyle,
+                                    decoration: InputDecoration(
+                                        hintText: " Select City",
+                                        hintStyle:subtitleStyle ,
+                                        enabledBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.black),
+                                        )
+                                    )
+
+                                ),
+                                suggestionsBoxDecoration: SuggestionsBoxDecoration(
+
+                                    color: Colors.lightBlue[50]
+                                ),
+                                suggestionsCallback: (pattern)
+                                {
+                                  List<CityDatum> matches = <CityDatum>[];
+                                  matches.addAll(controller.cityModel.value.data!);
+                                  matches.retainWhere((CityDatum s){
+                                    return s.name!.toLowerCase().contains(pattern.toLowerCase());
+                                  });
+                                  return matches;
+                                },
+
+                                itemBuilder: (context, CityDatum s)
+                                {
+                                  return Card(
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child:Text(s.name.toString()),
+                                      )
+                                  );
+                                },
+
+                                onSuggestionSelected: (CityDatum s)
+                                {
+                                  controller.selectedCity = s;
+                                  controller.etCity.text=s.id.toString();
+                                  controller.etNameCity.text = s.name.toString();
+
+                                },
+
+
+                              )
+                            ],
+                          ),
+                        ):Center()),
+
+
+
                         SizedBox(height: 25,),
-                        Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+
                           children: [
                             Text(
                               'Next',
@@ -260,15 +425,15 @@ class _RegistrationState extends State<Registration> {
                               textAlign: TextAlign.center,
                             ),
                             Padding(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.only(left: 15.0),
                               child: CircularButton(
                                 onPress: ()
                                 {
-                                  if(_controller.formKey.currentState!.validate())
+                                  if(controller.formKey.currentState!.validate())
                                   {
                                   if(deviceId!=null)
-                                  {
-                                    _controller.signUpNetworkApi(deviceId);
+                                  { print("hfgh"+deviceId);
+                                    controller.signUpNetworkApi(deviceId);
                                   }
                                   }
                                 },
@@ -358,7 +523,7 @@ class _RegistrationState extends State<Registration> {
         isScrollControlled: true,
         backgroundColor: Colors.white,
         builder: (context) {
-          return Obx(() => _controller.privacyModel.value.data != null
+          return Obx(() => controller.privacyModel.value.data != null
               ? SingleChildScrollView(
             child: Padding(
                 padding: EdgeInsets.only(
@@ -390,16 +555,16 @@ class _RegistrationState extends State<Registration> {
                                 height: 20,
                               ),
                               Container(
-                                child: Text(_controller.privacyModel.value.data!
+                                child: Text(controller.privacyModel.value.data!
                                     .title.toString(),style: heading3,),
 
                               ),
 
-                              _controller.privacyModel.value.data!
+                              controller.privacyModel.value.data!
                                   .description !=
                                   null
                                   ? Html(
-                                  data: _controller.privacyModel.value
+                                  data: controller.privacyModel.value
                                       .data!.description
                                       .toString(),
                                   style: {

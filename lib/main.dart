@@ -29,7 +29,7 @@ void main() async
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseDynamicLinkService.initDynamicLinks();
-  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+/*  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
   if (initialLink != null)
   {
     final Uri deepLink = initialLink.link;
@@ -39,7 +39,9 @@ void main() async
       var referral_id = deepLink.queryParameters['referral_id'];
       var postId = deepLink.queryParameters['postId'];
       if (referral_id != null)
-      {  GetStorage _storage=GetStorage();
+      {
+        print("dfdfgfgh "+referral_id.toString());
+        GetStorage _storage=GetStorage();
         _storage.write(AppConstant.referId,referral_id);
 
       }
@@ -50,12 +52,9 @@ void main() async
 
 
 
-  }
+  }*/
 
-  AdRequest? adRequest;
-  BannerAd? bannerAd;
-  InterstitialAd? interstitialAd;
-  RewardedAd? rewardedAd;
+
 
   runApp(  MyApp());
 
@@ -112,8 +111,8 @@ class MyApp extends StatelessWidget
               primarySwatch: Colors.blue,
                  ),
             home:
-            GetStorage().read(AppConstant.userName)!=null?
-            GetStorage().read(AppConstant.userName).toString().isNotEmpty?HomeDashboard():
+            GetStorage().read(AppConstant.id)!=null?
+            GetStorage().read(AppConstant.id).toString().isNotEmpty?HomeDashboard():
             const SplashPage():const SplashPage(),
             debugShowCheckedModeBanner: false,
           ),

@@ -58,7 +58,7 @@ class _RateUsAppState extends State<RateUsApp> {
           direction: Axis.horizontal,
           allowHalfRating: true,
           itemCount: 5,
-          itemPadding: EdgeInsets.symmetric(horizontal: 17.0),
+          itemPadding: EdgeInsets.symmetric(horizontal: 10.0),
           itemBuilder: (context, _) => Icon(
             Icons.star,
             color: Colors.amber,

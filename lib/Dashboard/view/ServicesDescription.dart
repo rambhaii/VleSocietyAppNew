@@ -14,6 +14,7 @@ import '../../AppConstant/textStyle.dart';
 import '../../UtilsMethod/BaseController.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import '../controller/DashboardController.dart';
+import 'SingleImageView.dart';
 import 'WebViewPage.dart';
 
 class ServicesDescription extends StatefulWidget
@@ -260,17 +261,23 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
                                 shape:RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: BASE_URL + widget.image.toString(),
-                                    height: 200,
-                                    width: double.infinity,
-                                    placeholder: (context, url) =>
-                                        Center(child: const CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                                child: InkWell(
+                                    onTap: (){
+                                      Get.to(SingleImageView(BASE_URL +  widget.image.toString()));
+                                    },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      fit: BoxFit.fill,
+                                      imageUrl: BASE_URL + widget.image.toString(),
+
+                                      height: 200,
+                                      width: double.infinity,
+                                      placeholder: (context, url) =>
+                                          Center(child: const CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                    ),
                                   ),
                                 ),
                               ):Center():Center(),

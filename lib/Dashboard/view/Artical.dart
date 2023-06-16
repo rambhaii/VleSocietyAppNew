@@ -22,6 +22,7 @@ import '../../CSC/Model/CscModel.dart';
 import '../../Widget/loading_widget.dart';
 import '../AddMobAds.dart';
 import '../model/ArticalModel.dart';
+import 'SingleImageView.dart';
 
 
 class ArticalPage extends StatefulWidget {
@@ -446,7 +447,8 @@ class _ArticalPageState extends State<ArticalPage> {
                                             Expanded(
                                               child: Text(
                                                 datas.title.toString(),
-                                                style: bodyText1Style,
+                                                style: bodyText1Style.copyWith(fontSize: 17,height: 1.2
+                                                ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
                                               ),
@@ -631,15 +633,20 @@ class _ArticalPageState extends State<ArticalPage> {
 
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl: BASE_URL + datum.image.toString(),
-                        height: 200,
-                        width: double.infinity,
-                        placeholder: (context, url) =>
-                            Center(child: const CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                      child: InkWell(
+                        onTap: (){
+                          Get.to(SingleImageView(BASE_URL +  datum.image.toString()));
+                        },
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: BASE_URL + datum.image.toString(),
+                          height: 200,
+                          width: double.infinity,
+                          placeholder: (context, url) =>
+                              Center(child: const CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -737,16 +744,21 @@ class _ArticalPageState extends State<ArticalPage> {
 
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        //imageUrl: BASE_URL + datum.image.toString(),
-                        imageUrl: datum.url.toString(),
-                        height: 200,
-                        width: double.infinity,
-                        placeholder: (context, url) =>
-                            Center(child: const CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/images/vleSociety.jpg"),
+                      child: InkWell(
+                        onTap: (){
+                          Get.to(SingleImageView(BASE_URL +  datum.url.toString()));
+                        },
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          //imageUrl: BASE_URL + datum.image.toString(),
+                          imageUrl: datum.url.toString(),
+                          height: 200,
+                          width: double.infinity,
+                          placeholder: (context, url) =>
+                              Center(child: const CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Image.asset("assets/images/vleSociety.jpg"),
+                        ),
                       ),
                     ),
                     const SizedBox(
