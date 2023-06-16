@@ -5,8 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
-import 'package:flutter_html/style.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -70,8 +69,7 @@ class _LogInPage1State extends State<LogInPage1> {
                           left: 20, right: 20, top: 20, bottom: 20),
                       height: 70,
                       width: 70,
-                      child: Lottie.asset('assets/json/vle.json',
-                          fit: BoxFit.fill),
+                      child: Image.asset("assets/images/icons.png"),
                     ),
                     const Text.rich(
                       TextSpan(
@@ -196,19 +194,28 @@ class _LogInPage1State extends State<LogInPage1> {
                 SizedBox(
                   width: 20,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: CircularButton(
-                    onPress: ()
-                    {
-                      if (_keyForm.currentState!.validate())
-                      {
-                        if(deviceId!=null) {
-                          _controller.loginNetworkApi(deviceId);
+                Row(
+                  children:
+                  [
+                    Text(
+                        'Next',
+                        style: titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: CircularButton(
+                        onPress: ()
+                        {
+                          if (_keyForm.currentState!.validate())
+                          {
+                              _controller.loginNetworkApi(deviceId);
+                            }
+
                         }
-                       }
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 40,
@@ -292,7 +299,8 @@ class _LogInPage1State extends State<LogInPage1> {
                   onTap: () {
                     termsAndPolicey();
                   },
-                  child: Text.rich(
+                  child:
+                  Text.rich(
                     TextSpan(
                       style: smallTextStyle,
                       children: [
@@ -386,6 +394,14 @@ class _LogInPage1State extends State<LogInPage1> {
                                           width: 0.5, color: Colors.black12),
                                       borderRadius: BorderRadius.circular(10)),
                                 ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  child: Text(_controller.privacyModel.value.data!
+                                      .title.toString(),style: heading3,),
+
+                                ),
                                 _controller.privacyModel.value.data!
                                             .description !=
                                         null
@@ -395,13 +411,11 @@ class _LogInPage1State extends State<LogInPage1> {
                                             .toString(),
                                         style: {
                                           "body": Style(
-                                              fontSize: FontSize(10.0),
-                                              fontWeight: FontWeight.w300,
-                                              letterSpacing: 0.2),
+                                              fontSize: FontSize(16.0),
+                                              textAlign: TextAlign.justify,
+                                              lineHeight: LineHeight(1.8)),
                                         },
-                                        onLinkTap: (String? url,
-                                            RenderContext context,
-                                            Map<String, String> attributes,
+                                        onLinkTap: (String? url, Map<String, String> attributes,
                                             element) async {
                                           await launch(url!);
                                         })

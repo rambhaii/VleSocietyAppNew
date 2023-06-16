@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/textStyle.dart';
 
 import '../../../AppConstant/APIConstant.dart';
@@ -26,7 +27,7 @@ class RateUsApp extends StatefulWidget {
 class _RateUsAppState extends State<RateUsApp> {
   TextEditingController etmessage = TextEditingController();
   DashboardController controller = Get.find();
-  late String ratingvalue;
+   String ratingvalue="";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +117,7 @@ class _RateUsAppState extends State<RateUsApp> {
                                     children: [
                                       CircularButton(
                                         onPress: ()
-                                        {
+                                        async {
                                           if(etmessage.text.isEmpty)
                                           {
                                             Fluttertoast.showToast(msg: "Please Enter your comments",
@@ -142,10 +143,18 @@ class _RateUsAppState extends State<RateUsApp> {
                                                 "Guest") {
                                               UtilsMethod.PopupBox(
                                                   context, "rating");
-                                            } else {
-                                              controller
-                                                  .postAppFeedbackNetworkApi(
-                                                  etmessage.text, ratingvalue);
+                                            }
+                                            else
+                                            {
+                                            /*  if(double.parse(ratingvalue) < 4.0)
+                                              {
+
+                                              }
+                                              else
+                                              {
+                                               // await launch("https://play.google.com/store/search?q=vle+society+mobile+app&c=apps");
+                                              }*/
+                                              controller.postAppFeedbackNetworkApi(etmessage.text, ratingvalue);
                                               Get.back();
                                             }
                                           }

@@ -1,22 +1,32 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:html/parser.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/textStyle.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:vlesociety/Dashboard/view/profile/tawk_widget.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../Notification/FirebaseDynamicLink.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import '../../Widget/loading_widget.dart';
+import '../AddMobAds.dart';
 import '../model/CommunityModel.dart';
 import 'CommunityDetails.dart';
 
@@ -40,6 +50,84 @@ class _CommunityPageState extends State<CommunityPage>
   int cuntnumber = 0;
   CommunityDatum communityModel2 = Get.put(CommunityDatum());
 
+  late WebViewController _con;
+
+
+
+  @override
+  void initState()
+  {
+    // TODO: implement initState
+    super.initState();
+  //  loadAd();
+  }
+
+  @override
+  void dispose() {
+    //_bannerAd?.dispose();
+    super.dispose();
+  }
+
+
+
+  Widget getAd()
+  {
+ BannerAdListener bannerAdListener=BannerAdListener(onAdWillDismissScreen: (ad)
+ {
+   ad.dispose();
+ },onAdClicked: (ad){
+   print("Ad got closed");
+ });
+ BannerAd bannerAd=BannerAd(
+     size:  AdSize.banner,
+     adUnitId: AdHelper.bannerAdUnitId,
+     request:  const AdRequest(),
+
+     listener: BannerAdListener(
+     // Called when an ad is successfully received.
+     onAdLoaded: (ad)
+      {
+   debugPrint('$ad loaded.');
+
+     },
+    // Called when an ad request failed.
+    onAdFailedToLoad: (ad, err)
+    {
+    debugPrint('BannerAd failed to load: $err');
+    // Dispose the ad here to free resources.
+    ad.dispose();
+    },
+
+  onAdOpened: (Ad ad) {},
+  // Called when an ad removes an overlay that covers the screen.
+  onAdClosed: (Ad ad) {
+
+  },
+  // Called when an impression occurs on the ad.
+  onAdImpression: (Ad ad) {},
+
+    )
+        );
+
+     bannerAd.load();
+     return SizedBox(
+       height: 100,
+
+       child: AdWidget(ad: bannerAd),
+
+     );
+  }
+  _launchURL(String urlvalue) async
+  {
+
+    final uri = Uri.parse(urlvalue);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $urlvalue';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context)
@@ -50,7 +138,7 @@ class _CommunityPageState extends State<CommunityPage>
       Obx(
       () => Column(
         children:
-        [Column(
+        [ Column(
             children: controller.communityModel.value.data != null
                 ? List.generate(
                     controller.communityModel.value.data!.length,
@@ -58,11 +146,42 @@ class _CommunityPageState extends State<CommunityPage>
                     {
                       final data = controller.communityModel.value.data![index];
                       count = int.parse(data.ttlLike.toString());
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(() => CommunityDetails(
-                                cid: data.id.toString(),
-                              ));
+                        String desc=data.description.toString();
+
+
+
+
+                      return
+                        GestureDetector(
+                        onTap: ()
+                        {
+                         if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                           {
+                             InterstitialExampleState.loadInterstitialAd(context, data.id.toString(),data.description.toString());
+                           }
+                         else
+                           {
+                             data.description.toString().contains("Https")?
+                             Get.to(
+                                 ChatAd( directChatLink:data.description.toString(), title:"",
+                                   onLoad: ()
+                                   {
+                                     print('Hello Tawk!');
+                                   },
+                                   onLinkTap: (String url)
+                                   {
+                                     print(url);
+                                   },
+                                   placeholder: const Center(
+                                     child: Text('Loading...'),
+                                   ),))
+                             :
+                             Get.to(() => CommunityDetails(cid: data.id.toString(),));
+                           }
+
+
+
+                          //
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +217,8 @@ class _CommunityPageState extends State<CommunityPage>
                                          )],),
                               subtitle: Text(
                                 timeago.format(
-                                    DateTime.parse(data.addDate.toString())),
+                                    DateTime.parse(data.addDate.toString())
+                                ),
                                 style: smallTextStyle.copyWith(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 10,
@@ -226,14 +346,16 @@ class _CommunityPageState extends State<CommunityPage>
                                 ),
                               ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.only(left: 5, right: 0),
                               child: Column(
-                                children: [
-                                  ReadMoreText(
-                                    data.description.toString(),
+                                children:
+                                [
+                                /*  ReadMoreText(
+                                  parse(data!.description.toString()).body!.text,
                                     style:
-                                        TextStyle(fontSize: 11, letterSpacing: 1),
+                                        TextStyle(fontSize: 12, letterSpacing: 1),
                                     textAlign: TextAlign.justify,
                                     trimLines: 2,
                                     colorClickableText: Colors.pink,
@@ -243,23 +365,84 @@ class _CommunityPageState extends State<CommunityPage>
                                     moreStyle: smallTextStyle,
                                     lessStyle: smallTextStyle,
                                   ),
+                                  */
+                                  data.image.toString().isNotEmpty?
+                                data.description.toString().contains("Https")?
+                               Container(
+                                /* height: 200,
+                                 child:  WebView(
+                                   initialUrl:  data.description,
+                                   javascriptMode: JavascriptMode.unrestricted,
+                                   onWebViewCreated: (WebViewController webViewController) {
+                                     // _controller.complete(webViewController);
+                                     _con = webViewController;
+                                     //_loadHTML();
+                                   },
+                                   onProgress: (int progress) {
+                                     print("WebView is loading (progress : $progress%)");
+                                   },
+                                   navigationDelegate: (NavigationRequest request) {
+                                     if (request.url.startsWith(data.description.toString()))
+                                     {
+                                       print('blocking navigation to $request}');
+                                       return NavigationDecision.prevent;
+                                     }
+                                     print('allowing navigation to $request');
+                                     return NavigationDecision.navigate;
+                                   },
+                                   onPageStarted: (String url) {
+                                     print('Page started loading: $url');
+                                   },
+                                   onPageFinished: (String url) {
+                                     print('Page finished loading: $url');
+                                   },
+                                   gestureNavigationEnabled: true,
+                                 )*/
+                               ):
+
+                                  Html(
+                                      data:data.description.toString(),
+                                      style:
+                                      {
+                                        "body": Style(
+                                          fontSize: FontSize(12.0),
+                                          letterSpacing: 1,
+                                          textAlign: TextAlign.justify,
+                                         // lineHeight: LineHeight(1),
+                                          maxLines: 4
+                                        ),
+                                      },
+                                      onLinkTap: (String? url, Map<String,
+                                          String> attributes,
+                                          element)
+                                      async{
+                                        await launch(url!);
+                                      }
+                                  ):Container(
+
+                                  ),
+
                                 ],
                               ),
                             ),
                             SizedBox(
                               height: 8,
                             ),
-                            if (data.image.toString().isNotEmpty)
-                              Container(
-                                height: 150,
+                            data.image.toString().isNotEmpty?
+                                Container(
+                                height: 180,
                                 width: Get.width,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     image: DecorationImage(
                                         image: NetworkImage(
-                                            BASE_URL + data.image.toString()),
-                                        fit: BoxFit.cover)),
-                              ),
+                                            BASE_URL + data.image.toString()
+                                        ),
+                                            fit: BoxFit.fill
+                                    )
+                                ),
+                              ):Container(),
+
                             Row(
                               children: [
                                 Column(
@@ -323,7 +506,8 @@ class _CommunityPageState extends State<CommunityPage>
                                 RawMaterialButton(
                                   onPressed: ()
                                   {
-                                    if (controller.userType == "Guest") {
+                                    if (controller.userType == "Guest")
+                                    {
                                       UtilsMethod.PopupBox(context, "comment");
                                     }
                                     else
@@ -607,6 +791,36 @@ class _CommunityPageState extends State<CommunityPage>
                                                         .toString(),
                                                     style: smallTextStyle,
                                                   ),
+                                                  controller.answerModel.value
+                                                      .data![index].answer
+                                                      .toString().contains("Https")?
+                                                      InkWell(
+                                                        onTap: (){
+                                                          _launchURL(controller.answerModel.value
+                                                              .data![index].answer
+                                                              .toString());
+                                                        },
+                                                        child: Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          children: [
+                                                            Text("Open",style: TextStyle(
+                                                              color: Colors.blue,
+
+                                                            )
+                                                            ),
+                                                            Icon(
+                                                              Icons.arrow_forward_ios_rounded,
+                                                              color: Colors.blue,
+                                                              size: 18,
+                                                            )
+
+                                                             ],
+
+                                                        ),
+                                                      )
+                                                      :
+                                                      Container()
                                                 ],
                                               )),
                                           subtitle: Row(
@@ -873,6 +1087,38 @@ class _CommunityPageState extends State<CommunityPage>
                                                   .toString(),
                                               style: smallTextStyle,
                                             ),
+                                            controller.answerModel.value
+                                                .data![index].answer
+                                                .toString().contains("Https")?
+                                            InkWell(
+                                              onTap: ()
+                                              {
+                                                _launchURL(controller.answerModel.value
+                                                    .data![index].answer
+                                                    .toString());
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+
+                                                  Text("Open",style: TextStyle(
+                                                    color: Colors.blue,
+
+                                                  )
+                                                  ),
+                                                  Icon(
+                                                    Icons.arrow_forward_ios_rounded,
+                                                    color: Colors.blue,
+                                                    size: 18,
+                                                  )
+
+                                                ],
+
+                                              ),
+                                            )
+                                                :
+                                            Container()
                                           ],
                                         )),
                                     subtitle: Row(

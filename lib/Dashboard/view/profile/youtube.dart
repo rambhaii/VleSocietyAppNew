@@ -106,12 +106,13 @@ class youtube extends StatelessWidget
 
 
   Future<void> _launchInBrowser(String url) async {
-    if (!await launch(
-      url,
+    if (!await launch(url,
       forceSafariVC: true,
       forceWebView: false,
       headers: <String, String>{'my_header_key': 'my_header_value'},
-    )) {
+    )
+    )
+    {
       throw 'Could not launch $url';
     }
   }

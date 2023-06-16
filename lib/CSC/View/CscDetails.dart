@@ -114,7 +114,7 @@ class CscDetails extends StatelessWidget
                               fontSize: FontSize(11.0),
                             ),},
                             onLinkTap:
-                                (String? url, RenderContext context, Map<String,
+                                (String? url, Map<String,
                                 String> attributes,
                                 element)
                             async{

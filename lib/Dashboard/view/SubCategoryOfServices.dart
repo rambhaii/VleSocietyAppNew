@@ -121,7 +121,7 @@ class SubCategoryOfServices extends StatelessWidget
                     width: MediaQuery.of(context).size.width,
                     height: 40,
                     child: Center(child: Text(controller.serviceCategoryModel.value.data![index].title.toString(),
-                      style: bodyText1Style.copyWith(color: Colors.grey),)),
+                      style: bodyText1Style.copyWith(color: Colors.grey,fontSize: 16),)),
                   ),
                 ),
               ),

@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,11 +39,76 @@ class _ArticalSearchState extends State<ArticalSearch> {
   Widget build(BuildContext context)
   {
     return Scaffold(
+        appBar: PreferredSize(
+          child: Stack(
+            children: [
+              Positioned(
+                  top: -80,
+                  right: 60,
+                  child: Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:   Color(0xffcdf55a),
+                    ),
+                  )
+              ),
+              ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: AppBar(
+                    backgroundColor: Colors.white.withOpacity(0.5),
+                    leading: Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: CircleAvatar(radius: 10, backgroundColor: Colors.amber.withOpacity(0.1), backgroundImage: NetworkImage(BASE_URL+controller.image),),
+                    ),
+                    leadingWidth: 60,
+                    title:Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                      [ Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
+                      ],
+                    ),
+                    elevation: 0.0,
+                    actions: [
+                      RawMaterialButton(
+                        constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
+                        onPressed: ()
+                        {
+                          Navigator.pop(context, true);
+                        },
+
+                        shape: CircleBorder(
+
+                        ),
+                        child: Image.asset(
+                          "assets/images/back.png",
+                          height: 40,
+                          width: 40,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      )
+
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          preferredSize: Size(
+            double.infinity,
+            60.0,
+          ),
+        ),
         body: Container(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-              SizedBox(height: 50),
+              SizedBox(height: 5),
                Container(
         height: 50.h,
         child: Padding(
@@ -217,7 +282,7 @@ class _ArticalSearchState extends State<ArticalSearch> {
                               Html(
                                   data: datum.description.toString(),
                                   onLinkTap:
-                                      (String? url, RenderContext context, Map<String,
+                                      (String? url,  Map<String,
                                       String> attributes,
                                       element)
                                   async{

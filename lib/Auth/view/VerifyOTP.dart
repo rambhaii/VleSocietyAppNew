@@ -13,6 +13,7 @@ class OtypVerifyPage extends StatelessWidget {
   OtypVerifyPage({Key? key, required this.id, required this.otp}) : super(key: key);
   LoginController _controller=Get.find();
  String etotp="";
+
   @override
   Widget build(BuildContext context)
   {
@@ -67,12 +68,18 @@ class OtypVerifyPage extends StatelessWidget {
                  child: Obx(() =>  Row(
                    mainAxisAlignment: MainAxisAlignment.end,
                      children: [
-                       Text(_controller.start.value.toString(),style: titleStyle.copyWith(fontSize: 16,color: _controller.start.value!=0? Colors.blue:Colors.grey.withOpacity(0.4)),textAlign: TextAlign.end,),
-                       TextButton(child:Text("Resend Code?",style: titleStyle.copyWith(fontSize: 16,decoration: TextDecoration.underline,color: _controller.start.value==0?Colors.blue:Colors.grey.withOpacity(0.4)),textAlign: TextAlign.end,),
+                       Text(_controller.start.value.toString(),style: titleStyle.copyWith(fontSize: 16,
+                           color: _controller.start.value!=0? Colors.blue:Colors.grey.withOpacity(0.4)),
+                         textAlign: TextAlign.end,),
+                       TextButton(child:Text("Resend Code?",
+                         style: titleStyle.copyWith(fontSize: 16,
+                             decoration: TextDecoration.underline,
+                             color: _controller.start.value==0?Colors.blue:Colors.grey.withOpacity(0.4)),textAlign: TextAlign.end,),
                        onPressed:_controller.start.value==0? ()
                        {
                          _controller.start.value=120;
                          _controller.startTimer();
+                         _controller.loginNetworkApi("");
                        }:null,
                        ),
                      ],

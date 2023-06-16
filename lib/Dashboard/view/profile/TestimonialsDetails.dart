@@ -16,16 +16,20 @@ import '../../../Widget/CustomAppBarWidget.dart';
 import '../../controller/DashboardController.dart';
 
 class TestimonialsDetails extends StatelessWidget {
-  Datum value1;
-   TestimonialsDetails( this.value1, {Key? key}) : super(key: key);
-  DashboardController controller = Get.find();
+    String desc;
+    String url;
+    String name;
+    String location;
+    TestimonialsDetails( this.desc,this.url, this.name , this.location , {Key? key}) : super(key: key);
+
+    DashboardController controller = Get.find();
 
   @override
   Widget build(BuildContext context)
   {
+      print("kjdfg"+location);
     return Scaffold(
-        appBar:
-        PreferredSize(
+        appBar: PreferredSize(
             preferredSize: Size(
               double.infinity,
               60.0,
@@ -36,75 +40,74 @@ class TestimonialsDetails extends StatelessWidget {
                 image:BASE_URL+GetStorage().read(AppConstant.profileImg)
             )
         ),
-        body:value1!=null?
+        body:
         Padding(
           padding: EdgeInsets.only(left: 20,right: 20),
-          child: Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-              [
-                Html(
-                    data: value1.description.toString(),
-                    style: {
-                      "body": Style(
-                        fontSize: FontSize(12.0.sp),
-                        textAlign: TextAlign.justify,
-                      ),
-                    },
-                    onLinkTap: (String? url,
-                        RenderContext context,
-                        Map<String, String> attributes,
-                        element) async {
-                      await launch(url!);
-                    }),
-                SizedBox(height: 10,),
-                Container(
-                  padding: EdgeInsets.only(top: 5),
-                  alignment: Alignment.topCenter,
-                  child: CircleAvatar(
-                    radius: 60.r,
-                    backgroundColor: Colors.blue,
-                    backgroundImage: NetworkImage(BASE_URL+value1.profile.toString()),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-
-                  child: Text(
-                    value1.name.toString(),
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-
-
-
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+            [
+              Html(
+                  data: desc.toString(),
+                  style: {
+                    "body": Style(
+                      fontSize: FontSize(15.0.sp),
+                      textAlign: TextAlign.justify,
+                      lineHeight: LineHeight(1.5),
                     ),
+                  },
+                  onLinkTap: (String? url,
 
-
-                  ),
+                      Map<String, String> attributes,
+                      element) async {
+                    await launch(url!);
+                  }),
+              SizedBox(height: 10,),
+              Container(
+                padding: EdgeInsets.only(top: 5),
+                alignment: Alignment.topCenter,
+                child: CircleAvatar(
+                  radius: 60.r,
+                  backgroundColor: Colors.blue,
+                  backgroundImage: NetworkImage(BASE_URL+url.toString()),
                 ),
-                SizedBox(height: 1,),
-                Container(
-                  alignment: Alignment.topCenter,
-                  child:
+              ),
+              Container(
+                alignment: Alignment.topCenter,
 
-                  Text(
-                    value1.location.toString(),
-                    style: TextStyle(
-                      fontSize: 15.spMax,
-                      fontWeight: FontWeight.w300,
+                child: Text(
+                  name.toString(),
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
 
-                    ),
 
 
                   ),
-                )
-              ],
-            ),
+
+
+                ),
+              ),
+              SizedBox(height: 1,),
+              Container(
+                alignment: Alignment.topCenter,
+                child:
+
+                Text(
+                  location.toString(),
+                  style: TextStyle(
+                    fontSize: 15.spMax,
+                    fontWeight: FontWeight.w300,
+
+                  ),
+
+
+                ),
+              )
+            ],
           ),
-        ):Container()
+        )
 
 
 

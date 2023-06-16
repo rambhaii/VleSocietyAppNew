@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/view/dashboard.dart';
 
@@ -298,6 +301,7 @@ class LoginController extends GetxController
     etName.text=_storage.read(AppConstant.userName);
     etEmail.text=_storage.read(AppConstant.email);
     etMobile.text=_storage.read(AppConstant.phone);
+    dob.text=_storage.read(AppConstant.dob);
   }
   chooseImage(bool isCamera)async{
     final ImagePicker _picker = ImagePicker();
@@ -307,13 +311,14 @@ class LoginController extends GetxController
       {
         rxPath.value=image.path;
       }
-    } on Exception catch (e) {
+    } on Exception catch (e)
+    {
       print("cxjkbjvkbsdjv"+e.toString());
     }
 
   }
   signUpProfileImgNetworkApi()async{
-    print("djskfhj");
+
     if(etSate.text.isEmpty)
     {
       BaseController().warningSnack("Please Select State");
@@ -338,6 +343,7 @@ class LoginController extends GetxController
       "ID":_storage.read(AppConstant.id).toString().trim(),
       "dob":dob.text
     };
+    dob.text=dob.text.toString();
     print("vbdsjsjkbsdvjbvds");
     print(bodyRequest);
     Get.context!.loaderOverlay.show();
@@ -377,5 +383,10 @@ class LoginController extends GetxController
     privacyModel.value = privacyModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+
+
+
+
+
 
 }

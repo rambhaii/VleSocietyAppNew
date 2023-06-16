@@ -1,19 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
 import 'package:vlesociety/Dashboard/model/AwardModel.dart';
 import 'package:vlesociety/Dashboard/model/BannerModel.dart';
 import 'package:vlesociety/Dashboard/model/FeedBackModel.dart';
 import 'package:vlesociety/Dashboard/model/follow_model.dart';
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../Auth/controller/login_controller.dart';
 import '../../Notification/FirebaseServices.dart';
@@ -24,6 +30,7 @@ import '../model/AboutCscModel .dart';
 import '../model/AnswerModel.dart';
 import '../model/ArticalModel.dart';
 import '../model/AwardsModel.dart';
+import '../model/BankModel.dart';
 import '../model/CertificateModel.dart';
 import '../model/CommunityCategoryModel.dart';
 import '../model/CommunityModel.dart';
@@ -32,20 +39,24 @@ import '../model/FeedArticalModel.dart';
 import '../model/GovernMentServices.dart';
 import '../model/LikeDislike.dart';
 import '../model/NotificationModel.dart';
+import '../model/PointsModelDetails.dart';
 import '../model/PressMediaData.dart';
 import '../model/PressMrdiaDetailsModel.dart';
 import '../model/PrivacyModel .dart';
 import '../model/QuizModel.dart';
 import '../model/Quiz_Model/ContestQuize.dart';
 import '../model/Quiz_Model/quizq_model.dart';
+import '../model/RedeemPointsModel.dart';
 import '../model/ReferalModel.dart';
 import '../model/ReportPostApi.dart';
 import '../model/SearchKeyModel.dart';
 import '../model/ServiceCategoryModel.dart';
 import '../model/ServiceModel.dart';
+import '../model/SettingModel.dart';
 import '../model/TestimonialModel.dart';
 import '../model/TransactionsModel.dart';
 import '../model/UserDetails.dart';
+import '../model/UserType.dart';
 import '../view/ArticalSearch.dart';
 import '../view/Community.dart';
 import '../view/Earning/ReferAndEarn.dart';
@@ -58,6 +69,8 @@ import '../view/profile/AboutCSC.dart';
 import '../view/profile/Awards.dart';
 import '../view/profile/Certificates.dart';
 import '../view/profile/FCQ.dart';
+import '../view/profile/PointRedeem.dart';
+import '../view/profile/PointTable.dart';
 import '../view/profile/PressMediaDetails.dart';
 import '../view/profile/PressMida.dart';
 import '../view/profile/TestimonialsDetails.dart';
@@ -77,6 +90,18 @@ class DashboardController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final ScrollController sFcrollController1 = ScrollController();
   final ScrollController scrollController2 = ScrollController();
+  final formKey=GlobalKey<FormState>();
+  final formKey1=GlobalKey<FormState>();
+  final upiformKey=GlobalKey<FormState>();
+  TextEditingController etAmount=TextEditingController();
+  TextEditingController etupiId=TextEditingController();
+  TextEditingController etSate=TextEditingController();
+  TextEditingController etAccountNumber=TextEditingController();
+  TextEditingController etIFSCECODE=TextEditingController();
+  TextEditingController etBranchName=TextEditingController();
+  TextEditingController etAddress=TextEditingController();
+  TextEditingController etSignature=TextEditingController();
+  var userTypemodel = UserType().obs;
 
   Timer? _timer;
   RxInt startime = 0.obs;
@@ -94,47 +119,31 @@ class DashboardController extends GetxController {
       },
     );
   }
-
-  // Stopwatch? stopwatch;
-  /*Timer? t;
-
-
-
-  void handleStartStop() {
-    if(stopwatch!.isRunning) {
-      stopwatch!.stop();
-    }
-    else {
-      stopwatch!.start();
-    }
-  }*/
-
-  /*String returnFormattedText()
-  {
-    var milli = stopwatch!.elapsed.inMilliseconds;
-
-    String milliseconds = (milli % 1000).toString().padLeft(3, "0");
-    String seconds = ((milli ~/ 1000) % 60).toString().padLeft(2, "0");
-    String minutes = ((milli ~/ 1000) ~/ 60).toString().padLeft(2, "0");
-
-    return "$minutes:$seconds:$milliseconds";
-  }*/
-
+  var selectedState;
   RxInt countvalue = 0.obs;
   int? countervalue=0;
-  Future<void> counter() async {
-
+  Future<void> counter() async
+  {
+    print("fjgjfg");
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       countervalue = prefs.getInt('count');
-        print("uiusdfhjf"+counter.toString());
-      if (counter != null) {
+      if(countervalue==null)
+        {
+          countervalue=0;
+        }
+
+      if (counter!= null)
+      {
+        print("dfgfghghgh"+countervalue.toString());
         countervalue = countervalue! + 1;
         await prefs.setInt("count", countervalue!);
         countvalue.value = countervalue!;
+
       }
-    } catch (e) {
-      print(e.toString());
+    } catch (e)
+    {
+      print("djghffdggfhgdhj "+e.toString());
     }
   }
 
@@ -144,6 +153,7 @@ class DashboardController extends GetxController {
   RxInt selectedIndex = 0.obs;
   RxInt selectedIndexOfArtical = 0.obs;
   RxInt selectedComunityIndex = 0.obs;
+  RxInt selectedTabRedeemIndex = 0.obs;
   RxInt selectedServicesIndex = 0.obs;
   RxBool isCategorySelected = false.obs;
   RxBool isDob = true.obs;
@@ -173,6 +183,10 @@ class DashboardController extends GetxController {
   var reportPostApi = ReportPostApi().obs;
   var referalModel = ReferalModel().obs;
   var userDetails = UserDetails().obs;
+  var bankModel = BankModel().obs;
+  var redeemPointsModel = RedeemPointsModel().obs;
+  var settingModel = SettingModel().obs;
+  var pointsModelDetails = PointsModelDetails().obs;
 
   var certificateModel = CertificateModel().obs;
 
@@ -190,6 +204,7 @@ class DashboardController extends GetxController {
   RxInt fileLength = 0.obs;
   List<XFile>? imagesList = [];
   RxString rxMessaage = "".obs;
+  RxString urlvalue = "".obs;
   TextEditingController etMessage = TextEditingController();
   TextEditingController searchkey = TextEditingController();
 
@@ -205,9 +220,10 @@ class DashboardController extends GetxController {
   RxBool isLoadingQuizePage = false.obs;
   RxBool isLoadingCSCPage = false.obs;
   RxBool isLoadingVleNewsPage = false.obs;
+  RxBool isLoadinginsertialAds = false.obs;
 
   RxInt setCategoryOfArtical = 0.obs;
-  RxInt setSelectedCategoryOfArtical = 0.obs;
+  RxInt setSelectedCategoryOfArtical = 1.obs;
 
   var articleModel = ArticaleModel().obs;
   var articleModelByCategory = ArticaleModel().obs;
@@ -217,12 +233,15 @@ class DashboardController extends GetxController {
 
   @override
   void onInit() {
+
+    setupRemoteConfig();
+
     userName = _storage.read(AppConstant.userName) ?? "";
     email = _storage.read(AppConstant.email) ?? "";
     image = _storage.read(AppConstant.profileImg) ?? "";
     userType = _storage.read(AppConstant.userType) ?? "";
     dob = _storage.read(AppConstant.dob) ?? "";
-
+    getSettingsNetworkApi();
     getgetUserDetailsNetworkApi();
     addItems();
     getBannerNetworkApi();
@@ -230,10 +249,93 @@ class DashboardController extends GetxController {
     getreportPostApiNetworkApi();
     getQuizNetworkApi();
     addItemsQuize();
+
+
     super.onInit();
   }
+    loadInterstitialAd()
+  {
+   // Get.context!.loaderOverlay.show();
 
-  addItems() async {
+    InterstitialAd? interstitialAd;
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad)
+          {
+
+            interstitialAd = ad;
+            interstitialAd!.show();
+          //  Get.context!.loaderOverlay.hide();
+            interstitialAd!.fullScreenContentCallback =
+                FullScreenContentCallback(
+                    onAdFailedToShowFullScreenContent: ((ad, error) {
+                      ad.dispose();
+                      interstitialAd!.dispose();
+                      debugPrint(error.message);
+                    }),
+                    onAdDismissedFullScreenContent: (ad) {
+                      ad.dispose();
+                      interstitialAd!.dispose();
+
+                    //  Get.to(() => CommunityDetails(cid:id.toString()));
+                    }
+
+                );
+          },
+          onAdFailedToLoad: (err) {
+            debugPrint(err.message);
+          },
+        ));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  addItems() async
+  {
+
+    print("objedfdfgdfct");
+    print(isLoadingPageArtical.value);
+    print( selectedIndex.value);
+    print(setSelectedCategoryOfArtical.value);
+
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.position.pixels) {
@@ -241,17 +343,19 @@ class DashboardController extends GetxController {
 
           start = start + int.parse(communityModel.value.page!.toString());
           getCommunityLoadingNetworkApi(start);
-        } else if (isLoadingPageArtical.value &&
-            selectedIndex.value == 1 &&
-            setSelectedCategoryOfArtical.value == 1) {
+        } else if (isLoadingPageArtical.value && selectedIndex.value == 1 &&
+            setSelectedCategoryOfArtical.value == 1)
+        {
+          print("djdfh");
           start = start + int.parse(feedArticalModel.value.page!.toString());
           getFeedArticalLoadingNetworkApi(start);
         } else if (isLoadingQuizePage.value && selectedIndex.value == 3) {
           start = start + int.parse(quizModel.value.page!.toString());
           getQuizeLoadingNetworkApi(start);
-        } else if (isLoadingPageArtical.value &&
-            selectedIndex.value == 1 &&
-            setSelectedCategoryOfArtical.value == 2) {
+        } else if (isLoadingPageArtical.value && selectedIndex.value == 1
+            && setSelectedCategoryOfArtical.value == 2)
+        {
+          print("jfdhg");
           start = start + int.parse(articleModel.value.page!.toString());
           getArticalLoadingNetworkApi(start);
         }
@@ -266,7 +370,7 @@ class DashboardController extends GetxController {
         if (isLoadingVleNewsPage.value)
         {
           start = start + int.parse(feedArticalModel.value.page!.toString());
-          getFeedArticalLoadingNetworkApi(start);
+         getFeedArticalLoadingNetworkApi(start);
         }
       }
     });
@@ -319,20 +423,25 @@ class DashboardController extends GetxController {
     var response = await BaseClient()
         .get(getFeedArtical + "?lng=eng&limit=${20}&page=${end}")
         .catchError(BaseController().handleError);
+    print("dfgfghghfj"+response);
 
-    if (jsonDecode(response)["status"] == 1) {
-      if (isLoadingPageArtical.value == true) {
-        feedArticalModel.value.data!
-            .addAll(feedArticalModelFromJson(response).data!);
-        feedArticalModel.refresh();
+    if (jsonDecode(response)["status"] == 1)
+    {
+      if (isLoadingPageArtical.value == true)
+      {
+       feedArticalModel.value.data!.reversed;
+       feedArticalModel.value.data!.addAll(feedArticalModelFromJson(response).data!);
+       feedArticalModel.refresh();
       }
-    } else {
+    } else
+    {
       isLoadingPageArtical.value = false;
-      Fluttertoast.showToast(msg: "No more data availabel ! ");
+      Fluttertoast.showToast(msg: "No more data available !");
     }
   }
 
-  getArticalLoadingNetworkApi(int end) async {
+  getArticalLoadingNetworkApi(int end) async
+  {
     var response = await BaseClient()
         .get(getArticalApi + "?lng=eng&limit=${20}&page=${end}")
         .catchError(BaseController().handleError);
@@ -347,7 +456,7 @@ class DashboardController extends GetxController {
     }
   }
 
-  //Community
+
   getCommunityNetworkApi() async {
     var response = await BaseClient()
         .get(getCommunityApi +
@@ -491,11 +600,13 @@ class DashboardController extends GetxController {
     Get.offAll(() => SplashPage());
   }
 
-  void selectMultipleImage() async {
+  void selectMultipleImage() async
+  {
     final ImagePicker _picker = ImagePicker();
     List<XFile>? imagesList2 = await _picker.pickMultiImage(
         imageQuality: 60, requestFullMetadata: true);
-    if (imagesList2.isNotEmpty) {
+    if (imagesList2.isNotEmpty)
+    {
       fileLength.value = imagesList2.length;
       imagesList = imagesList2;
     }
@@ -515,7 +626,7 @@ class DashboardController extends GetxController {
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
-//api/Dashboard/getArtical?lng=eng&csc_id=8
+
   getArticleNetworkApi() async {
     var response = await BaseClient()
         .get(getArticalApi + "?lng=eng")
@@ -723,6 +834,21 @@ class DashboardController extends GetxController {
     transactionsModel.value = transactionsModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+  gettransactionPointsDetails() async
+  {
+
+    Get.context!.loaderOverlay.show();
+    var response = await BaseClient().get(gettransactionHistory +"?lng=eng&user_id=${_storage.read(AppConstant.id)}&limit=500&page=0&txn_status=").catchError(BaseController().handleError);
+    Get.context!.loaderOverlay.hide();
+    if (jsonDecode(response)["status"] .toString()== "1")
+    {
+      transactionsModel.value = transactionsModelFromJson(response);
+      Get.to(()=>PointTable());
+      return;
+    }
+    transactionsModel.value = transactionsModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
 
   getTestimonialsData() async {
     Get.context!.loaderOverlay.show();
@@ -815,7 +941,7 @@ class DashboardController extends GetxController {
       return;
     }
     awardModel.value = awardModelFromJson(response);
-    BaseController().errorSnack(jsonDecode(response)["message"]);
+   BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
   getComunitylikeDislikeNetworkApi(String community_id, String status) async {
@@ -883,14 +1009,15 @@ class DashboardController extends GetxController {
   }
 
   getSearchListNetworkApi(
-      String searchKey, String post_category_master_id) async {
-    //   Get.context!.loaderOverlay.show();
+      String searchKey, String post_category_master_id) async
+  {
+       Get.context!.loaderOverlay.show();
 
     var response = await BaseClient()
         .get(getCommunity_search +
             "?lng=eng&limit=10&page=0&user_id=${_storage.read(AppConstant.id)}&searchkey=${searchKey}&post_category_master_id=${post_category_master_id}")
         .catchError(BaseController().handleError);
-    // Get.context!.loaderOverlay.hide();
+   Get.context!.loaderOverlay.hide();
     if (jsonDecode(response)["status"] == 1) {
       communityModelBySerachKey.value = communityModelFromJson(response);
 
@@ -899,6 +1026,28 @@ class DashboardController extends GetxController {
     communityModelBySerachKey.value = communityModelFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+    getSearchDataListNetworkApi(
+      String searchKey, String post_category_master_id) async
+     {
+
+    var response = await BaseClient()
+        .get(getCommunity_search +
+        "?lng=eng&limit=100&page=0&user_id=${_storage.read(AppConstant.id)}&searchkey=${searchKey}&post_category_master_id=${post_category_master_id}")
+        .catchError(BaseController().handleError);
+
+    if (jsonDecode(response)["status"] == 1) {
+      communityModelBySerachKey.value = communityModelFromJson(response);
+
+      return;
+    }
+    communityModelBySerachKey.value = communityModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+
+
+
+
+
 
   getArticleBySearchKeyNetworkApi(
       String searchkey, String state_id, String post_category_id) async {
@@ -1075,7 +1224,8 @@ class DashboardController extends GetxController {
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
 
-  getFeedArticalNetworkApi(String searchkey) async {
+  getFeedArticalNetworkApi(String searchkey)
+  async {
     Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getFeedArtical + "?lng=eng&limit=${20}&page=${0}&searchkey=${searchkey}")
@@ -1084,6 +1234,7 @@ class DashboardController extends GetxController {
     if (jsonDecode(response)["status"] == 1)
     {
       feedArticalModel.value = feedArticalModelFromJson(response);
+      print("djfhgj");
       isLoadingPageArtical.value = true;
       isLoadingVleNewsPage.value = true;
       setCategoryOfArtical.value = 1;
@@ -1133,6 +1284,7 @@ class DashboardController extends GetxController {
   }
 
   getReferalPointsDetailNetworkApi() async {
+    print('kjdfghkj');
     Get.context!.loaderOverlay.show();
     var response = await BaseClient()
         .get(getReferalPointsDetail + "?lng=eng")
@@ -1148,22 +1300,229 @@ class DashboardController extends GetxController {
   }
 
   getgetUserDetailsNetworkApi() async {
-    print("skdjfdfjhgkjhg");
+
     var response = await BaseClient()
         .get(getUserDetails + "?lng=eng&ID=${_storage.read(AppConstant.id)}")
         .catchError(BaseController().handleError);
      if (jsonDecode(response)["status"].toString() == "1")
      {
+       print("");
       points = jsonDecode(response)["Data"]["points"] ?? "";
       _storage.write(AppConstant.points, jsonDecode(response)["Data"]["points"]??"");
       dob = jsonDecode(response)["Data"]["dob"] ?? "";
-
-      print("fjghkgfdhfhgjfdgh" + jsonDecode(response)["Data"]["dob"] ?? "");
       userDetails.value = userDetailsFromJson(response);
-
       return;
     }
     userDetails.value = userDetailsFromJson(response);
     BaseController().errorSnack(jsonDecode(response)["message"]);
   }
+
+
+
+  getBankListNetworkApi() async {
+    var response = await BaseClient()
+        .get(getBankList + "?lng=eng")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
+      bankModel.value = bankModelFromJson(response);
+      return;
+    }
+    bankModel.value = bankModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+
+//
+  Future<bool> postRedeemNetworkApi(String rdeemType) async {
+
+
+
+
+
+    var bodyRequest =
+    {
+      "lng": language,
+      "user_id": _storage.read(AppConstant.id),
+      "amount": etAmount.text.toString(),
+      "redeem_type":rdeemType.toString() ,
+      "upi_id":etupiId.text.toString().trim() ,
+      "bank_master_id":etSate.text.toString().trim() ,
+      "branch": etBranchName.text.toString().trim(),
+      "ifsc_code":etIFSCECODE.text.toString().trim() ,
+      "address":  etAddress.text.toString().trim(),
+      "remark": etSignature.text.toString().trim(),
+    };
+
+    print(bodyRequest);
+
+    Get.context!.loaderOverlay.show();
+    var response = await BaseClient()
+        .post(postRedeem, bodyRequest)
+        .catchError(BaseController().handleError);
+    Get.context!.loaderOverlay.hide();
+    print("dfbijbdkbd");
+    print(response);
+    if (jsonDecode(response)["status"] == 1) {
+      BaseController().successSnack("Report" + jsonDecode(response)["message"]);
+      return true;
+    }
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+    return false;
+  }
+//getRedeemList
+
+
+  getRedeemListNetworkApi() async {
+    var response = await BaseClient()
+        .get(getRedeemList + "?lng=eng&user_id=${_storage.read(AppConstant.id)}")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
+      redeemPointsModel.value = redeemPointsModelFromJson(response);
+      return;
+    }
+    redeemPointsModel.value = redeemPointsModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+  getSettingsNetworkApi() async {
+    var response = await BaseClient()
+        .get(getSettings + "?lng=eng&user_id=${_storage.read(AppConstant.id)}")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
+      settingModel.value=settingModelFromJson(response);
+      return;
+    }
+    settingModel.value = settingModelFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+  getPointsMaster_listNetworkApi() async
+  {
+    var response = await BaseClient()
+        .get(getPointsMaster_list + "?lng=eng&user_id=${_storage.read(AppConstant.id)}")
+        .catchError(BaseController().handleError);
+    if (jsonDecode(response)["status"].toString() == "1")
+    {
+      pointsModelDetails.value = pointsModelDetailsFromJson(response);
+      return;
+    }
+    pointsModelDetails.value = pointsModelDetailsFromJson(response);
+    BaseController().errorSnack(jsonDecode(response)["message"]);
+  }
+
+
+
+
+
+
+
+  setupRemoteConfig() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+
+    final  remoteConfig = FirebaseRemoteConfig.instance;
+    remoteConfig.setConfigSettings(
+        RemoteConfigSettings(fetchTimeout: Duration(seconds: 10), minimumFetchInterval: Duration.zero)
+    );
+    await remoteConfig.fetch();
+    await remoteConfig.activate();
+    if(remoteConfig.getValue(AppConstant.vleSocietyUpdate).asBool())
+    {
+
+      if(version!=remoteConfig.getValue(AppConstant.vleSocietyVersion).asString() && remoteConfig.getValue(AppConstant.forceFully).asBool() )
+      {
+        _forceFullyupdate(remoteConfig.getString(AppConstant.vleSocietyUrl),remoteConfig.getString(AppConstant.vleSocietyMessage));
+        return;
+      }
+      if(version!=remoteConfig.getValue(AppConstant.vleSocietyVersion).asString())
+      {
+        _update(remoteConfig.getString(AppConstant.vleSocietyUrl),remoteConfig.getString(AppConstant.vleSocietyMessage));
+        return;
+      }
+
+    }
+
+    //  print(remoteConfig.getValue('version').asString());
+
+  }
+  void _update(String url,String Message) {
+    showCupertinoDialog(
+        context: Get.context!,
+        builder: (BuildContext ctx) {
+          return CupertinoAlertDialog(
+            title: const Text('Update ! '),
+            content:  Text(Message),
+            actions: [
+              // The "Yes" button
+              CupertinoDialogAction(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text('May be later'),
+                isDefaultAction: true,
+                isDestructiveAction: true,
+              ),
+              // The "No" button
+              CupertinoDialogAction(
+                onPressed: () {
+                  _lunchInBrowser(url);
+                },
+                child: const Text('Install'),
+                isDefaultAction: false,
+                isDestructiveAction: false,
+              )
+            ],
+          );
+        });
+  }
+
+
+  void _forceFullyupdate(String url,String Message) {
+    showCupertinoDialog(
+        context: Get.context!,
+        barrierDismissible: true,
+        builder: (BuildContext ctx) {
+          return WillPopScope(onWillPop: ()async{
+            return false;
+          },
+            child: CupertinoAlertDialog(
+              insetAnimationCurve: Curves.easeInOutCubic,
+              insetAnimationDuration:Duration(milliseconds: 600),
+              title: const Text('Update required !',),
+              content:  Text(Message),
+              actions: [
+                // The "Yes" button
+
+                // The "No" button
+                CupertinoDialogAction(
+                  onPressed: () {
+                    _lunchInBrowser(url);
+                  },
+                  child: const Text('Install'),
+                  isDefaultAction: false,
+                  isDestructiveAction: false,
+                )
+              ],
+            ),
+          );
+        });
+  }
+  Future<void> _lunchInBrowser(String url) async
+  {
+    if(await canLaunch(url))
+    {
+      await launch(url,forceSafariVC: false,forceWebView: false,
+          headers: <String,String>{"headesr_key":  "headers_value"}
+      );
+
+    }
+    else{
+      throw "url not lunched $url";
+    }
+  }
+
+
+
+
 }

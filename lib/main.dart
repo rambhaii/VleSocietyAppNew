@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:vlesociety/Splash/SplashPage.dart';
 import 'AppConstant/AppConstant.dart';
@@ -20,6 +22,8 @@ import 'Notification/FirebaseDynamicLink.dart';
 void main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
+
+  MobileAds.instance.initialize();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await GetStorage.init();
@@ -48,7 +52,10 @@ void main() async
 
   }
 
-
+  AdRequest? adRequest;
+  BannerAd? bannerAd;
+  InterstitialAd? interstitialAd;
+  RewardedAd? rewardedAd;
 
   runApp(  MyApp());
 
@@ -64,8 +71,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async
 class MyApp extends StatelessWidget
 {
   const MyApp( {super.key});
+
+
+
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return ScreenUtilInit(
       splitScreenMode: true,
       minTextAdapt: true,

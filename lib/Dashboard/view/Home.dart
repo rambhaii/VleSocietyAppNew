@@ -1,14 +1,21 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
+import 'package:vlesociety/Dashboard/view/profile/PointRedeem.dart';
+import 'package:vlesociety/Dashboard/view/quize.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import 'Community.dart';
 import 'MyAsk.dart';
+import 'Services.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -24,10 +31,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late TabController tabController;
   AnimationController? _controller;
   Animation<double>? _animation;
+
+
   @override
   void initState()
   {
     super.initState();
+
 
     tabController = TabController(length: 2, vsync: this);
     _controller = AnimationController(
@@ -45,6 +55,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+
     tabController.dispose();
     super.dispose();
   }
@@ -63,12 +74,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           SizedBox(
             height: 8,
           ),
+
           Container(
             child: Obx(
               () => controller.bannerModel.value.data != null
                   ? CarouselSlider(
                       options: CarouselOptions(
-                        height: 130.0,
+                        height: 190.0,
                         viewportFraction: 1,
                         aspectRatio: 16/9,
                         initialPage: 0,
@@ -82,46 +94,94 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         enlargeFactor: 0.3,
                         scrollDirection: Axis.horizontal,
                       ),
-                      items: controller.bannerModel.value.data!.map((i) {
+                      items: controller.bannerModel.value.data!.map((i)
+                      {
                         return Builder(
                           builder: (BuildContext context)
                           {
                             return InkWell(
                               onTap: ()
-                              async{
-                                await launch(i.url!=null?i.url.toString():"");
-                              },
-                              child:  Container(
-                                height: 130.0,
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.only(left: 10.0, right: 10),
+                              async
+                              {
 
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white,
-                                  image:
-                                  DecorationImage(
-                                    image: NetworkImage(BASE_URL + i.image.toString()),
-                                    fit: BoxFit.fill,
+                                if(i.rediret_type.toString()=="1")
+                                  {
+                                    //Get.to(ServicePage());
+                                    controller.selectedIndex.value = 2;
+                                  }
+                                else if(i.rediret_type.toString()=="2")
+                                  {
+                                    controller.selectedIndex.value = 3;
+                                    //Get.to(QuizPage());
+                                  }
+                                else if(i.rediret_type.toString()=="3")
+                                {
+                                  controller.selectedIndex.value = 0;
+                                  //Get.to(QuizPage());
+                                }
+                                else if(i.rediret_type.toString()=="4")
+                                {
+                                  controller.selectedIndex.value = 1;
+                                  //Get.to(QuizPage());
+                                }
+                                else if(i.rediret_type.toString()=="5")
+                                {
+                                  controller.selectedIndex.value = 2;
+                                  //Get.to(QuizPage());
+                                }
+                                else if(i.rediret_type.toString()=="6")
+                                {
+                                  controller.selectedIndex.value = 4;
+                                  //Get.to(QuizPage());
+                                }
+                                else if(i.rediret_type.toString()=="7")
+                                {
+                                controller.gettransactionPointsDetails();
 
-                                  ),
-                                 ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 60.0,left: 5,right: 5),
+                                }
+                                else if(i.rediret_type.toString()=="8")
+                                {
+
+                                controller.getReferalPointsDetailNetworkApi();
+                                }
+                                else if(i.rediret_type.toString()=="0")
+                                  {
+                                    await launch(i.url!=null?i.url.toString():"");
+                                  }
+                                  
+                                },
+                              child:
+                              Column(
+                                children: [
+                                  Container(
+                                    height: 100.0.h,
+                                    width: MediaQuery.of(context).size.width,
+                                    margin: EdgeInsets.only(left: 10.0, right: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
+                                      image:
+                                      DecorationImage
+                                        (
+                                        image: NetworkImage(BASE_URL + i.image.toString()),
+                                        fit: BoxFit.fill,
+                                           ),),),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5.0,left: 20,right: 30),
                                     child: Text(i.title.toString(),
-                                     style: bodyText1Style.copyWith(
-                                         color: Colors.black54,
-                                       fontSize: 15
-                                     ),overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
-                                        textAlign: TextAlign.center
 
-                                  ),
-                                ),
+                                        style: bodyText1Style.copyWith(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                           letterSpacing:1
+                                        ),
+                                        maxLines: 2,
 
-                              ),
-                            ));
+
+                                    ),
+                                  )
+                                ],
+                              ));
                           },
                         );
                       }).toList(),
@@ -141,7 +201,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             height: 35,
             child: TabBar(
-                onTap: (value) {
+                onTap: (value)
+                {
                   controller.selectedComunityIndex.value = value;
                   if (value == 1)
                   {

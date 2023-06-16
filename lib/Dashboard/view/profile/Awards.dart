@@ -42,6 +42,7 @@ class _AwordsState extends State<Awords> {
   void initState()
   {
     super.initState();
+    controller.getAwardNetworkApi();
     _pageController = PageController();
     Timer.periodic(Duration(seconds: 5), (Timer timer)
     {
@@ -64,7 +65,7 @@ class _AwordsState extends State<Awords> {
 
   @override
   Widget build(BuildContext context) {
-    controller.getAwardNetworkApi();
+
     return Scaffold(
       appBar: PreferredSize(
         child: Stack(

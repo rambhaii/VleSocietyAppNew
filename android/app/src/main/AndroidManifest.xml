@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vlesociety.vlesociety"
+    package="com.vlesociety"
     xmlns:tools="http://schemas.android.com/tools">
     <queries>
         <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
@@ -9,34 +9,40 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-   <application
-       android:configChanges=
-           "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+
+    <application
+        android:configChanges=
+            "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
         android:label="vlesociety"
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
-       android:icon="@mipmap/ic_launcher"
-       tools:replace="android:label"
-       >
-       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="593905325990207"/>
-       <meta-data android:name="com.facebook.sdk.ClientToken" android:value="86cf4d01ed94b2ed140758fbd2892be1"/>
-       <activity
-           android:name="com.facebook.FacebookActivity"
-           android:label="Vle"
-           tools:replace="android:label"
-           />
-       <activity
-           android:name="com.facebook.CustomTabActivity"
-           android:exported="true"
-           >
-           <intent-filter>
-               <action android:name="android.intent.action.VIEW" />
-               <category android:name="android.intent.category.DEFAULT" />
-               <category android:name="android.intent.category.BROWSABLE" />
-               <data android:scheme="fb593905325990207" />
-           </intent-filter>
-       </activity>
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:label"
+        >
+        <!--  chnage key at run time Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8173413063975533~4659831245"/>
+
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="593905325990207"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="86cf4d01ed94b2ed140758fbd2892be1"/>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:label="Vle"
+            tools:replace="android:label"
+            />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="fb593905325990207" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -50,21 +56,21 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+                />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW"/>-->
-<!--                <category android:name="android.intent.category.DEFAULT"/>-->
-<!--                <category android:name="android.intent.category.BROWSABLE"/>-->
-<!--                <data-->
-<!--                    android:host="vlesocietyapp.page.link"-->
-<!--                    android:scheme="https"/>-->
-<!--            </intent-filter>-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.VIEW"/>-->
+            <!--                <category android:name="android.intent.category.DEFAULT"/>-->
+            <!--                <category android:name="android.intent.category.BROWSABLE"/>-->
+            <!--                <data-->
+            <!--                    android:host="vlesocietyapp.page.link"-->
+            <!--                    android:scheme="https"/>-->
+            <!--            </intent-filter>-->
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -81,15 +87,15 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <meta-data
-           android:name="com.google.firebase.messaging.default_notification_channel_id"
-           android:value="high_importance_channel" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
 
 
 
-       <meta-data
-           android:name="flutterEmbedding"
-           android:value="2" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
 
 
     </application>

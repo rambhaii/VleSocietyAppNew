@@ -38,60 +38,7 @@ class _TawkState extends State<ChatAd>
   Completer<WebViewController>();
   late WebViewController _con;
 
-  /*String setHTML(String email, String phone, String name)
-  {
-    return ('''
-    <html>
-      <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-      </head>
-      
-        <body style="background-color:#fff;height:100vh ">
 
-          <div style="width: 50%; margin: 0 auto;margin-top: 200px">
-            <table class="table table-striped">
-              <tbody>
-                <tr>
-                  <th>Name</th>
-                  <th>$name</th>
-                </tr>
-                <tr>
-                  <th>Email</th>
-                  <td>$email</td>
-                </tr>
-                <tr>
-                  <th>Phone</th>
-                  <th>$phone</th>
-                </tr>
-              </tbody>
-            </table>
-            <a type="button" class="btn btn-success" style="width: 210px" href="https://connelevalsam.github.io/connelblaze/">
-              Submit
-            </a>
-          </div>
-        </body>
-      </html>
-      
-
-    ''');
-  }
-
-  _loadHTML() async {
-    _con.loadUrl(Uri.dataFromString(
-        setHTML(
-            "connelblaze@gmil.com",
-            "+2347034857296",
-            "Connel Asikong"
-        ),
-        mimeType: 'text/html',
-        encoding: Encoding.getByName('utf-8')
-    ).toString());
-  }*/
 
 
   @override
@@ -148,7 +95,8 @@ class _TawkState extends State<ChatAd>
         ),
       body:
       Builder(builder: (BuildContext context) {
-        return WebView(
+        return
+          WebView(
           initialUrl: widget.directChatLink,
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {

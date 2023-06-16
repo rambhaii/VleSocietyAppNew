@@ -16,6 +16,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../../AppConstant/textStyle.dart';
 
 import '../../controller/quize_controller.dart';
+import '../dashboard.dart';
 import 'QuestionHistory.dart';
 
 class showresult extends StatefulWidget {
@@ -327,8 +328,10 @@ class _showresultState extends State<showresult> {
                               color: Colors.grey.shade300),
                               borderRadius: BorderRadius.circular(4))
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
+                      onPressed: ()
+                      {
+                        Get.off(HomeDashboard());
+
                       }, child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -28,11 +28,6 @@ class YourCertificates extends StatefulWidget {
 class _YourCertificatesState extends State<YourCertificates> {
   DashboardController controller = Get.find();
 
-
-
-
-
-
   @override
   Widget build(BuildContext context)
   {
@@ -111,7 +106,7 @@ class _YourCertificatesState extends State<YourCertificates> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Certificate of Participation",
+                                                    "Participation in vle society",
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -164,15 +159,29 @@ class _YourCertificatesState extends State<YourCertificates> {
                                               Spacer(),
                                               InkWell(
                                                   onTap: ()
+                                                async
                                                 {
-
-
-
-                                                  showDialog(
+                                                 // generatePdf(context,data.certificate.toString());
+                                                 /* showDialog(
                                                     context: context,
                                                     builder: (context) =>  DownloadingDialog(BASE_URL+data.certificate.toString()),
-                                                    );
-                                                },
+                                                    );*/
+
+                                                  final urlPreview =BASE_URL+data.certificate.toString();
+                                                  final url = Uri.parse(urlPreview);
+                                                  final response = await http.get(url);
+
+
+
+                                                  var data1 = await http.get(url);
+                                                  final output = await getTemporaryDirectory();
+                                                  final file = File('${output.path}/certificate${new DateTime.now().
+                                                  microsecondsSinceEpoch}.pdf');
+                                                  await file.writeAsBytes(data1.bodyBytes);
+                                                  var pdfData = response.bodyBytes;
+                                                  await Printing.layoutPdf(onLayout: (PdfPageFormat
+                                                  format) async => pdfData);
+                                                  },
                                                   child: Text(
                                                     "DOWNLODE",
                                                     style: TextStyle(
@@ -201,27 +210,20 @@ class _YourCertificatesState extends State<YourCertificates> {
     );
   }
 
- /* pw.Column(
-  crossAxisAlignment: pw.CrossAxisAlignment.start,
-  children: [
-  pw.Row(
-  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  children: [
-  pw.Header(text: "About Cat", level: 1),
-  pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)
-  ]
-  ),
-  pw.Divider(borderStyle: pw.BorderStyle.dashed),
-  pw.Paragraph(text: "fjhjf"),
-  ]
-  );*/
 
- /* Future<Uint8List> buildPdf(PdfPageFormat format,String imageUrl)
+
+  Future<Uint8List> buildPdf(PdfPageFormat format,String imageUrl,BuildContext context1,String images)
   async
   {
+    String fileimage=BASE_URL+images.toString();
+    print("dfghuhhjgk"+fileimage);
+
     final pdf = pw.Document();
-    final ByteData bytes = await rootBundle.load('assets/notification.png');
-    final Uint8List byteList = bytes.buffer.asUint8List();
+    final image = await flutterImageProvider(NetworkImage(fileimage)
+    );
+
+
+
     pdf.addPage(
         pw.Page(
             margin: const pw.EdgeInsets.all(10),
@@ -229,67 +231,65 @@ class _YourCertificatesState extends State<YourCertificates> {
             build: (context)
             {
               return
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Header(text: "About Cat", level: 1),
-                          pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)
-                        ]
-                    ),
-                    pw.Divider(borderStyle: pw.BorderStyle.dashed),
-                    pw.Paragraph(text: "fjhjf"),
-                  ]
+              pw.Padding(
+                padding: pw.EdgeInsets.only(right: 10,) ,
+                child:  pw.Container(
+                  height: MediaQuery.of(context1).size.height,
+                  width: MediaQuery.of(context1).size.width,
+                  child: pw.Row(
+                    children:
+                    [
+                      pw.Image(image,fit:pw.BoxFit.cover),
+                    ],
+                  ),
+                )
               );
+               
             }
         ));
     return pdf.save();
-  }*/
-
-
-  void _convertPdfToImages(pw.Document doc) async
-  {
-    await for (var page in Printing.raster(await doc.save(), pages: [0, 1], dpi: 72)) {
-      final image = page.toImage(); // ...or page.toPng()
-      print(image);
-    }
   }
-  Future<Uint8List> _generatePdf(PdfPageFormat format, String title) async
-  {
-    final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
-    final font = await PdfGoogleFonts.nunitoExtraLight();
-  /*  final ByteData bytes = await rootBundle.load('assets/filter.png');
-  //  final Uint8List byteList = bytes.buffer.asUint8List();
-    //pw.Image(pw.MemoryImage(byteList), fit: pw.BoxFit.fitHeight, height: 100, width: 100)*/
+
+
+
+
+
+
+  void generatePdf(BuildContext context,String image) async {
+    const title = 'eclectify Demo';
+    await Printing.layoutPdf(onLayout: (format) => buildPdf(format, title,context,image));
+  }
+
+  Future<Uint8List> _generatxcvvePdf(PdfPageFormat format, AsyncSnapshot snapshot,
+      BuildContext context, int index) async {
+    final pdf = pw.Document();
+
+    final image = await flutterImageProvider(NetworkImage(snapshot.data[index].img));
 
     pdf.addPage(
       pw.Page(
-        pageFormat: format,
+        pageFormat: PdfPageFormat.a4,
         build: (context) {
-          return pw.Column(
-            children: [
-              pw.SizedBox(
-                width: double.infinity,
-                child: pw.FittedBox(
-                  child: pw.Text(title, style: pw.TextStyle(font: font)),
+          return pw.ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              return
+                pw.Container(
+                height: 50,
+                width: 50,
+                child: pw.Row(
+                  children:
+                  [
+                    pw.Image(image),
+                  ],
                 ),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Flexible(child: pw.FlutterLogo()),
-
-            ],
+              );
+            },
           );
         },
       ),
     );
+
     return pdf.save();
   }
-  void generatePdf() async {
-    const title = 'eclectify Demo';
-    await Printing.layoutPdf(onLayout: (format) => _generatePdf(format, title));
-  }
-
-
 }

@@ -123,8 +123,14 @@ class _TesimonialsState extends State<Tesimonials> {
                           return InkWell(
                               onTap: ()
                               {
+                                data.toString().isNotEmpty?
                                 Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop,
-                                    duration: Duration(milliseconds: 700), child:TestimonialsDetails(data)));
+                                    duration: Duration(milliseconds: 700), child:TestimonialsDetails(data.description.toString(),
+                                        data.profile.toString(),
+                                        data.name.toString(),
+                                        data.location.toString()
+
+                                    ))):Container();
                               },
                             child: Container(
                               margin: EdgeInsets.all(5),
@@ -140,11 +146,30 @@ class _TesimonialsState extends State<Tesimonials> {
                                       radius: 30,
                                       backgroundColor: Colors.blue,
                                       backgroundImage: NetworkImage(BASE_URL+data.profile.toString()),
+
+
+
                                     ),
                                   ),
                                   SizedBox(
                                     width: 10.w,
                                   ),
+
+                                  /*CachedNetworkImage(
+                                                    fit: BoxFit.cover,
+                                                    imageUrl:
+                                                        datas.url.toString(),
+                                                    height: 75,
+                                                    width: 75,
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        Center(
+                                                            child:
+                                                                const CircularProgressIndicator()),
+                                                    errorWidget: (context, url,
+                                                            error) =>
+                                                        const Icon(Icons.error),
+                                                  )*/
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 5),
@@ -155,7 +180,7 @@ class _TesimonialsState extends State<Tesimonials> {
                                         [
                                           Text(data.description.toString(),
                                             style: TextStyle(
-                                              fontSize: 15,overflow: TextOverflow.ellipsis,
+                                              fontSize: 16,overflow: TextOverflow.ellipsis,
                                             ),maxLines: 3,softWrap: false,textAlign: TextAlign.justify,
                                           ),
                                           SizedBox(height: 10,),
@@ -219,18 +244,27 @@ class _TesimonialsState extends State<Tesimonials> {
                 final value1=controller.testimonialModel.value.data![index];
                 return InkWell(
                   onTap: ()
-                  {
-                    Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop,
-                        duration: Duration(milliseconds: 700), child:TestimonialsDetails(value1)));
+                  {  value1.toString().isNotEmpty?
+                       Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop,
+                        duration: Duration(milliseconds: 700), child:TestimonialsDetails(
+                               value1.description.toString(),
+                               value1.profile.toString(),
+                               value1.name.toString(),
+                               value1.location.toString()
+                           ))):Container();
                   },
                   child: Container(
                     height: 100,
                     width: double.maxFinite,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(BASE_URL+value1.profile.toString()),
+                          image:
+                          NetworkImage(BASE_URL+value1.profile.toString()),
                           fit: BoxFit.fill,
+
+
                         ),
+
                         borderRadius: BorderRadius.circular(10)
                     ),
                     child: Stack(

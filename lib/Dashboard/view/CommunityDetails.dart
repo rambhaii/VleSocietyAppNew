@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/AppConstant/AppConstant.dart';
+import 'package:vlesociety/Dashboard/view/profile.dart';
 import 'package:vlesociety/Dashboard/view/profile/testimonials.dart';
 
 import '../../AppConstant/APIConstant.dart';
@@ -63,11 +64,16 @@ class _CommunityDetailsState extends State<CommunityDetails>
                   backgroundColor: Colors.white.withOpacity(0.5),
                   leading: Padding(
                     padding: EdgeInsets.only(left: 8.0),
-                    child: CircleAvatar(
-                      radius: 10,
-                      backgroundColor: Colors.amber.withOpacity(0.1),
-                      backgroundImage:
-                      NetworkImage(BASE_URL + controller1.image),
+                    child: InkWell(
+                      onTap: (){
+                        Get.to(Profile());
+                          },
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.amber.withOpacity(0.1),
+                        backgroundImage:
+                        NetworkImage(BASE_URL + controller1.image),
+                      ),
                     ),
                   ),
                   leadingWidth: 60,
@@ -92,6 +98,29 @@ class _CommunityDetailsState extends State<CommunityDetails>
                   ,
 
                   elevation: 0.0,
+                  actions: [
+                    RawMaterialButton(
+                      constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
+                      onPressed: ()
+                      {
+                        Navigator.pop(context, true);
+                      },
+
+                      shape: CircleBorder(
+
+                      ),
+                      child: Image.asset(
+                        "assets/images/back.png",
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    )
+
+                  ],
 
                 ),
               ),
@@ -103,14 +132,7 @@ class _CommunityDetailsState extends State<CommunityDetails>
           60.0,
         ),
       ),
-    /*  PreferredSize(
-          preferredSize: Size(
-            double.infinity,
-            60.0,
-          ),
-          child: CustomAppBar(title: GetStorage().read(AppConstant.userName),
-              image:BASE_URL+GetStorage().read(AppConstant.profileImg))
-      ),*/
+
 
           body:Obx(()=> controller.communityModel.value.data!=null?Container
             (
@@ -192,7 +214,7 @@ class _CommunityDetailsState extends State<CommunityDetails>
                   ):
       Container(
         decoration: BoxDecoration(),
-        height: 170,
+        height: 200,
         width: Get.width,
         child:InkWell(
           onTap: (){
@@ -237,8 +259,7 @@ class _CommunityDetailsState extends State<CommunityDetails>
                             Text(
                               controller.communityModel.value.data!.addDate.toString().split(" ").first,
                               style: smallTextStyle,
-                            ), Text("By "+
-                                controller.communityModel.value.data!.addBy.toString(),
+                            ), Text("By "+ controller.communityModel.value.data!.addBy.toString(),
                               style: bodyText1Style.copyWith(color: Colors.deepPurple),
                             ),
                           ],
@@ -258,14 +279,20 @@ class _CommunityDetailsState extends State<CommunityDetails>
                             data:controller.communityModel.value.data!.description.toString(),
                             style: {
                               "body": Style(
-                                fontSize: FontSize(12.0),
+
+                                fontSize: FontSize(16.0),
+
+                                lineHeight: LineHeight(2),
+                                textAlign: TextAlign.justify
                               ),
                               "body ol li, body ul li": Style(
-                                fontSize: FontSize(10.0),
+                                fontSize: FontSize(13.0),
+                                letterSpacing: 1.2,
+                                lineHeight: LineHeight(2),
                               ),
 
                             },
-                            onLinkTap: (String? url, RenderContext context, Map<String,
+                            onLinkTap: (String? url,  Map<String,
                                 String> attributes,
                                 element)
                             async{
@@ -273,9 +300,7 @@ class _CommunityDetailsState extends State<CommunityDetails>
                             }
                         ),
 
-                        const SizedBox(
-                          height: 10,
-                        ),
+
 
                       ],
                     ),

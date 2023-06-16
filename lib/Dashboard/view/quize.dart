@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ import 'package:vlesociety/AppConstant/APIConstant.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/view/quizeQA/question.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/textStyle.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 import '../../Widget/loading_widget.dart';
@@ -35,7 +37,7 @@ class QuizPage extends StatelessWidget
       SingleChildScrollView(
 
       child: Obx(
-    () =>
+      () =>
       Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,25 +227,87 @@ class QuizPage extends StatelessWidget
                                                 flex: 3,
                                                 child: TextButton(onPressed: ()
                                                 {
-                                                  if (controller.userType == "Guest")
+                                                  if(controller.settingModel.value.data!.adsStatus.toString()=="1")
                                                   {
-                                                    UtilsMethod.PopupBox(context, "Attempt quiz");
+                                                    InterstitialAd? interstitialAd;
+                                                    InterstitialAd.load(
+                                                        adUnitId:  AdHelper.interstitialAdUnitId,
+                                                        request: const AdRequest(),
+                                                        adLoadCallback: InterstitialAdLoadCallback(
+                                                          onAdLoaded: (ad)
+                                                          {
+
+                                                            interstitialAd = ad;
+                                                            interstitialAd!.show();
+                                                            interstitialAd!.fullScreenContentCallback =
+                                                                FullScreenContentCallback(
+                                                                    onAdFailedToShowFullScreenContent: ((ad, error) {
+                                                                      ad.dispose();
+                                                                      interstitialAd!.dispose();
+                                                                      debugPrint(error.message);
+                                                                    }),
+                                                                    onAdDismissedFullScreenContent: (ad) {
+                                                                      ad.dispose();
+                                                                      interstitialAd!.dispose();
+                                                                      if (controller.userType == "Guest")
+                                                                      {
+                                                                        UtilsMethod.PopupBox(context, "Attempt quiz");
 
 
 
-                                                  }
-                                                  else
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                        Get.to(() =>
+                                                                            question(quizeId: controller
+                                                                                .quizModelContest.value
+                                                                                .data!
+                                                                            [index].id.toString(), url: BASE_URL+controller
+                                                                                .quizModelContest.value
+                                                                                .data!
+                                                                            [index].image.toString(),
+                                                                            ),
+                                                                            fullscreenDialog: true,
+                                                                            transition: Transition
+                                                                                .rightToLeft);
+
+                                                                      }
+                                                                    }
+
+                                                                );
+                                                          },
+                                                          onAdFailedToLoad: (err) {
+                                                            debugPrint(err.message);
+                                                          },
+                                                        ));
+                                                  }else
                                                   {
-                                                    Get.to(() =>
-                                                        question(quizeId: controller
-                                                            .quizModelContest.value
-                                                            .data!
-                                                        [index].id.toString(),),
-                                                        fullscreenDialog: true,
-                                                        transition: Transition
-                                                            .rightToLeft);
+                                                    if (controller.userType == "Guest")
+                                                    {
+                                                      UtilsMethod.PopupBox(context, "Attempt quiz");
 
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                      Get.to(() =>
+                                                          question(quizeId: controller
+                                                              .quizModelContest.value
+                                                              .data!
+                                                          [index].id.toString(),url: BASE_URL+controller
+                                                              .quizModelContest.value
+                                                              .data!
+                                                          [index].image.toString()),
+                                                          fullscreenDialog: true,
+                                                          transition: Transition
+                                                              .rightToLeft);
+
+                                                    }
                                                   }
+
+
+
 
                                                   }, child:
                                                 Text("ATTEMPT",style:bodyText2Style.copyWith(color: Colors.blue),maxLines: 1,overflow: TextOverflow.ellipsis,)),
@@ -350,9 +414,13 @@ class QuizPage extends StatelessWidget
                                               ),Spacer(),
                                               Expanded(
                                                 flex: 3,
-                                                child: TextButton(onPressed: (){
+                                                child: TextButton(onPressed: ()
+                                                {
                                                   Get.to(()=>question(quizeId: controller.quizModel.value.data!
-                                                  [index].id.toString(),),fullscreenDialog: true,transition:Transition.rightToLeft);
+                                                  [index].id.toString(),url: BASE_URL+controller
+                                                      .quizModel.value
+                                                      .data!
+                                                  [index].image.toString()),fullscreenDialog: true,transition:Transition.rightToLeft);
                                                 }, child:
                                                 Text("ATTEMPT",style:bodyText2Style.copyWith(color: Colors.blue),
                                                   maxLines: 1,overflow: TextOverflow.ellipsis,)),

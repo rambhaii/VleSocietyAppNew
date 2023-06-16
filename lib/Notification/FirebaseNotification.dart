@@ -45,6 +45,9 @@ class NotificationServices
 
   void initLocalNotifications(BuildContext context, RemoteMessage message)async
   {
+
+    DashboardController controller=Get.find();
+    controller.counter();
     var androidInitializationSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitializationSettings = const DarwinInitializationSettings();
     var initializationSetting = InitializationSettings
@@ -86,10 +89,6 @@ class NotificationServices
         print("dsfhfdg"+message.data['image']);
         DashboardController controller=Get.find();
         controller.counter();
-
-
-
-
       }
 
       //show notifications when app is active
@@ -164,6 +163,7 @@ class NotificationServices
   //handle tap on notification when app is in background or terminated
   Future<void> setupInteractMessage(BuildContext context)async{
 
+
     // when app is terminated
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
@@ -177,8 +177,7 @@ class NotificationServices
     //when app ins background
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       handleMessage(context, event);
-      DashboardController controller=Get.find();
-      controller.counter();
+
     });
 
   }

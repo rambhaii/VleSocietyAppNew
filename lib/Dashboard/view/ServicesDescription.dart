@@ -4,13 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/view/profile/tawk_widget.dart';
 
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/textStyle.dart';
 import '../../UtilsMethod/BaseController.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
+import '../controller/DashboardController.dart';
 import 'WebViewPage.dart';
 
 class ServicesDescription extends StatefulWidget
@@ -25,11 +28,61 @@ class ServicesDescription extends StatefulWidget
 }
 
 class _ServicesDescriptionState extends State<ServicesDescription> {
+  DashboardController controller=Get.find();
+  Widget getAd()
+  {
+    BannerAdListener bannerAdListener=BannerAdListener(onAdWillDismissScreen: (ad)
+    {
+      ad.dispose();
+    },onAdClicked: (ad){
+      print("Ad got closed");
+    });
+    BannerAd bannerAd=BannerAd(
+        size:  AdSize.banner,
+        adUnitId: AdHelper.bannerAdUnitId,
+        request:  const AdRequest(),
+
+        listener: BannerAdListener(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad)
+          {
+            debugPrint('$ad loaded.');
+
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (ad, err)
+          {
+            debugPrint('BannerAd failed to load: $err');
+            // Dispose the ad here to free resources.
+            ad.dispose();
+          },
+
+          onAdOpened: (Ad ad) {},
+          // Called when an ad removes an overlay that covers the screen.
+          onAdClosed: (Ad ad) {
+
+          },
+          // Called when an impression occurs on the ad.
+          onAdImpression: (Ad ad) {},
+
+        )
+    );
+
+    bannerAd.load();
+    return SizedBox(
+      height: 100,
+
+      child: AdWidget(ad: bannerAd),
+
+    );
+  }
   @override
   Widget build(BuildContext context)
   {
+
     return
     Scaffold(
+      bottomNavigationBar:getAd() ,
         extendBodyBehindAppBar: false,
         extendBody: false,
         backgroundColor: Colors.white,
@@ -47,17 +100,62 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
               hoverColor: Colors.blue.withOpacity(0.8),
               onTap: ()
               {
-               /* if(url!=null)
+                if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                {
+                  InterstitialAd? interstitialAd;
+                  InterstitialAd.load(
+                      adUnitId:  AdHelper.interstitialAdUnitId,
+                      request: const AdRequest(),
+                      adLoadCallback: InterstitialAdLoadCallback(
+                        onAdLoaded: (ad)
+                        {
+
+                          interstitialAd = ad;
+                          interstitialAd!.show();
+                          interstitialAd!.fullScreenContentCallback =
+                              FullScreenContentCallback(
+                                  onAdFailedToShowFullScreenContent: ((ad, error)
+                                  {
+                                    ad.dispose();
+                                    interstitialAd!.dispose();
+                                    debugPrint(error.message);
+                                  }),
+                                  onAdDismissedFullScreenContent: (ad)
+                                  {
+                                    ad.dispose();
+                                    interstitialAd!.dispose();
+                                    if(widget.url.isNotEmpty)
+                                    {
+                                      // Get.to(WebViewPage(url,title));}
+                                      Get.to(
+                                          ChatAd( directChatLink: widget.url, title:widget.title,
+                                            onLoad: ()
+                                        {
+                                          print('Hello Tawk!');
+                                        },
+                                        onLinkTap: (String url)
+                                        {
+                                          print(url);
+                                        },
+                                        placeholder: const Center(
+                                          child: Text('Loading...'),
+                                        ),))
+                                      ;}
+                                  }
+
+                              );
+                        },
+                        onAdFailedToLoad: (err) {
+                          debugPrint(err.message);
+                        },
+                      ));
+                }else
+                {
+                  if(widget.url.isNotEmpty)
                   {
-                   // UtilsMethod.launchUrls(url.toString());
-                    UtilsMethod.launchUrls("https://www.google.com/search?q=flutter+different+type+ui+design&rlz=1C1GIVA_enIN997IN997&oq=&aqs=chrome.0.35i39i362l8.3034932j0j7&sourceid=chrome&ie=UTF-8");
-                  }
-             */
-                if(widget.url.isNotEmpty)
-                  {
-                   // Get.to(WebViewPage(url,title));}
+                    // Get.to(WebViewPage(url,title));}
                     Get.to(ChatAd( directChatLink: widget.url,
-                        title:widget.title,
+                      title:widget.title,
 
                       onLoad: ()
                       {
@@ -70,6 +168,8 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
                       placeholder: const Center(
                         child: Text('Loading...'),
                       ),));}
+                }
+
 
 
 
@@ -77,8 +177,8 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: 40,
-                child: Center(child: Text("Go To Side",
-                style: bodyText1Style.copyWith(color: Colors.grey),)),
+                child: Center(child: Text("Go To Site",
+                style: bodyText1Style.copyWith(color: Colors.grey,fontSize: 22),)),
               ),
             ),
           ),
@@ -119,7 +219,7 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
                     leadingWidth: 60,
 
                     title: widget.title!=null?
-                    Text(widget.title, style: subtitleStyle.copyWith(fontWeight: FontWeight.w900,fontSize: 16)
+                    Text(widget.title, style: subtitleStyle.copyWith(fontWeight: FontWeight.w900,fontSize: 18)
                     ):Text("", style: TextStyle(color: Colors.black, fontSize: 16)
                     ),
                   )
@@ -146,14 +246,15 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
                       children: [
                         Container(
                           width: double.infinity,
-                          child: Column(
+                          child:
+                          Column(
                             children:
                             [
                               SizedBox(
                                 height: 20,
                               ),
 
-                              widget.image!=null?
+                              widget.image!=null ?widget.image!.isNotEmpty?
                               Card(
                                 elevation: 0.5,
                                 shape:RoundedRectangleBorder(
@@ -172,41 +273,49 @@ class _ServicesDescriptionState extends State<ServicesDescription> {
                                     const Icon(Icons.error),
                                   ),
                                 ),
-                              ):Center(),
-
+                              ):Center():Center(),
 
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Container(
-                                height:Get.height/2+20,
+                              //  height:Get.height/2+20,
                                 width: double.infinity,
                                 child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: 20,),
-                                      widget.title!=null?Text(
-                                        widget.title.toString(),
-                                        style: bodyText1Style,
-                                      ):Center(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children:
+                                      [
+                                        SizedBox(height: 20,),
+                                        widget.title!=null?Text(
+                                          widget.title.toString(),
+                                          style: bodyText1Style.copyWith(fontSize: 22),
+                                        ):Center(),
 
-                                      Html(
-                                          data:widget.desc.toString(),
-                                          style: {
-                                            "body": Style(
-                                              fontSize: FontSize(12.0),
-                                            ),
-                                          },
-                                          onLinkTap: (String? url, RenderContext context, Map<String,
-                                              String> attributes,
-                                              element)
-                                          async{
-                                            await launch(url!);
-                                          }
-                                      ),
+                                        Html(
+                                            data:widget.desc.toString(),
+                                            style:
+                                            {
+                                              "body": Style(
+                                                fontSize: FontSize(19.0),
+                                                //letterSpacing: 1.1,
+                                                textAlign: TextAlign.justify,
+                                                lineHeight: LineHeight(1.8),
+                                              ),
+                                            },
+                                            onLinkTap: (String? url, Map<String,
+                                                String> attributes,
+                                                element)
+                                            async{
+                                              await launch(url!);
+                                            }
+                                        ),
 
 
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

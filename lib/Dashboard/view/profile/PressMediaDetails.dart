@@ -201,11 +201,14 @@ class PressMediaDetails extends StatelessWidget {
                                         .toString(),
                                     style: {
                                       "body": Style(
-                                        fontSize: FontSize(12.0),
+
+                                        fontSize: FontSize(15.0),
+                                        textAlign: TextAlign.justify,
+                                        lineHeight: LineHeight(1.8),
                                       ),
                                     },
                                     onLinkTap: (String? url,
-                                        RenderContext context,
+
                                         Map<String, String> attributes,
                                         element) async {
                                       await launch(url!);

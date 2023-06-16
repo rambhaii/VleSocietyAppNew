@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
 
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
@@ -24,16 +26,67 @@ class VleNews extends StatefulWidget
   State<VleNews> createState() => _VleNewsState();
 }
 
-class _VleNewsState extends State<VleNews> {
+class _VleNewsState extends State<VleNews>
+{
   DashboardController controller = Get.find();
+
+  Widget getAd()
+  {
+    BannerAdListener bannerAdListener=BannerAdListener(onAdWillDismissScreen: (ad)
+    {
+      ad.dispose();
+    },onAdClicked: (ad){
+      print("Ad got closed");
+    });
+    BannerAd bannerAd=BannerAd(
+        size:  AdSize.banner,
+        adUnitId: AdHelper.bannerAdUnitId,
+        request:  const AdRequest(),
+
+        listener: BannerAdListener(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad)
+          {
+            debugPrint('$ad loaded.');
+
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (ad, err)
+          {
+            debugPrint('BannerAd failed to load: $err');
+            // Dispose the ad here to free resources.
+            ad.dispose();
+          },
+
+          onAdOpened: (Ad ad) {},
+          // Called when an ad removes an overlay that covers the screen.
+          onAdClosed: (Ad ad) {
+
+          },
+          // Called when an impression occurs on the ad.
+          onAdImpression: (Ad ad) {},
+
+        )
+    );
+
+    bannerAd.load();
+    return SizedBox(
+      height: 100,
+
+      child: AdWidget(ad: bannerAd),
+
+    );
+  }
 
   @override
   Widget build(BuildContext context)
   {
+    controller.getFeedArticalNetworkApi("");
     return
       Scaffold
       (
-      appBar:
+        bottomNavigationBar: getAd() ,
+        appBar:
       PreferredSize(
           preferredSize: Size(
             double.infinity,
@@ -79,7 +132,45 @@ class _VleNewsState extends State<VleNews> {
                             (
                             onTap: ()
                             {
-                              _showBottomSheetFeedArtcal(context, datas);
+                              if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                              {
+                                InterstitialAd? interstitialAd;
+                                InterstitialAd.load(
+                                    adUnitId:  AdHelper.interstitialAdUnitId,
+                                    request: const AdRequest(),
+                                    adLoadCallback: InterstitialAdLoadCallback(
+                                      onAdLoaded: (ad)
+                                      {
+
+                                        interstitialAd = ad;
+                                        interstitialAd!.show();
+                                        interstitialAd!.fullScreenContentCallback =
+                                            FullScreenContentCallback(
+                                                onAdFailedToShowFullScreenContent: ((ad, error) {
+                                                  ad.dispose();
+                                                  interstitialAd!.dispose();
+                                                  debugPrint(error.message);
+                                                }),
+                                                onAdDismissedFullScreenContent: (ad) {
+                                                  ad.dispose();
+                                                  interstitialAd!.dispose();
+                                                  _showBottomSheetFeedArtcal(context, datas);
+                                                }
+
+                                            );
+                                      },
+                                      onAdFailedToLoad: (err) {
+                                        debugPrint(err.message);
+                                      },
+                                    ));
+                              }else
+                              {
+                                _showBottomSheetFeedArtcal(context, datas);
+                              }
+
+
+
+
                             },
                             child: Row
                               (
@@ -114,7 +205,6 @@ class _VleNewsState extends State<VleNews> {
                       },
                     )
                         :Container()),
-
                     controller.isLoadingVleNewsPage.value?const LoadingWidget():Container()
                   ],
                 )
@@ -201,8 +291,19 @@ void _showBottomSheetFeedArtcal(BuildContext context, Datum1 datum)
                             ),
                             Html(
                                 data: result1.toString(),
+                                style: {
+                                  "body": Style(
+                                      fontSize: FontSize(16.0),
+                                      //  letterSpacing: 1.2,
+                                      lineHeight: LineHeight(1.8),
+                                      textAlign: TextAlign.justify
+
+
+
+                                  ),
+                                },
                                 onLinkTap:
-                                    (String? url, RenderContext context, Map<String,
+                                    (String? url, Map<String,
                                     String> attributes,
                                     element)
                                 async

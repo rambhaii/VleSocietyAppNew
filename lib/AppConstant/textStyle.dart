@@ -33,7 +33,7 @@ final  bodyText1Style= GoogleFonts.josefinSans(
     color:  Color(0xff000000),
     fontWeight: FontWeight.w600,
   ),
-  fontSize: 15,
+  fontSize: 17,
   fontWeight: FontWeight.w600,
 );
 final  bodyText2Style= GoogleFonts.josefinSans(
@@ -41,7 +41,7 @@ final  bodyText2Style= GoogleFonts.josefinSans(
     color:  Color(0xff000000),
     fontWeight: FontWeight.w600,
   ),
-  fontSize: 14,
+  fontSize: 16,
   fontWeight: FontWeight.w600,
 );
 

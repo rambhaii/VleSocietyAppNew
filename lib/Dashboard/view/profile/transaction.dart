@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vlesociety/Dashboard/view/profile.dart';
+import 'package:vlesociety/Dashboard/view/profile/PointRedeem.dart';
 
 import '../../../AppConstant/APIConstant.dart';
 import '../../../AppConstant/textStyle.dart';
 import '../../controller/DashboardController.dart';
+import 'package:timeago/timeago.dart' as timeago;
 class transaction extends StatefulWidget {
   transaction({super.key});
 
@@ -43,9 +45,15 @@ class _transactionState extends State<transaction> {
                 filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                 child: AppBar(
                   backgroundColor: Colors.white.withOpacity(0.5),
-                  leading: Padding(
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: CircleAvatar(radius: 10, backgroundColor: Colors.amber.withOpacity(0.1), backgroundImage: NetworkImage(BASE_URL+controller.image),),
+                  leading: InkWell(
+                    onTap: (){
+                      Get.off(Profile());
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: CircleAvatar(radius: 10, backgroundColor: Colors.amber.withOpacity(0.1),
+                        backgroundImage: NetworkImage(BASE_URL+controller.image),),
+                    ),
                   ),
                   leadingWidth: 60,
                   title:Column(
@@ -58,15 +66,16 @@ class _transactionState extends State<transaction> {
                   elevation: 0.0,
                   actions: [
                     RawMaterialButton(
-                       constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
-                       onPressed: () {Get.to(()=>Profile());},
-                       shape: CircleBorder(
-                       side: BorderSide(width: 0.5, color: Colors.black)),
-                       child: Image.asset("assets/images/menu.png", height: 15, width: 20, fit: BoxFit.fill,),
+                      constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
+                      onPressed: () {Get.off(()=>Profile());},
+                      shape: CircleBorder(
+                          side: BorderSide(width: 0.5, color: Colors.black)),
+                      child: Image.asset("assets/images/menu.png", height: 15, width: 20, fit: BoxFit.fill,),
                     ),
                     SizedBox(
                       width: 8,
                     )
+
 
                   ],
                 ),
@@ -142,7 +151,8 @@ class _transactionState extends State<transaction> {
                           SizedBox(height: 10,),
                           InkWell(
                             onTap: (){
-                              setState(() {
+                              setState(()
+                              {
                                 controller.gettransactionHistoryDetails("1");
                                 filter=1;
                               });
@@ -176,8 +186,9 @@ class _transactionState extends State<transaction> {
                           SizedBox(height: 10.h,),
                           InkWell(
                             onTap: (){
-                              setState(() {
-                                controller.gettransactionHistoryDetails("2");
+                              setState(()
+                              {
+                                controller.getRedeemListNetworkApi();
                                 filter=2;
                               });
                             },
@@ -190,7 +201,7 @@ class _transactionState extends State<transaction> {
                                   ),
 
                               ),
-                              child: Center(child: Text(controller.transactionsModel.value.totalDebit.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14))),
+                              child: Center(child: Text(controller.transactionsModel.value.totalRedeem.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14))),
                             ),
                           )
                         ],
@@ -201,8 +212,9 @@ class _transactionState extends State<transaction> {
                 ],
               ),
             ),
-
-            filter==0?ListView.builder(
+//redeemPointsModel
+            filter==0?
+            ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: controller.transactionsModel.value.data?.length,
@@ -260,7 +272,8 @@ class _transactionState extends State<transaction> {
                       ),
                     ),
                   );
-                }):filter==1?ListView.builder(
+                }):filter==1?
+            ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: controller.transactionsModel.value.data?.length,
@@ -307,25 +320,29 @@ class _transactionState extends State<transaction> {
                                 padding: EdgeInsets.only(right: 80),
                                 height: 40,
                                 width: 10,
-                                child:data.status.toString()=="1"?Icon(Icons.add,size: 15,color: Colors.green,):Container()),
+                                child:data.status.toString()=="1"?Icon(Icons.add,size: 15,color: Colors.green,):Container()
+                            ),
                             SizedBox(width: 6,),
                             data.status.toString()=="1"?
                             Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14),)
-                                :Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
+                                :Text("₹ "+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
                             SizedBox(width: 20,),
                           ],
                         ),
                       ),
                     ),
                   );
-                }):ListView.builder(
+                }) :
+            controller.redeemPointsModel.value.data!=null ?
+            ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: controller.transactionsModel.value.data?.length,
+                itemCount: controller.redeemPointsModel.value.data?.length,
                 itemBuilder: (context,index)
                 {
-                  final data = controller.transactionsModel.value.data![index];;
-                  return Padding(
+                  final data = controller.redeemPointsModel.value.data![index];;
+                  return data.redeemType.toString()=="2"?
+                    Padding(
                     padding: const EdgeInsets.only(left: 8.0,right: 8),
                     child: Container(
                       height:60.h,
@@ -339,9 +356,7 @@ class _transactionState extends State<transaction> {
                             Container(
                                 height: 40,
                                 width: 40,
-                                child:Image.asset("assets/images/points.png")
-                            ) ,
-
+                                child:Image.asset("assets/images/points.png")) ,
                             SizedBox(width: 20,),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,33 +365,102 @@ class _transactionState extends State<transaction> {
                               [
                                 Container(
                                   width: 180.h,
-                                  child: Text(data.title.toString(),style: bodyText1Style.copyWith(fontSize: 17),
+                                  child: Text(data.branch.toString(),style: bodyText1Style.copyWith(fontSize: 17),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis
                                   ),
                                 ),
-
-
-                                Text(data.addDate.toString(),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
+                                Row(
+                                  children:
+                                  [
+                                    Text("status: ",style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
+                                    Text(convert(data.status.toString()),style: bodyText1Style.copyWith(fontSize: 11,color: Colors.green)),
+                                  ],
+                                ),
+                                SizedBox(height: 5,),
+                                Text( timeago.format(
+                                    DateTime.parse(data.addDate.toString())
+                                ),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
                               ],
                             ),
                             Spacer(),
+
+                            data.status.toString()=="3"?
                             Container(
                                 padding: EdgeInsets.only(right: 80),
+                                height: 30,
+                                width: 30,
+                                child:Icon(Icons.error_outline_outlined,size: 15,color: Colors.red,)
+                            )
+                                :Text("₹ "+data.amount.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
+
+                            SizedBox(width: 20,),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ):
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0,right: 8),
+                    child: Container(
+                      height:60.h,
+                      decoration: BoxDecoration(
+                      ),
+                      child: InkWell(
+                        onTap: (){
+                        },
+                        child: Row(
+                          children: [
+                            Container(
                                 height: 40,
-                                width: 10,
-                                child:data.status.toString()=="1"?Icon(Icons.add,size: 15,color: Colors.green,):Container()),
-                            SizedBox(width: 6,),
-                            data.status.toString()=="1"?
-                            Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.green,fontSize: 14),)
-                                :Text("₹"+data.points.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),),
+                                width: 40,
+                                child:Image.asset("assets/images/points.png")) ,
+                            SizedBox(width: 20,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children:
+                              [
+                                Container(
+                                  width: 180.h,
+                                  child: Text(data.upiId.toString(),style: bodyText1Style.copyWith(fontSize: 17),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis
+                                  ),
+                                ),
+                                Row(
+                                  children:
+                                  [
+                                    Text("status: ",style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
+                                    Text(convert(data.status.toString()),style: bodyText1Style.copyWith(fontSize: 11,color: Colors.green)),
+                                  ],
+                                ),
+                                SizedBox(height: 5,),
+                                Text( timeago.format(
+                                    DateTime.parse(data.addDate.toString())
+                                ),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87)),
+                              ],
+                            ),
+                            Spacer(),
+                            data.status.toString()=="3"?
+                            Container(
+                                padding: EdgeInsets.only(right: 80),
+                                height: 30,
+                                width: 30,
+                                child:Icon(Icons.error_outline_outlined,size: 15,color: Colors.red,)
+                            )
+                            :Text("₹ "+data.amount.toString(),style: subtitleStyle.copyWith(color: Colors.red,fontSize: 14),)
+
+                           ,
+
+
                             SizedBox(width: 20,),
                           ],
                         ),
                       ),
                     ),
                   );
-                })
+                }):Center()
 
 
           ],
@@ -388,4 +472,22 @@ class _transactionState extends State<transaction> {
 
     );
   }
+  String convert(String value)
+  {  String data="";
+    if(value=="1")
+      {
+        data="pending";
+      }
+    else if(value=="2")
+      {
+        data="completed";
+      }
+    else if(value=="3")
+    {
+      data="failed";
+    }
+
+    return data;
+  }
+
 }

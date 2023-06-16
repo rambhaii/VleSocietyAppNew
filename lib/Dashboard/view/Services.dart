@@ -9,9 +9,11 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/UtilsMethod/UtilsMethod.dart';
 
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
@@ -93,9 +95,11 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                }
                if (value == 2)
                {
+                 print("sdjkhjh");
+                 controller.getServicesCSCNetworkApi();
                  controller.serviceCSCModel.value.data!.clear();
                  controller.serviceCSCModel.refresh();
-                 controller.getServicesCSCNetworkApi();
+
                }
 
              },
@@ -132,7 +136,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                  shrinkWrap: true,
                  primary: false,
                  padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                 crossAxisSpacing: 10,
+                 crossAxisSpacing: 2,
                  mainAxisSpacing: 1,
                  crossAxisCount: 3,
                  children: List.generate(
@@ -179,14 +183,14 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                                        controller.serviceModel.value.data![index].image.toString()),fit: BoxFit.fill)),
                          ),
                          SizedBox(
-                           height: 8,
+                           height: 5,
                          ),
                          Text(
                            controller.serviceModel.value.data![index].title.toString()
                            ,
                            style: smallTextStyle
                                .copyWith(
-                               fontSize: 11.sp),
+                               fontSize: 14.sp),
                            maxLines: 2,
                            overflow:
                            TextOverflow.ellipsis,
@@ -215,7 +219,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                              shrinkWrap: true,
                              primary: false,
                              padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                             crossAxisSpacing: 10,
+                             crossAxisSpacing: 2,
                              mainAxisSpacing: 1,
                              crossAxisCount: 3,
                              children: List.generate(
@@ -223,14 +227,58 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                                    (index) => GestureDetector(
                                  onTap: ()
                                  {
-                                   controller.governmentServiceModel.value.data![index].is_gosite=='0'?
-                                   controller.getServicesGovernmentSubCategoryNetworkApi(controller.governmentServiceModel.value.data![index].id.toString(),
-                                       controller.governmentServiceModel.value.data![index].title.toString())
-                                       :Get.to(ServicesDescription( controller.governmentServiceModel.value.data![index].description.toString(),
-                                       controller.governmentServiceModel.value.data![index].url.toString(),controller.governmentServiceModel.value.data![index].title.toString(),
-                                       controller.governmentServiceModel.value.data![index].image.toString()));
-                                   // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
-                                   //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
+                                   if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                                   {
+                                     InterstitialAd? interstitialAd;
+                                     InterstitialAd.load(
+                                         adUnitId:  AdHelper.interstitialAdUnitId,
+                                         request: const AdRequest(),
+                                         adLoadCallback: InterstitialAdLoadCallback(
+                                           onAdLoaded: (ad)
+                                           {
+
+                                             interstitialAd = ad;
+                                             interstitialAd!.show();
+                                             interstitialAd!.fullScreenContentCallback =
+                                                 FullScreenContentCallback(
+                                                     onAdFailedToShowFullScreenContent: ((ad, error) {
+                                                       ad.dispose();
+                                                       interstitialAd!.dispose();
+                                                       debugPrint(error.message);
+                                                     }),
+                                                     onAdDismissedFullScreenContent: (ad) {
+                                                       ad.dispose();
+                                                       interstitialAd!.dispose();
+                                                          controller.governmentServiceModel.value.data![index].is_gosite=='0'?
+                                                           controller.getServicesGovernmentSubCategoryNetworkApi(controller.governmentServiceModel.value.data![index].id.toString(),
+                                                           controller.governmentServiceModel.value.data![index].title.toString())
+                                                           :Get.to(ServicesDescription( controller.governmentServiceModel.value.data![index].description.toString(),
+                                                           controller.governmentServiceModel.value.data![index].url.toString(),controller.governmentServiceModel.value.data![index].title.toString(),
+                                                           controller.governmentServiceModel.value.data![index].image.toString()));
+                                                       // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
+                                                       //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
+                                                     }
+
+                                                 );
+                                           },
+                                           onAdFailedToLoad: (err) {
+                                             debugPrint(err.message);
+                                           },
+                                         ));
+                                   }else
+                                   {
+                                     controller.governmentServiceModel.value.data![index].is_gosite=='0'?
+                                     controller.getServicesGovernmentSubCategoryNetworkApi(controller.governmentServiceModel.value.data![index].id.toString(),
+                                         controller.governmentServiceModel.value.data![index].title.toString())
+                                         :Get.to(ServicesDescription( controller.governmentServiceModel.value.data![index].description.toString(),
+                                         controller.governmentServiceModel.value.data![index].url.toString(),controller.governmentServiceModel.value.data![index].title.toString(),
+                                         controller.governmentServiceModel.value.data![index].image.toString()));
+                                     // Get.to(SubCategoryOfServices( controller.serviceModel.value.data![index].id.toString()))
+                                     //  UtilsMethod.launchUrls(controller.serviceModel.value.data![index].url.toString());
+                                   }
+
+
+
                                  },
                                  child: Column(
                                    children: [
@@ -265,14 +313,14 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                                                    controller.governmentServiceModel.value.data![index].image.toString()),fit: BoxFit.fill)),
                                      ),
                                      SizedBox(
-                                       height: 8,
+                                       height: 5,
                                      ),
                                      Text(
                                        controller.governmentServiceModel.value.data![index].title.toString()
                                        ,
                                        style: smallTextStyle
                                            .copyWith(
-                                           fontSize: 11.sp),
+                                           fontSize: 14.sp),
                                        maxLines: 2,
                                        overflow:
                                        TextOverflow.ellipsis,
@@ -354,7 +402,7 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                  shrinkWrap: true,
                  primary: false,
                  padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-                 crossAxisSpacing: 10,
+                 crossAxisSpacing: 2,
                  mainAxisSpacing: 1,
                  crossAxisCount: 3,
                  children: List.generate(
@@ -362,13 +410,60 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                        (index) => GestureDetector(
                      onTap: ()
                      {
-                           controller.serviceCSCModel.value.data![index].is_gosite=='0'?
-                           controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
-                           controller.serviceCSCModel.value.data![index].title.toString())
-                           :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
-                           controller.serviceCSCModel.value.data![index].url.toString(),
-                           controller.serviceCSCModel.value.data![index].title.toString(),
-                           controller.serviceCSCModel.value.data![index].image.toString()));
+
+
+
+                           if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                           {
+                             InterstitialAd? interstitialAd;
+                             InterstitialAd.load(
+                                 adUnitId:  AdHelper.interstitialAdUnitId,
+                                 request: const AdRequest(),
+                                 adLoadCallback: InterstitialAdLoadCallback(
+                                   onAdLoaded: (ad)
+                                   {
+
+                                     interstitialAd = ad;
+                                     interstitialAd!.show();
+                                     interstitialAd!.fullScreenContentCallback =
+                                         FullScreenContentCallback(
+                                             onAdFailedToShowFullScreenContent: ((ad, error) {
+                                               ad.dispose();
+                                               interstitialAd!.dispose();
+                                               debugPrint(error.message);
+                                             }),
+                                             onAdDismissedFullScreenContent: (ad) {
+                                               ad.dispose();
+                                               interstitialAd!.dispose();
+                                               controller.serviceCSCModel.value.data![index].is_gosite=='0'?
+                                               controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
+                                                   controller.serviceCSCModel.value.data![index].title.toString())
+                                                   :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
+                                                   controller.serviceCSCModel.value.data![index].url.toString(),
+                                                   controller.serviceCSCModel.value.data![index].title.toString(),
+                                                   controller.serviceCSCModel.value.data![index].image.toString()));
+                                             }
+
+                                         );
+                                   },
+                                   onAdFailedToLoad: (err) {
+                                     debugPrint(err.message);
+                                   },
+                                 ));
+                           }else
+                           {
+                             controller.serviceCSCModel.value.data![index].is_gosite=='0'?
+                             controller.getServicesCSCSubCategoryNetworkApi(controller.serviceCSCModel.value.data![index].id.toString(),
+                                 controller.serviceCSCModel.value.data![index].title.toString())
+                                 :Get.to(ServicesDescription( controller.serviceCSCModel.value.data![index].description.toString(),
+                                 controller.serviceCSCModel.value.data![index].url.toString(),
+                                 controller.serviceCSCModel.value.data![index].title.toString(),
+                                 controller.serviceCSCModel.value.data![index].image.toString()));
+                           }
+
+
+
+
 
                            },
                      child: Column(
@@ -404,11 +499,11 @@ class _ServicePageState extends State<ServicePage> with TickerProviderStateMixin
                                        controller.serviceCSCModel.value.data![index].image.toString()),fit: BoxFit.fill)),
                          ),
                          SizedBox(
-                           height: 8,
+                           height: 5,
                          ),
                          Text(
                            controller.serviceCSCModel.value.data![index].title.toString(),
-                           style: smallTextStyle.copyWith(fontSize: 11.sp),
+                           style: smallTextStyle.copyWith(fontSize: 14.sp),
                            maxLines: 2,
                            overflow:
                            TextOverflow.ellipsis,

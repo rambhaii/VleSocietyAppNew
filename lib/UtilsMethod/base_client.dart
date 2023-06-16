@@ -57,7 +57,8 @@ class BaseClient{
     var uri=Uri.parse(url);
     try {
       var request = await http.MultipartRequest("POST", uri);
-      for (var file in filesdata) {
+      for (var file in filesdata)
+      {
         request.files.add(await http.MultipartFile.fromPath('files[]',file.path));
       }
         request.fields.addAll({"lng":"eng","user_id":userId,"postCategoryID":catId,"description":msg});

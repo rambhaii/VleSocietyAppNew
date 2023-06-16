@@ -39,18 +39,21 @@ class Datum {
     this.title,
     this.url,
     this.image,
+    this.rediret_type,
   });
 
   String? id;
   String? title;
   String? url;
   String? image;
+  String? rediret_type;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["id"] ?? "",
         title: json["title"] ?? "",
         url: json["url"] ?? "",
         image: json["image"] ?? "",
+       rediret_type: json["rediret_type"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -58,5 +61,6 @@ class Datum {
         "title": title,
         "url": url,
         "image": image,
+        "rediret_type": rediret_type,
       };
 }

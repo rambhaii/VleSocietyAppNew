@@ -2,8 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
-import 'package:flutter_html/style.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -46,7 +45,7 @@ class ReferAndEarn extends StatefulWidget {
              child: Center(
                child: Column(
                  children: [
-                   Text("Refer & Earn",style: TextStyle(fontSize: 14),),
+                   Text("Refer & Earn",style: TextStyle(fontSize: 16),),
                    SizedBox(height: 2,),
                    Container(
                      height: 3,
@@ -69,7 +68,7 @@ class ReferAndEarn extends StatefulWidget {
                          onTap: (){
                            controller.getFaQNetworkApi();
                          },
-                         child: Text("?FAQs",style: TextStyle(fontSize: 13),)),
+                         child: Text("?FAQs",style: TextStyle(fontSize: 16),)),
                      Container(
                        height: 2,
                        width: 29,
@@ -160,7 +159,7 @@ class ReferAndEarn extends StatefulWidget {
                                      Container(
                                          padding: EdgeInsets.only(left: 10),
                                          child: Text("Invite Friends on VLE Community",
-                                           style: TextStyle(fontSize: 10),)),
+                                           style: TextStyle(fontSize: 16),)),
                                      Spacer(),
                                      InkWell(
                                        onTap: ()
@@ -173,7 +172,7 @@ class ReferAndEarn extends StatefulWidget {
                                                "",
                                              false,1,GetStorage().read(AppConstant.id));
                                        },
-                                         child: Text("Invite",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
+                                         child: Text("Invite",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600,fontSize: 16),),
                                      )
 
                                    ],
@@ -199,13 +198,13 @@ class ReferAndEarn extends StatefulWidget {
                          children: [
                            Row(
                              children: [
-                               Text("How it Works?"),
+                               Text("How it Works?",style:TextStyle(fontSize: 16)),
                                Spacer(),
                                InkWell(
                                  onTap: (){
                                    termsAndPolicey();
                                  },
-                                 child:Text("T&Cs",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),),
+                                 child:Text("T&Cs",style: TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600,fontSize: 16),),
                                )
 
                              ],
@@ -230,7 +229,7 @@ class ReferAndEarn extends StatefulWidget {
                                            decoration: BoxDecoration(
                                                shape: BoxShape.circle
                                            ),
-                                           child: Center(child: Text("1x")),
+                                           child: Center(child: Text("1x",style:TextStyle(fontSize: 16))),
                                          ),
                                        ),
                                        controller.referalModel.value.data!=null?
@@ -242,9 +241,9 @@ class ReferAndEarn extends StatefulWidget {
                                            mainAxisAlignment: MainAxisAlignment.start,
                                            children:
                                            [
-                                             Text("Your Friend registers on Community",style: TextStyle(fontSize: 12),),
-                                             Text(controller.referalModel.value.data!.referalUse!=null?"Friend earn ${ controller.referalModel.value.data!.referalUse.toString()} points":"Friend earn 0 points ",
-                                              maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.green),overflow: TextOverflow.ellipsis,
+                                             Text("Your Friend registers on Community",style: TextStyle(fontSize: 16),),
+                                             Text(controller.referalModel.value.data!.referalUse!=null?"Friend Earn ${ controller.referalModel.value.data!.referalUse.toString()} points":"Friend earn 0 points ",
+                                              maxLines:2, style:TextStyle(height:1.4,fontSize: 16,color: Colors.green),overflow: TextOverflow.ellipsis,
                                              )],
                                          ),
                                        ):Container(),
@@ -252,19 +251,19 @@ class ReferAndEarn extends StatefulWidget {
                                        Container(
                                          margin: EdgeInsets.only(top: 15),
                                          height: 70,
-                                         width: 75,
+                                         width: 90,
                                          child: Stack(
                                            children: [
                                              Container(
-                                               height: 40,
-                                               width: 75,
+                                               height: 65,
+                                               width: 85,
                                                  padding: EdgeInsets.only(left: 3,right: 3),
                                                decoration: BoxDecoration(
                                                    border: Border.all(width: 1,color: Colors.black),
                                                    borderRadius: BorderRadius.circular(5)
                                                ),
                                                child:
-                                               Text( controller.referalModel.value.data!.referalUse!=null?"${ controller.referalModel.value.data!.referalUse.toString()} points you earn  ":"0 point you ",maxLines:2, style:TextStyle(height:1.4,fontSize: 12,color: Colors.black),overflow: TextOverflow.ellipsis,
+                                               Text( controller.referalModel.value.data!.referalUse!=null?"${ controller.referalModel.value.data!.referalUse.toString()} points you earn  ":"0 point you ",maxLines:2, style:TextStyle(height:1.4,fontSize: 14,color: Colors.black),overflow: TextOverflow.ellipsis,
                                                )
                                              ),
                                            ],
@@ -300,7 +299,7 @@ class ReferAndEarn extends StatefulWidget {
                                        backgroundColor: MaterialStateProperty.all(Colors.red)
                                    ),
                                    child: Text("Give Contact Permission to Invite Your Friends",style:
-                                   TextStyle(fontSize: 11,fontWeight: FontWeight.bold),), // trying to move to the bottom
+                                   TextStyle(fontSize: 14,fontWeight: FontWeight.bold),), // trying to move to the bottom
                                  ),
                                ),
                              ),),
@@ -332,7 +331,7 @@ class ReferAndEarn extends StatefulWidget {
                                          mainAxisAlignment: MainAxisAlignment.center,
                                          children:
                                          [
-                                           Text("Refer Now",style: TextStyle(color: Colors.black),),SizedBox(width: 5,),
+                                           Text("Refer Now",style: TextStyle(color: Colors.black,fontSize: 14),),SizedBox(width: 5,),
                                            Image(image: AssetImage("assets/images/whatsapp.png",),height: 20,)
                                          ],
                                        ),
@@ -386,13 +385,16 @@ class ReferAndEarn extends StatefulWidget {
                                   ),
                                   controller.privacyModel.value.data!.description!=null?  Html(
                                       data:  controller.privacyModel.value.data!.description.toString(),
-                                      style: {
+                                      style:
+                                      {
                                         "body": Style(
-                                          fontSize: FontSize(12.0),
+                                          fontSize: FontSize(16.0),
+                                            lineHeight: LineHeight(1.8),
+                                          textAlign: TextAlign.justify
                                         ),
                                       },
                                       onLinkTap: (String? url,
-                                          RenderContext context,
+
                                           Map<String, String> attributes,
                                           element) async {
                                         await launch(url!);

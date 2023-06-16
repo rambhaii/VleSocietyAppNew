@@ -73,23 +73,28 @@ class _AboutCSCState extends State<AboutCSC> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: 5,),
                             Row(
-                              children: [
+                              children:
+                              [
                                 Text(controller.aboutCscModel.value.data!.title.toString()
                                   ,style: TextStyle(fontSize: 23),textAlign: TextAlign.justify,),
                               ],
                             ),
-                            SizedBox(height: 10,),
+                            SizedBox(height: 1,),
 
                             Html(
                                 data: controller.aboutCscModel.value.data!.description.toString(),
                                 style: {
                                   "body": Style(
-                                    fontSize: FontSize(12.0),
+                                    fontSize: FontSize(16.0),
+                                    //letterSpacing: 1.1,
+                                    textAlign: TextAlign.justify,
+                                    lineHeight: LineHeight(1.8),
                                   ),
                                 },
                                 onLinkTap: (String? url,
-                                    RenderContext context,
+
                                     Map<String, String> attributes,
                                     element) async {
                                   await launch(url!);

@@ -29,7 +29,7 @@ class _FaqState extends State<Faq> {
           elevation: 1,
           backgroundColor: Colors.white,
           title: Text("FAQs", style: TextStyle(
-              color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),),
           iconTheme: IconThemeData(color: Colors.black),
         ),
       ),
@@ -46,11 +46,11 @@ class _FaqState extends State<Faq> {
              String d=data.title.toString();
             return
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10,top: 10),
                 child: Column(
                   children: [
                      ExpansionTile(
-                      title: Text(d,style: titleStyle.copyWith(fontSize: 16),),
+                      title: Text(d,style: titleStyle.copyWith(fontSize: 20),),
                        children: <Widget>[
                         ListTile(title:
                         Column(
@@ -73,14 +73,15 @@ class _FaqState extends State<Faq> {
                                 data:data.description.toString(),
                                 style: {
                                   "body": Style(
-                                    fontSize: FontSize(12.0),
+                                    fontSize: FontSize(16.0),
+                                    textAlign: TextAlign.justify
                                   ),
                                   "body ol li, body ul li": Style(
-                                    fontSize: FontSize(10.0),
+                                    fontSize: FontSize(12.0),
                                   ),
 
                                 },
-                                onLinkTap: (String? url, RenderContext context, Map<String,
+                                onLinkTap: (String? url,  Map<String,
                                     String> attributes,
                                     element)
                                 async{

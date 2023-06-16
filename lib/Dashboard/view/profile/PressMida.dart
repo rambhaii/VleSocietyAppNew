@@ -66,13 +66,16 @@ class PressMedia extends StatelessWidget {
                          crossAxisAlignment: CrossAxisAlignment.start,
                          mainAxisAlignment: MainAxisAlignment.center,
                          children: [
-                           Text(data.title.toString(),style: bodyText1Style.copyWith(fontSize: 13),),
+                           Text(data.title.toString(),style: bodyText1Style.copyWith(fontSize: 17),),
+                           SizedBox(height: 5,),
                            data.description!=null?
                            Container(
                                width: Get.width/1.5,
                                child:  Text(parsedString
                                  ,maxLines: 2,overflow: TextOverflow.ellipsis,
-                                 style: bodyText2Style.copyWith(color: Colors.black.withOpacity(0.6)),),
+                                 textAlign: TextAlign.justify,
+
+                                 style: bodyText2Style.copyWith(color: Colors.black.withOpacity(0.6),fontSize: 16),),
                              ):Center()
                                //Text(data.description.toString(),style: bodyText1Style.copyWith(fontSize: 13,color: Colors.black87))),
                          ],

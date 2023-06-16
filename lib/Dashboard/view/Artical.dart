@@ -8,9 +8,11 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/model/FeedArticalModel.dart';
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../AppConstant/AppConstant.dart';
 import '../../AppConstant/textStyle.dart';
@@ -18,10 +20,9 @@ import '../../Auth/controller/login_controller.dart';
 import '../../Auth/model/StateModel.dart';
 import '../../CSC/Model/CscModel.dart';
 import '../../Widget/loading_widget.dart';
+import '../AddMobAds.dart';
 import '../model/ArticalModel.dart';
-import 'ArticalDetailsPage.dart';
-import 'FeedDetails.dart';
-import '../model/FeedArticalModel.dart';
+
 
 class ArticalPage extends StatefulWidget {
   ArticalPage({super.key});
@@ -49,8 +50,7 @@ class _ArticalPageState extends State<ArticalPage> {
       controller.getCommmunityCategoryNetworkApi();
       controller.getFeedArticalNetworkApi("");
       loginController.getStateNetworkApi();
-
-     }
+  }
 
   @override
   Widget build(BuildContext context)
@@ -73,6 +73,7 @@ class _ArticalPageState extends State<ArticalPage> {
                             child: InkWell(
                               onTap: ()
                               {
+                                print("khkfjk");
                                 controller.getFeedArticalNetworkApi("");
                                 controller.feedArticalModel.refresh();
                                 setState(()
@@ -291,9 +292,8 @@ class _ArticalPageState extends State<ArticalPage> {
                   isCategory == false ?
                   Obx(() => Column(
                             children: [
-                              Obx(() => controller.feedArticalModel.value.data !=
-                                      null
-                                  ? ListView.separated(
+                              Obx(() => controller.feedArticalModel.value.data != null ?
+                              ListView.separated(
                                       padding: EdgeInsets.all(15),
                                       shrinkWrap: true,
                                       reverse: true,
@@ -318,16 +318,59 @@ class _ArticalPageState extends State<ArticalPage> {
                                           padding: const EdgeInsets.only(
                                               top: 6.0, bottom: 6.0),
                                           child: InkWell(
-                                            onTap: () {
-                                              _showBottomSheetFeedArtcal(
-                                                  context, datas);
+                                            onTap: ()
+                                            {
+                                              if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                                              {
+                                                InterstitialAd? interstitialAd;
+                                                InterstitialAd.load(
+                                                    adUnitId:  AdHelper.interstitialAdUnitId,
+                                                    request: const AdRequest(),
+                                                    adLoadCallback: InterstitialAdLoadCallback(
+                                                      onAdLoaded: (ad)
+                                                      {
+
+                                                        interstitialAd = ad;
+                                                        interstitialAd!.show();
+                                                        interstitialAd!.fullScreenContentCallback =
+                                                            FullScreenContentCallback(
+                                                                onAdFailedToShowFullScreenContent: ((ad, error) {
+                                                                  ad.dispose();
+                                                                  interstitialAd!.dispose();
+                                                                  debugPrint(error.message);
+                                                                }),
+                                                                onAdDismissedFullScreenContent: (ad) {
+                                                                  ad.dispose();
+                                                                  interstitialAd!.dispose();
+                                                                  _showBottomSheetFeedArtcal(
+                                                                      context, datas);
+                                                                }
+
+                                                            );
+                                                      },
+                                                      onAdFailedToLoad: (err) {
+                                                        debugPrint(err.message);
+                                                      },
+                                                    ));
+                                              }else
+                                              {
+                                                _showBottomSheetFeedArtcal(
+                                                    context, datas);
+                                              }
+
+
+
+
+
                                             },
                                             child: Row(
                                               children: [
                                                 Expanded(
                                                   child: Text(
                                                     datas.title.toString(),
-                                                    style: bodyText1Style,
+                                                    style: bodyText1Style.copyWith(fontSize: 17,height: 1.2
+
+                                                    ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 3,
@@ -338,7 +381,7 @@ class _ArticalPageState extends State<ArticalPage> {
                                                 ),
                                                 ClipRRect(
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                                   child: CachedNetworkImage(
                                                     fit: BoxFit.cover,
                                                     imageUrl:
@@ -362,18 +405,16 @@ class _ArticalPageState extends State<ArticalPage> {
                                       },
                                     )
                                   : Container()),
-                              controller.setCategoryOfArtical.value == 1
-                                  ? controller.isLoadingPageArtical.value
-                                      ? const LoadingWidget()
+                                 controller.setCategoryOfArtical.value == 1
+                                  ? controller.isLoadingPageArtical.value ? const LoadingWidget()
                                       : Container()
                                   : Container()
                             ],
                           ))
-                      : filter == 0
-                          ? Obx(() => controller
-                                      .articleModelByCategory.value.data !=
-                                  null
-                              ? ListView.separated(
+                      :
+                  filter == 0 ?
+                  Obx(() => controller.articleModelByCategory.value.data != null ?
+                  ListView.separated(
                                   padding: EdgeInsets.all(10),
                                   shrinkWrap: true,
                                   reverse: true,
@@ -438,8 +479,7 @@ class _ArticalPageState extends State<ArticalPage> {
                                   },
                                 )
                               : Center(
-                                  ))
-                          : Obx(() => controller
+                                  )) : Obx(() => controller
                                       .articleModelWithFilter.value.data !=
                                   null
                               ? ListView.separated(
@@ -558,7 +598,6 @@ class _ArticalPageState extends State<ArticalPage> {
       ],
     );
   }
-
   void _showBottomSheet(BuildContext context, ArticleDatum datum) {
     showModalBottomSheet(
       context: context,
@@ -611,10 +650,11 @@ class _ArticalPageState extends State<ArticalPage> {
                       width: double.infinity,
                       child: SingleChildScrollView(
                         child: Column(
-                          children: [
+                          children:
+                          [
                             Text(
                               datum.title.toString(),
-                              style: bodyText1Style,
+                              style: bodyText1Style.copyWith(fontSize: 17),
                             ),
                             const SizedBox(
                               height: 10,
@@ -628,10 +668,23 @@ class _ArticalPageState extends State<ArticalPage> {
                             ),
                             Html(
                                 data: datum.description.toString(),
+                                style: {
+                                  "body": Style(
+                                    fontSize: FontSize(17.0),
+                                    //  letterSpacing: 1.2,
+                                    lineHeight: LineHeight(1.8),
+                                      textAlign: TextAlign.justify
+
+
+
+                                  ),
+                                },
+
                                 onLinkTap: (String? url,
-                                    RenderContext context,
+
                                     Map<String, String> attributes,
-                                    element) async {
+                                    element) async
+                                {
                                   await launch(url!);
                                 }),
                           ],
@@ -647,7 +700,6 @@ class _ArticalPageState extends State<ArticalPage> {
       },
     );
   }
-
   void _showBottomSheetFeedArtcal(BuildContext context, Datum1 datum) {
     String value = datum.description.toString();
     String result = value.replaceAll("[fusion_button", "");
@@ -708,7 +760,7 @@ class _ArticalPageState extends State<ArticalPage> {
                           children: [
                             Text(
                               datum.title.toString(),
-                              style: bodyText1Style,
+                              style: bodyText1Style.copyWith(fontSize:17 ),
                             ),
                             const SizedBox(
                               height: 10,
@@ -722,8 +774,19 @@ class _ArticalPageState extends State<ArticalPage> {
                             ),
                             Html(
                                 data: result1.toString(),
+                                style: {
+                                  "body": Style(
+                                    fontSize: FontSize(17.0),
+                                    //  letterSpacing: 1.2,
+                                    lineHeight: LineHeight(1.8),
+                                      textAlign: TextAlign.justify
+
+
+
+                                  ),
+                                },
                                 onLinkTap: (String? url,
-                                    RenderContext context,
+
                                     Map<String, String> attributes,
                                     element) async {
                                   await launch(url!);
@@ -741,7 +804,6 @@ class _ArticalPageState extends State<ArticalPage> {
       },
     );
   }
-
   void _showBottomSheetFilter(BuildContext context, String cat_Id) {
     showDialog(
       context: context,

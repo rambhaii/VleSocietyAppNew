@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-import 'package:carousel_slider/carousel_slider.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -9,6 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,6 +22,7 @@ import 'package:vlesociety/Dashboard/view/dashboard.dart';
 import 'package:vlesociety/Dashboard/view/profile/AboutCSC.dart';
 import 'package:vlesociety/Dashboard/view/profile/Awards.dart';
 import 'package:vlesociety/Dashboard/view/profile/Certificates.dart';
+import 'package:vlesociety/Dashboard/view/profile/PointTable.dart';
 import 'package:vlesociety/Dashboard/view/profile/RateUsApp.dart';
 import 'package:vlesociety/Dashboard/view/profile/like.dart';
 import 'package:vlesociety/Dashboard/view/profile/testimonials.dart';
@@ -28,7 +30,9 @@ import 'package:vlesociety/Dashboard/view/profile/transaction.dart';
 import 'package:vlesociety/Dashboard/view/profile/youtube.dart';
 import 'package:vlesociety/Widget/CircularTopButton.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
+
 import '../../Auth/controller/login_controller.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../Auth/model/CityModel.dart';
@@ -42,6 +46,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 
 import 'VleNews.dart';
+import 'profile/PointRedeem.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -66,6 +71,7 @@ class _ProfileState extends State<Profile> {
   {
     // TODO: implement initState
     controller.getPrivacyNetworkApi();
+    loginController.getStateNetworkApi();
 
     super.initState();
   }
@@ -78,17 +84,24 @@ class _ProfileState extends State<Profile> {
         children: [
           Obx(
             () => loginController.rxPath.value.isEmpty
-                ? Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(60),
-                      border: Border.all(),
-                      image: DecorationImage(
-                          image: NetworkImage(BASE_URL + controller.image),
-                          fit: BoxFit.fill),
+                ? InkWell(
+                  onTap: ()
+                    {
+                          showOptionDailog(context);
+                       },
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(60),
+                        border: Border.all(),
+                        image: DecorationImage(
+                            image: NetworkImage(BASE_URL + controller.image),
+                            fit: BoxFit.fill),
+                      ),
+                      child: Container(),
                     ),
-                    child: Container(),
-                  )
-                : Container(
+                )
+                :
+            Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(60),
                       border: Border.all(),
@@ -102,7 +115,8 @@ class _ProfileState extends State<Profile> {
               bottom: 0,
               right: 0,
               child: InkWell(
-                onTap: () {
+                onTap: ()
+                {
                   showOptionDailog(context);
                 },
                 child: Icon(
@@ -151,7 +165,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Positioned.fill(
-                top: 40,
+                top: 20,
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: SingleChildScrollView(
@@ -167,7 +181,9 @@ class _ProfileState extends State<Profile> {
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: ()
+                                  {
+
                                     bottomSheet();
                                   },
                                   child: Container(
@@ -228,6 +244,7 @@ class _ProfileState extends State<Profile> {
                                   onPressed: ()
                                   {
                                     loginController.getStateNetworkApi();
+
                                     bottomSheet();
                                   },
                                   child: Text(
@@ -255,7 +272,7 @@ class _ProfileState extends State<Profile> {
                                     Colors.blue
                                   ]))),
                         ),
-                        SizedBox(height: 5, width: 10),
+                        SizedBox(height: 3, width: 10),
                         ListTile(
                           onTap: () {
                             Get.to(() => HomeDashboard());
@@ -268,7 +285,8 @@ class _ProfileState extends State<Profile> {
                                   height: .5)),
                         ),
                         ListTile(
-                          onTap: () {
+                          onTap: ()
+                          {
                             Get.to(VleNews());
                           },
                           contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -279,9 +297,48 @@ class _ProfileState extends State<Profile> {
                                   height: .3)),
                         ),
                         ListTile(
-                          onTap: () {
+                          onTap: ()
+                          {
                             //     Get.to(()=>youtube());
-                            _launchInBrowser(toLaunch);
+                            if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                            {
+                              InterstitialAd? interstitialAd;
+                              InterstitialAd.load(
+                                  adUnitId:  AdHelper.interstitialAdUnitId,
+                                  request: const AdRequest(),
+                                  adLoadCallback: InterstitialAdLoadCallback(
+                                    onAdLoaded: (ad)
+                                    {
+
+                                      interstitialAd = ad;
+                                      interstitialAd!.show();
+                                      interstitialAd!.fullScreenContentCallback =
+                                          FullScreenContentCallback(
+                                              onAdFailedToShowFullScreenContent: ((ad, error) {
+                                                ad.dispose();
+                                                interstitialAd!.dispose();
+                                                debugPrint(error.message);
+                                              }),
+                                              onAdDismissedFullScreenContent: (ad) {
+                                                ad.dispose();
+                                                interstitialAd!.dispose();
+                                                _launchInBrowser(toLaunch);
+                                              }
+
+                                          );
+                                    },
+                                    onAdFailedToLoad: (err) {
+                                      debugPrint(err.message);
+                                    },
+                                  ));
+                            }else
+                            {
+                              _launchInBrowser(toLaunch);
+                            }
+
+
+
+
                           },
                           contentPadding: EdgeInsets.only(left: 20, right: 20),
                           title: Text("YOUTUBE",
@@ -303,12 +360,28 @@ class _ProfileState extends State<Profile> {
                                   height: .5)),
                         ),
                         ListTile(
-                          onTap: () {
+                          onTap: ()
+                          {
                             // Get.to(()=>transaction());
                             controller.gettransactionHistoryDetails("");
-                          },
+                           },
                           contentPadding: EdgeInsets.only(left: 20, right: 20),
                           title: Text("TRANSACTIONS",
+                              style: titleStyle.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 19,
+                                  height: .3)),
+                        ),
+                        ListTile(
+                          onTap: ()
+                          {
+                            // Get.to(()=>transaction());
+                           controller.gettransactionPointsDetails();
+
+
+                          },
+                          contentPadding: EdgeInsets.only(left: 20, right: 20),
+                          title: Text("REDEEM POINTS",
                               style: titleStyle.copyWith(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 19,
@@ -375,7 +448,8 @@ class _ProfileState extends State<Profile> {
                             )),
                             InkWell(
                               onTap: () {
-                                if (controller.userType == "Guest") {
+                                if (controller.userType == "Guest")
+                                {
                                   UtilsMethod.PopupBox(context, "feedback");
                                 } else {
                                   bottomSheetFeedBack();
@@ -385,7 +459,7 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   Padding(
                                       padding: EdgeInsets.only(
-                                          right: 10, left: 10, top: 20)),
+                                          right: 10, left: 10, top: 10)),
                                   Image.asset(
                                     'assets/images/feedback.png',
                                     fit: BoxFit.cover,
@@ -405,9 +479,10 @@ class _ProfileState extends State<Profile> {
                             SizedBox(width: 10),
                             Column(
                               children: [
-                                Padding(padding: EdgeInsets.only(top: 20)),
+                                Padding(padding: EdgeInsets.only(top: 10)),
                                 InkWell(
-                                  onTap: () {
+                                  onTap: ()
+                                  {
                                     Get.to(RateUsApp());
                                   },
                                   child: Image.asset(
@@ -427,7 +502,7 @@ class _ProfileState extends State<Profile> {
                             SizedBox(width: 25),
                             Column(
                               children: [
-                                Padding(padding: EdgeInsets.only(top: 20)),
+                                Padding(padding: EdgeInsets.only(top: 10)),
                                 InkWell(
                                   focusColor: Colors.white,
                                   hoverColor: Colors.cyanAccent,
@@ -464,7 +539,7 @@ class _ProfileState extends State<Profile> {
                             SizedBox(width: 25),
                             Column(
                               children: [
-                                Padding(padding: EdgeInsets.only(top: 20)),
+                                Padding(padding: EdgeInsets.only(top: 10)),
                                 InkWell(
                                   highlightColor: Colors.white,
                                   onTap: () {
@@ -959,7 +1034,8 @@ class _ProfileState extends State<Profile> {
                                             controller: loginController.etEmail,
                                             hint: 'Email',
                                             validator: (value) {
-                                              if (value.toString().isEmpty) {
+                                              if (value.toString().isEmpty)
+                                              {
                                                 return "Please Enter Email";
                                               }
                                               if (!GetUtils.isEmail(value)) {
@@ -1043,8 +1119,7 @@ class _ProfileState extends State<Profile> {
                                                 String formattedDate =
                                                     DateFormat('dd/MM/yyyy')
                                                         .format(Datet);
-                                                loginController.dob.text =
-                                                    formattedDate;
+                                                loginController.dob.text = formattedDate;
                                               }
                                             },
                                             keyboardType: TextInputType.text,
@@ -1333,21 +1408,30 @@ class _ProfileState extends State<Profile> {
                                           width: 0.5, color: Colors.black12),
                                       borderRadius: BorderRadius.circular(10)),
                                 ),
-                                controller.privacyModel.value.data!
-                                            .description !=
-                                        null
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  child: Text(controller.privacyModel.value.data!
+                                     .title.toString(),style: heading3,),
+
+                                ),
+
+                                controller.privacyModel.value.data!.description != null
                                     ? Html(
                                         data: controller.privacyModel.value
                                             .data!.description
                                             .toString(),
                                         style: {
                                           "body": Style(
-                                            fontSize: FontSize(12.0),
+                                            fontSize: FontSize(16.0),
+                                            textAlign: TextAlign.justify,
+                                            lineHeight: LineHeight(1.8),
+
                                           ),
                                         },
-                                        onLinkTap: (String? url,
-                                            RenderContext context,
-                                            Map<String, String> attributes,
+                                        onLinkTap:
+                                            (String? url, Map<String, String> attributes,
                                             element) async {
                                           await launch(url!);
                                         })
@@ -1360,7 +1444,8 @@ class _ProfileState extends State<Profile> {
         });
   }
 
-  void editInterestBottomSheet() {
+  void editInterestBottomSheet()
+  {
     int optionSelect = 0;
     bool isSelected = false;
 

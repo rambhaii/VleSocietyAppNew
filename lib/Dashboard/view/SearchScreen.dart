@@ -4,10 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vlesociety/Dashboard/view/profile/tawk_widget.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 
 import '../../AppConstant/APIConstant.dart';
@@ -45,19 +48,90 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context)
   {
-    controller.getSearchListNetworkApi("", "");
-    return new Scaffold(
+    controller.getSearchDataListNetworkApi("", "");
+    return Scaffold(
+      appBar: PreferredSize(
+        child: Stack(
+          children: [
+            Positioned(
+                top: -80,
+                right: 60,
+                child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:   Color(0xffcdf55a),
+                  ),
+                )
+            ),
+            ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: AppBar(
+                  backgroundColor: Colors.white.withOpacity(0.5),
+                  leading: Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: CircleAvatar(radius: 10, backgroundColor: Colors.amber.withOpacity(0.1), backgroundImage: NetworkImage(BASE_URL+controller.image),),
+                  ),
+                  leadingWidth: 60,
+                  title:Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                    [ Text(controller.userName.toString(), style: TextStyle(color: Colors.black, fontSize: 16),),
+                    ],
+                  ),
+                  elevation: 0.0,
+                  actions: [
+                    RawMaterialButton(
+                      constraints: BoxConstraints(maxHeight: 40, minWidth: 40),
+                      onPressed: ()
+                       {
+                         Navigator.pop(context, true);
+                        },
+
+                      shape: CircleBorder(
+
+                      ),
+                      child: Image.asset(
+                        "assets/images/back.png",
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    )
+
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        preferredSize: Size(
+          double.infinity,
+          60.0,
+        ),
+      ),
       body:
       Container(
         child: Column(
           children: <Widget>
           [
-            SizedBox(height: 50),
+            SizedBox(height: 5),
             Container(
               height: 50.h,
               child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    textInputAction: TextInputAction.search,
+                             onFieldSubmitted: (String _message){
+                               controller.getSearchListNetworkApi(_message, "");
+                               controller.communityModelBySerachKey.refresh();
+
+                           },
                     onChanged: (value)
                     {
                       keyMessage = value;
@@ -88,6 +162,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               if (keyMessage.isNotEmpty)
                               {
                                 controller.getSearchListNetworkApi(keyMessage, "");
+                                controller.communityModelBySerachKey.refresh();
                               }
                             },
                             child: Icon(
@@ -117,10 +192,24 @@ class _SearchScreenState extends State<SearchScreen> {
                               count = int.parse(data.ttlLike.toString());
 
                               return GestureDetector(
-                                onTap: () {
-                                  Get.to(() => CommunityDetails(
-                                        cid: data.id.toString(),
-                                      ));
+                                onTap: ()
+                                {
+                                  data.description.toString().contains("Https")?
+                                  Get.to(
+                                      ChatAd( directChatLink:data.description.toString(), title:"",
+                                        onLoad: ()
+                                        {
+                                          print('Hello Tawk!');
+                                        },
+                                        onLinkTap: (String url)
+                                        {
+                                          print(url);
+                                        },
+                                        placeholder: const Center(
+                                          child: Text('Loading...'),
+                                        ),))
+                                      :
+                                  Get.to(() => CommunityDetails(cid: data.id.toString(),));
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,7 +428,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ),
                                       ),
                                     ),
-                                    Padding(
+                                  /*  Padding(
                                       padding: const EdgeInsets.only(
                                           left: 5, right: 0),
                                       child: Column(
@@ -359,13 +448,91 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ),
                                         ],
                                       ),
+                                    ),*/
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 5, right: 0),
+                                      child: Column(
+                                        children:
+                                        [
+                                          /*  ReadMoreText(
+                                  parse(data!.description.toString()).body!.text,
+                                    style:
+                                        TextStyle(fontSize: 12, letterSpacing: 1),
+                                    textAlign: TextAlign.justify,
+                                    trimLines: 2,
+                                    colorClickableText: Colors.pink,
+                                    trimMode: TrimMode.Line,
+                                    trimCollapsedText: 'Show more',
+                                    trimExpandedText: '  Show less',
+                                    moreStyle: smallTextStyle,
+                                    lessStyle: smallTextStyle,
+                                  ),
+                                  */
+                                          data.image.toString().isNotEmpty?
+                                          data.description.toString().contains("Https")?
+                                          Container(
+                                            /* height: 200,
+                                 child:  WebView(
+                                   initialUrl:  data.description,
+                                   javascriptMode: JavascriptMode.unrestricted,
+                                   onWebViewCreated: (WebViewController webViewController) {
+                                     // _controller.complete(webViewController);
+                                     _con = webViewController;
+                                     //_loadHTML();
+                                   },
+                                   onProgress: (int progress) {
+                                     print("WebView is loading (progress : $progress%)");
+                                   },
+                                   navigationDelegate: (NavigationRequest request) {
+                                     if (request.url.startsWith(data.description.toString()))
+                                     {
+                                       print('blocking navigation to $request}');
+                                       return NavigationDecision.prevent;
+                                     }
+                                     print('allowing navigation to $request');
+                                     return NavigationDecision.navigate;
+                                   },
+                                   onPageStarted: (String url) {
+                                     print('Page started loading: $url');
+                                   },
+                                   onPageFinished: (String url) {
+                                     print('Page finished loading: $url');
+                                   },
+                                   gestureNavigationEnabled: true,
+                                 )*/
+                                          ):
+
+                                          Html(
+                                              data:data.description.toString(),
+                                              style:
+                                              {
+                                                "body": Style(
+                                                    fontSize: FontSize(12.0),
+                                                    letterSpacing: 1,
+                                                    textAlign: TextAlign.justify,
+                                                    // lineHeight: LineHeight(1),
+                                                    maxLines: 4
+                                                ),
+                                              },
+                                              onLinkTap: (String? url, Map<String,
+                                                  String> attributes,
+                                                  element)
+                                              async{
+                                                await launch(url!);
+                                              }
+                                          ):Container(
+
+                                          ),
+
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 8,
                                     ),
                                     if (data.image.toString().isNotEmpty)
                                       Container(
-                                        height: 150,
+                                        height: 180,
                                         width: Get.width,
                                         decoration: BoxDecoration(
                                             borderRadius:

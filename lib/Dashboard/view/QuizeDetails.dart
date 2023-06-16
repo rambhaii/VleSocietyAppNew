@@ -4,12 +4,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html/parser.dart';
 import 'package:vlesociety/AppConstant/textStyle.dart';
 import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:vlesociety/Dashboard/model/QuizModel.dart';
 import 'package:vlesociety/Dashboard/view/quizeQA/question.dart';
 
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/APIConstant.dart';
 import '../../UtilsMethod/UtilsMethod.dart';
 
@@ -35,12 +37,63 @@ Widget build(BuildContext context)
           width: double.infinity,
           child:data.id!=null ? ElevatedButton(
               onPressed: ()
-              { if (controller.userType == "Guest")
               {
-              UtilsMethod.PopupBox(context, "Attempt quiz");
-              } else {
-                Get.to(() => question(quizeId: data.id.toString()));
-              } },
+                if(controller.settingModel.value.data!.adsStatus.toString()=="1")
+                {
+                  InterstitialAd? interstitialAd;
+                  InterstitialAd.load(
+                      adUnitId:  AdHelper.interstitialAdUnitId,
+                      request: const AdRequest(),
+                      adLoadCallback: InterstitialAdLoadCallback(
+                        onAdLoaded: (ad)
+                        {
+
+                          interstitialAd = ad;
+                          interstitialAd!.show();
+                          interstitialAd!.fullScreenContentCallback =
+                              FullScreenContentCallback(
+                                  onAdFailedToShowFullScreenContent: ((ad, error) {
+                                    ad.dispose();
+                                    interstitialAd!.dispose();
+                                    debugPrint(error.message);
+                                  }),
+                                  onAdDismissedFullScreenContent: (ad) {
+                                    ad.dispose();
+                                    interstitialAd!.dispose();
+                                    if (controller.userType == "Guest")
+                                    {
+                                      UtilsMethod.PopupBox(context, "Attempt quiz");
+                                    }
+                                    else
+                                    {
+                                      Get.to(() => question(quizeId: data.id.toString(), url: BASE_URL+data.image.toString(),
+                                      ));
+                                    }
+                                  }
+
+                              );
+                        },
+                        onAdFailedToLoad: (err) {
+                          debugPrint(err.message);
+                        },
+                      ));
+                }else
+                {
+                  if (controller.userType == "Guest")
+                  {
+                    UtilsMethod.PopupBox(context, "Attempt quiz");
+                  }
+                  else
+                  {
+                    Get.to(() => question(quizeId: data.id.toString(), url: BASE_URL+data.image.toString(),));
+                  }
+                }
+
+
+
+
+
+                },
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.white)
               ),
@@ -144,9 +197,10 @@ Widget build(BuildContext context)
                   padding: EdgeInsets.only(left: 15,right: 15,top: 20,),
                   width: MediaQuery.of(context).size.width,
                   child:data.description!=null?
-                  Text(parsedString
-                    ,maxLines: 15,overflow: TextOverflow.ellipsis,textAlign: TextAlign.justify,
-                    style: bodyText2Style.copyWith(color: Colors.black.withOpacity(0.6)),):
+                  Text(parsedString,
+                    textAlign: TextAlign.justify,
+                    style: bodyText2Style.copyWith( fontSize: 16,
+                        color: Colors.black.withOpacity(0.6)),):
                   Container()
 
               ),

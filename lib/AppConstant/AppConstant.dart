@@ -16,5 +16,16 @@ class AppConstant{
   static final String referId ="referId";
   static late  int countNotification =0;
 
+// set ID'S For ADMOBE
+  static final String BannerID ="dob";
+
+
+  //
+  static final String forceFully="force_fully";
+  static final String vleSocietyVersion="vle_society_version";
+  static final String vleSocietyUpdate="vleSocietyUpdate";
+  static final String vleSocietyUrl="vleSocietyUrl";
+  static final String vleSocietyMessage="vleSocietyMessage";
+
 
 }

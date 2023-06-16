@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../Ads/AdHelper.dart';
 import '../../AppConstant/textStyle.dart';
 import '../controller/DashboardController.dart';
 import 'ServicesDescription.dart';
@@ -14,12 +16,60 @@ class SubCategoryOfCategoryServices extends StatelessWidget
  final String type;
   SubCategoryOfCategoryServices(this.title, this.type, {Key? key}) : super(key: key);
   DashboardController controller = Get.find();
+ Widget getAd()
+ {
+   BannerAdListener bannerAdListener=BannerAdListener(onAdWillDismissScreen: (ad)
+   {
+     ad.dispose();
+   },onAdClicked: (ad){
+     print("Ad got closed");
+   });
+   BannerAd bannerAd=BannerAd(
+       size:  AdSize.banner,
+       adUnitId: AdHelper.bannerAdUnitId,
+       request:  const AdRequest(),
+
+       listener: BannerAdListener(
+         // Called when an ad is successfully received.
+         onAdLoaded: (ad)
+         {
+           debugPrint('$ad loaded.');
+
+         },
+         // Called when an ad request failed.
+         onAdFailedToLoad: (ad, err)
+         {
+           debugPrint('BannerAd failed to load: $err');
+           // Dispose the ad here to free resources.
+           ad.dispose();
+         },
+
+         onAdOpened: (Ad ad) {},
+         // Called when an ad removes an overlay that covers the screen.
+         onAdClosed: (Ad ad) {
+
+         },
+         // Called when an impression occurs on the ad.
+         onAdImpression: (Ad ad) {},
+
+       )
+   );
+
+   bannerAd.load();
+   return SizedBox(
+     height: 100,
+
+     child: AdWidget(ad: bannerAd),
+
+   );
+ }
   @override
   Widget build(BuildContext context)
   {
   //  controller.getServicesSubCategoryNetworkApi(id);
     return
       Scaffold(
+          bottomNavigationBar:getAd() ,
         appBar: PreferredSize(
           child: Stack(
             children: [
@@ -116,7 +166,7 @@ class SubCategoryOfCategoryServices extends StatelessWidget
                         width: MediaQuery.of(context).size.width,
                         height: 40,
                         child: Center(child: Text(controller.serviceCategoryModel1.value.data![index].title.toString(),
-                          style: bodyText1Style.copyWith(color: Colors.grey),)),
+                          style: bodyText1Style.copyWith(color: Colors.grey,fontSize: 16),)),
                       ),
                     ),
                   ),

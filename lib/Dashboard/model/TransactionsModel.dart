@@ -16,6 +16,7 @@ class TransactionsModel {
     this.avlPoint,
     this.totalDebit,
     this.limit,
+    this.totalRedeem,
     this.page,
     this.data,
   });
@@ -26,6 +27,7 @@ class TransactionsModel {
   int? avlPoint;
   String? totalDebit;
   String? limit;
+  String? totalRedeem;
   int? page;
   List<Datum>? data;
 
@@ -36,6 +38,7 @@ class TransactionsModel {
     avlPoint: json["avlPoint"],
     totalDebit: json["totalDebit"],
     limit: json["limit"],
+    totalRedeem: json["totalRedeem"],
     page: json["page"],
     data: List<Datum>.from(json["Data"].map((x) => Datum.fromJson(x))),
   );
@@ -47,6 +50,7 @@ class TransactionsModel {
     "avlPoint": avlPoint,
     "totalDebit": totalDebit,
     "limit": limit,
+    "totalRedeem": totalRedeem,
     "page": page,
     "Data": List<dynamic>.from(data!.map((x) => x.toJson())),
   };

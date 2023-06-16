@@ -1,4 +1,4 @@
-package com.vlesociety.vlesociety
+package com.vlesociety
 
 import io.flutter.embedding.android.FlutterActivity
 
