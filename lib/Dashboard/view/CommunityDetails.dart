@@ -21,6 +21,7 @@ import '../../Widget/CustomAppBarWidget.dart';
 import '../controller/CommunityDetails.dart';
 import '../controller/DashboardController.dart';
 import 'GallaryCommunity.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommunityDetails extends StatefulWidget {
   final String cid;
@@ -266,10 +267,22 @@ class _CommunityDetailsState extends State<CommunityDetails>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            /*Text(
                               controller.communityModel.value.data!.addDate.toString().split(" ").first,
                               style: smallTextStyle,
-                            ), Text("By "+ controller.communityModel.value.data!.addBy.toString(),
+                            ),*/
+
+                            Text(
+                              timeago.format(
+                                  DateTime.parse( controller.communityModel.value.data!.addDate.toString().split(" ").first)
+                              ),
+                              style: smallTextStyle.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: Colors.black.withOpacity(0.5)),
+                            ),
+
+                            Text("By "+ controller.communityModel.value.data!.addBy.toString(),
                               style: bodyText1Style.copyWith(color: Colors.deepPurple),
                             ),
                           ],
@@ -351,10 +364,7 @@ class _CommunityDetailsState extends State<CommunityDetails>
                   ),
                 ],
               )
-
-
-
-       ),
+                         ),
                        ):
                         Html(
                             data:controller.communityModel.value.data!.description.toString(),

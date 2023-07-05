@@ -505,6 +505,7 @@ class _HomeDashboardState extends State<HomeDashboard>
       context: context,
       barrierColor: Colors.black.withOpacity(0.1),
       isScrollControlled: true,
+      isDismissible: false,
       backgroundColor: Colors.white70,
       builder: (context) 
       {
@@ -698,7 +699,7 @@ class _HomeDashboardState extends State<HomeDashboard>
 
                                                 },
                                                 minLines: null,
-                                                maxLines:10,
+                                                maxLines:13,
                                                 controller: etmessage,
                                                 keyboardType:
                                                 TextInputType.multiline,

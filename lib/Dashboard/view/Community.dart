@@ -24,6 +24,7 @@ import 'package:vlesociety/Dashboard/controller/DashboardController.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vlesociety/Dashboard/view/profile/tawk_widget.dart';
+import 'package:vlesociety/Dashboard/view/profile/youtube.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 import '../../Ads/AdHelper.dart';
@@ -178,6 +179,7 @@ class _CommunityPageState extends State<CommunityPage>
                          else
                            {
                              data.description.toString().contains("Https")?
+
                              Get.to(
                                  ChatAd( directChatLink:data.description.toString(), title:"",
                                    onLoad: ()
@@ -193,6 +195,7 @@ class _CommunityPageState extends State<CommunityPage>
                                    ),))
                              :
                              Get.to(() => CommunityDetails(cid: data.id.toString(),));
+
                            }
 
 
@@ -543,11 +546,20 @@ class _CommunityPageState extends State<CommunityPage>
                             data.description.toString().contains("Https")||data.description.toString().contains("https")?
                             Container
                               (
-                                    height: 250,
+                                    height: 320,
                                     width: Get.width.w,
                                     child:
                                     AnyLinkPreview(
                                       link:dataUrlValue,
+
+
+                                        bodyMaxLines: 3,
+                                        bodyTextOverflow: TextOverflow.ellipsis,
+                                        titleStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
                                         errorWidget: Container(
                                           height: 150,
                                           width: Get.width.w,
@@ -571,10 +583,11 @@ class _CommunityPageState extends State<CommunityPage>
                                                 },
                                                 placeholder: const Center(
                                                   child: Text('Loading...'),
-                                                ),));
+                                                ),)
+                                          );
                                         }
                                     ),
-                              /* SimpleUrlPreview(
+                               /* SimpleUrlPreview(
                               url:  dataUrlValue,
                              bgColor: Colors.white38,
 
@@ -599,7 +612,6 @@ class _CommunityPageState extends State<CommunityPage>
 
                               onTap: () => print('Hello Flutter URL Preview'),
                             ),*/
-
                               /*AnyLinkPreview(
                                     link:  dataUrlValue,
                                     displayDirection: UIDirection.uiDirectionHorizontal,
@@ -891,7 +903,7 @@ class _CommunityPageState extends State<CommunityPage>
                               ],
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                              padding: const EdgeInsets.only(left: 4.0, right: 4.0,bottom: 5),
                               child: Divider(
                                 thickness: 1.8,
                                 height: 5,

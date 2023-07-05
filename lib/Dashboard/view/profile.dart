@@ -1214,32 +1214,17 @@ class _ProfileState extends State<Profile> {
                                         child: Center(
                                           child: Obx(()
                                           {
-                                            int ind = loginController
-                                                .stateData.value.data!
-                                                .indexWhere((element) =>
-                                                    element.stateId ==
-                                                    GetStorage()
-                                                        .read(
-                                                            AppConstant.stateId)
-                                                        .toString());
-                                            if (ind != -1) {
-                                              loginController.selectedState =
-                                                  loginController.stateData
-                                                      .value.data![ind];
-                                              loginController.etSate.text =
-                                                  loginController
-                                                      .stateData
-                                                      .value
-                                                      .data![ind]
-                                                      .stateId!;
+                                            int ind = loginController.stateData.value.data!.indexWhere((element) => element.stateId == GetStorage().read(AppConstant.stateId).toString());
+                                            if (ind != -1)
+                                            {
+                                              loginController.selectedState = loginController.stateData.value.data![ind];
+                                              loginController.etSate.text = loginController.stateData.value.data![ind].stateId!;
                                               loginController.getCityNetworkApi(
                                                   loginController.stateData
                                                       .value.data![ind].stateId
                                                       .toString());
                                             }
-                                            return loginController
-                                                        .stateData.value.data !=
-                                                    null
+                                            return loginController.stateData.value.data != null
                                                 ? DropdownButton(
                                                     value: loginController
                                                         .selectedState,
